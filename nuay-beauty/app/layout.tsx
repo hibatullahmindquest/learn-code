@@ -1,5 +1,5 @@
 import type { Metadata } from 'next';
-import { Cormorant_Garamond, Outfit } from 'next/font/google';
+import { Playfair_Display, Roboto_Mono } from 'next/font/google';
 import './globals.css';
 import Navbar from '@/components/Navbar';
 import Footer from '@/components/Footer';
@@ -7,17 +7,17 @@ import WhatsAppButton from '@/components/WhatsAppButton';
 import { LanguageProvider } from '@/components/LanguageContext';
 import { SiteDataProvider } from '@/components/SiteDataContext';
 
-const cormorant = Cormorant_Garamond({
+const playfair = Playfair_Display({
   subsets: ['latin'],
-  weight: ['300', '400', '500', '600'],
+  weight: ['400', '500', '600', '700'],
   style: ['normal', 'italic'],
   variable: '--font-cormorant',
   display: 'swap',
 });
 
-const outfit = Outfit({
+const robotoMono = Roboto_Mono({
   subsets: ['latin'],
-  weight: ['300', '400', '500', '600'],
+  weight: ['300', '400', '500'],
   variable: '--font-outfit',
   display: 'swap',
 });
@@ -36,10 +36,10 @@ export const metadata: Metadata = {
 
 export default function RootLayout({ children }: { children: React.ReactNode }) {
   return (
-    <html lang="en" className={`${cormorant.variable} ${outfit.variable}`}>
+    <html lang="en" className={`${playfair.variable} ${robotoMono.variable}`}>
       <body
         className="min-h-screen flex flex-col antialiased"
-        style={{ fontFamily: 'var(--font-outfit), sans-serif' }}
+        style={{ fontFamily: 'var(--font-outfit), monospace', letterSpacing: '-0.02em' }}
       >
         <LanguageProvider>
           <SiteDataProvider>

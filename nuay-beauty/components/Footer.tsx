@@ -26,7 +26,7 @@ export default function Footer() {
         </p>
         <h2
           className="text-4xl md:text-5xl mb-6 tracking-tight"
-          style={{ fontFamily: 'Cormorant Garamond, serif', fontWeight: 300 }}
+          style={{ fontFamily: 'var(--font-cormorant), serif', fontWeight: 300 }}
         >
           {lang === 'en' ? 'Book Your Session' : 'Tempah Sesi Anda'}
         </h2>
@@ -48,7 +48,7 @@ export default function Footer() {
           <div className="mb-4">
             <p
               className="text-xl tracking-[0.3em]"
-              style={{ fontFamily: 'Cormorant Garamond, serif', color: 'var(--gold)' }}
+              style={{ fontFamily: 'var(--font-cormorant), serif', color: 'var(--gold)' }}
             >
               NUAY
             </p>

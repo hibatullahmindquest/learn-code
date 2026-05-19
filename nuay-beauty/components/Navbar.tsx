@@ -46,7 +46,7 @@ export default function Navbar() {
           <Link href="/" className="flex flex-col leading-none group">
             <span
               className="text-xl tracking-[0.25em] font-semibold transition-colors duration-300"
-              style={{ fontFamily: 'Cormorant Garamond, serif', color: scrolled ? 'var(--burgundy)' : 'var(--cream)' }}
+              style={{ fontFamily: 'var(--font-cormorant), serif', color: scrolled ? 'var(--burgundy)' : 'var(--cream)' }}
             >
               NUAY
             </span>
@@ -143,7 +143,7 @@ export default function Navbar() {
                 onClick={() => setOpen(false)}
                 className="text-2xl tracking-tight"
                 style={{
-                  fontFamily: 'Cormorant Garamond, serif',
+                  fontFamily: 'var(--font-cormorant), serif',
                   color: pathname === l.href ? 'var(--burgundy)' : 'var(--charcoal)',
                   fontWeight: pathname === l.href ? '500' : '300',
                 }}
