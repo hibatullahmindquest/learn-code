@@ -1,9 +1,9 @@
 'use client';
 
-import { useEffect } from 'react';
+import { useEffect, useState, useCallback } from 'react';
 import Link from 'next/link';
 import Image from 'next/image';
-import { ArrowRight, Drop, Shield, Star, ArrowUpRight } from '@phosphor-icons/react';
+import { ArrowRight, Drop, Shield, Star, ArrowUpRight, X, CaretLeft, CaretRight } from '@phosphor-icons/react';
 import { useLang } from '@/components/LanguageContext';
 import { content, services, artists, testimonials, faqs } from '@/lib/data';
 import { useSiteData } from '@/components/SiteDataContext';
@@ -40,6 +40,30 @@ export default function HomePage() {
   }, []);
 
   const featuredServices = services.slice(0, 4);
+
+  const galleryImages = [
+    '/images/nuay-studio-1.avif',
+    '/images/nuay-studio-2.avif',
+    '/images/nuay-studio-3.avif',
+    '/images/nuay-studio-4.avif',
+    'https://picsum.photos/seed/nuay-studio-5/600/400',
+  ];
+  const [lightbox, setLightbox] = useState<number | null>(null);
+
+  const prevImage = useCallback(() => setLightbox((i) => (i !== null ? (i - 1 + galleryImages.length) % galleryImages.length : null)), [galleryImages.length]);
+  const nextImage = useCallback(() => setLightbox((i) => (i !== null ? (i + 1) % galleryImages.length : null)), [galleryImages.length]);
+
+  useEffect(() => {
+    if (lightbox === null) return;
+    const onKey = (e: KeyboardEvent) => {
+      if (e.key === 'Escape') setLightbox(null);
+      if (e.key === 'ArrowLeft') prevImage();
+      if (e.key === 'ArrowRight') nextImage();
+    };
+    document.body.style.overflow = 'hidden';
+    window.addEventListener('keydown', onKey);
+    return () => { window.removeEventListener('keydown', onKey); document.body.style.overflow = ''; };
+  }, [lightbox, prevImage, nextImage]);
 
   return (
     <div style={{ background: 'var(--cream)' }}>
@@ -506,15 +530,20 @@ export default function HomePage() {
           </Link>
         </div>
         <div className="grid grid-cols-2 md:grid-cols-12 gap-3">
-          <div className="reveal col-span-2 md:col-span-5 overflow-hidden rounded-3xl relative" style={{ aspectRatio: '4/5', transform: 'scale(0.97)' } as React.CSSProperties}>
-            <Image src="/images/nuay-studio-1.avif" alt="Nuay Beauty Studio" fill className="object-cover transition-transform duration-700 hover:scale-[1.04]" />
+          <div
+            className="reveal col-span-2 md:col-span-5 overflow-hidden rounded-3xl relative cursor-pointer"
+            style={{ aspectRatio: '4/5', transform: 'scale(0.97)' } as React.CSSProperties}
+            onClick={() => setLightbox(0)}
+          >
+            <Image src={galleryImages[0]} alt="Nuay Beauty Studio" fill className="object-cover transition-transform duration-700 hover:scale-[1.04]" />
           </div>
           <div className="col-span-2 md:col-span-7 grid grid-cols-2 gap-3">
-            {['/images/nuay-studio-2.avif', '/images/nuay-studio-3.avif', '/images/nuay-studio-4.avif', 'https://picsum.photos/seed/nuay-studio-5/600/400'].map((src, i) => (
+            {galleryImages.slice(1).map((src, i) => (
               <div
                 key={i}
-                className="reveal overflow-hidden rounded-2xl relative"
+                className="reveal overflow-hidden rounded-2xl relative cursor-pointer"
                 style={{ aspectRatio: '4/3', transform: 'scale(0.97)', '--delay': `${(i + 1) * 0.07}s` } as React.CSSProperties}
+                onClick={() => setLightbox(i + 1)}
               >
                 <Image src={src} alt="Studio" fill className="object-cover transition-transform duration-700 hover:scale-[1.04]" />
               </div>
@@ -573,6 +602,61 @@ export default function HomePage() {
           ))}
         </div>
       </section>
+
+      {/* ─────────────── LIGHTBOX ─────────────── */}
+      {lightbox !== null && (
+        <div
+          className="fixed inset-0 z-50 flex items-center justify-center"
+          style={{ background: 'rgba(28,28,28,0.95)' }}
+          onClick={() => setLightbox(null)}
+        >
+          {/* Close */}
+          <button
+            className="absolute top-6 right-6 w-10 h-10 rounded-full flex items-center justify-center transition-opacity duration-200 hover:opacity-70"
+            style={{ background: 'rgba(245,239,230,0.1)', color: 'var(--cream)' }}
+            onClick={() => setLightbox(null)}
+          >
+            <X size={18} />
+          </button>
+
+          {/* Prev */}
+          <button
+            className="absolute left-4 md:left-8 w-10 h-10 rounded-full flex items-center justify-center transition-opacity duration-200 hover:opacity-70"
+            style={{ background: 'rgba(245,239,230,0.1)', color: 'var(--cream)' }}
+            onClick={(e) => { e.stopPropagation(); prevImage(); }}
+          >
+            <CaretLeft size={18} />
+          </button>
+
+          {/* Image */}
+          <div
+            className="relative w-[90vw] h-[70vh] md:w-[75vw] md:h-[80vh]"
+            onClick={(e) => e.stopPropagation()}
+          >
+            <Image
+              src={galleryImages[lightbox]}
+              alt={`Gallery ${lightbox + 1}`}
+              fill
+              className="object-contain"
+              sizes="90vw"
+            />
+          </div>
+
+          {/* Next */}
+          <button
+            className="absolute right-4 md:right-8 w-10 h-10 rounded-full flex items-center justify-center transition-opacity duration-200 hover:opacity-70"
+            style={{ background: 'rgba(245,239,230,0.1)', color: 'var(--cream)' }}
+            onClick={(e) => { e.stopPropagation(); nextImage(); }}
+          >
+            <CaretRight size={18} />
+          </button>
+
+          {/* Counter */}
+          <p className="absolute bottom-6 left-1/2 -translate-x-1/2 text-xs tracking-widest" style={{ color: 'rgba(245,239,230,0.5)' }}>
+            {lightbox + 1} / {galleryImages.length}
+          </p>
+        </div>
+      )}
 
     </div>
   );
