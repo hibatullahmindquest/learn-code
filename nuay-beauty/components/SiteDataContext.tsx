@@ -52,26 +52,26 @@ const defaultContact: ContactSettings = {
 };
 
 const defaultImages: ImageSettings = {
-  hero: 'https://picsum.photos/seed/nuay-hero-studio/1600/900',
+  hero: '/images/nuay-hero.avif',
   studio: [
-    'https://picsum.photos/seed/nuay-studio-1/600/800',
-    'https://picsum.photos/seed/nuay-studio-2/600/450',
-    'https://picsum.photos/seed/nuay-studio-3/600/450',
-    'https://picsum.photos/seed/nuay-studio-4/600/450',
-    'https://picsum.photos/seed/nuay-studio-5/600/450',
+    '/images/nuay-studio-1.avif',
+    '/images/nuay-studio-2.avif',
+    '/images/nuay-studio-3.avif',
+    '/images/nuay-studio-4.avif',
+    '/images/nuay-hero.avif',
   ],
   gallery: [
-    { url: 'https://picsum.photos/seed/nuay-g1/600/600', label: 'Korean Lash Lift', span: 'col-span-2 row-span-2' },
-    { url: 'https://picsum.photos/seed/nuay-g2/600/600', label: 'Brow Lamination', span: '' },
-    { url: 'https://picsum.photos/seed/nuay-g3/600/600', label: 'Brow Tint', span: '' },
-    { url: 'https://picsum.photos/seed/nuay-g4/600/600', label: 'Roma Pink Lips', span: '' },
-    { url: 'https://picsum.photos/seed/nuay-g5/600/600', label: 'Studio', span: 'col-span-2' },
-    { url: 'https://picsum.photos/seed/nuay-g6/600/600', label: 'Totok Wajah', span: '' },
-    { url: 'https://picsum.photos/seed/nuay-g7/600/600', label: 'Brow Bleach', span: '' },
-    { url: 'https://picsum.photos/seed/nuay-g8/600/600', label: 'Laser Treatment', span: '' },
-    { url: 'https://picsum.photos/seed/nuay-g9/600/600', label: 'Brow Wax', span: 'col-span-2' },
-    { url: 'https://picsum.photos/seed/nuay-g10/600/600', label: 'Lash Lift', span: '' },
-    { url: 'https://picsum.photos/seed/nuay-g11/600/600', label: 'Studio Interior', span: '' },
+    { url: '/images/nuay-hero.avif', label: 'Korean Lash Lift', span: 'col-span-2 row-span-2' },
+    { url: '/images/nuay-studio-2.avif', label: 'Brow Lamination', span: '' },
+    { url: '/images/nuay-studio-3.avif', label: 'Brow Tint', span: '' },
+    { url: '/images/nuay-studio-4.avif', label: 'Roma Pink Lips', span: '' },
+    { url: '/images/nuay-studio-1.avif', label: 'Studio', span: 'col-span-2' },
+    { url: '/images/nuay-studio-2.avif', label: 'Totok Wajah', span: '' },
+    { url: '/images/nuay-studio-3.avif', label: 'Brow Bleach', span: '' },
+    { url: '/images/nuay-studio-4.avif', label: 'Laser Treatment', span: '' },
+    { url: '/images/nuay-hero.avif', label: 'Brow Wax', span: 'col-span-2' },
+    { url: '/images/nuay-studio-1.avif', label: 'Lash Lift', span: '' },
+    { url: '/images/nuay-studio-2.avif', label: 'Studio Interior', span: '' },
   ],
 };
 
