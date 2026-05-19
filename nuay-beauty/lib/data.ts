@@ -201,6 +201,12 @@ export const artists = [
     services: ['Korean Lash Lift + Tint', 'Brow Lamination', 'Brow Tint', 'Brow Wax', 'Brow Bleach'],
     image: '/images/nuay-artist.png',
     instagram: null,
+    gallery: [
+      '/images/nuay-studio-1.avif',
+      '/images/nuay-studio-2.avif',
+      '/images/nuay-studio-3.avif',
+      '/images/nuay-hero.avif',
+    ],
   },
   {
     id: 'zafirah',
@@ -212,6 +218,12 @@ export const artists = [
     services: ['Korean Lash Lift + Tint', 'Brow Lamination', 'Brow Tint', 'Brow Wax', 'Brow Bleach'],
     image: '/images/nuay-artist.png',
     instagram: null,
+    gallery: [
+      '/images/nuay-studio-4.avif',
+      '/images/nuay-studio-1.avif',
+      '/images/nuay-studio-3.avif',
+      '/images/nuay-hero.avif',
+    ],
   },
   {
     id: 'thila',
@@ -223,6 +235,12 @@ export const artists = [
     services: ['Totok Wajah', 'Brow Tint', 'Brow Wax', 'Brow Bleach'],
     image: '/images/nuay-artist.png',
     instagram: null,
+    gallery: [
+      '/images/nuay-studio-2.avif',
+      '/images/nuay-studio-4.avif',
+      '/images/nuay-hero.avif',
+      '/images/nuay-studio-1.avif',
+    ],
   },
 ];
 
