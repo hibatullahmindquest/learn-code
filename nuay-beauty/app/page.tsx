@@ -31,13 +31,13 @@ export default function HomePage() {
             alt="Nuay Beauty Studio"
             fill
             className="object-cover"
-            style={{ opacity: 0.6 }}
+            style={{ opacity: 0.75 }}
             priority
           />
           <div
             className="absolute inset-0"
             style={{
-              background: 'linear-gradient(to top, rgba(28,28,28,0.75) 30%, rgba(28,28,28,0.15) 100%)',
+              background: 'linear-gradient(to top, rgba(28,28,28,0.55) 30%, rgba(28,28,28,0.05) 100%)',
             }}
           />
         </div>
