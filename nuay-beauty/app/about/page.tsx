@@ -41,7 +41,7 @@ export default function AboutPage() {
           </div>
           <div className="relative h-64 md:h-80 rounded-t-2xl overflow-hidden self-end">
             <Image
-              src="https://picsum.photos/seed/nuay-about-hero/800/500"
+              src="/images/nuay-studio-2.avif"
               alt="Nuay Beauty Studio"
               fill
               className="object-cover"
@@ -78,13 +78,13 @@ export default function AboutPage() {
           </div>
           <div className="grid grid-cols-2 gap-3">
             <div className="rounded-2xl overflow-hidden row-span-2" style={{ aspectRatio: '2/3' }}>
-              <Image src="https://picsum.photos/seed/nuay-about-1/400/600" alt="Studio" width={400} height={600} className="w-full h-full object-cover" />
+              <Image src="/images/nuay-artist.png" alt="Studio" width={400} height={600} className="w-full h-full object-cover" />
             </div>
             <div className="rounded-2xl overflow-hidden" style={{ aspectRatio: '1' }}>
-              <Image src="https://picsum.photos/seed/nuay-about-2/300/300" alt="Studio" width={300} height={300} className="w-full h-full object-cover" />
+              <Image src="/images/nuay-studio-3.avif" alt="Studio" width={300} height={300} className="w-full h-full object-cover" />
             </div>
             <div className="rounded-2xl overflow-hidden" style={{ aspectRatio: '1' }}>
-              <Image src="https://picsum.photos/seed/nuay-about-3/300/300" alt="Studio" width={300} height={300} className="w-full h-full object-cover" />
+              <Image src="/images/nuay-studio-4.avif" alt="Studio" width={300} height={300} className="w-full h-full object-cover" />
             </div>
           </div>
         </div>
