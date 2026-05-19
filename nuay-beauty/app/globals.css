@@ -33,3 +33,26 @@ body {
 ::-webkit-scrollbar-track { background: var(--cream); }
 ::-webkit-scrollbar-thumb { background: var(--burgundy); border-radius: 2px; }
 ::selection { background: var(--burgundy); color: var(--cream); }
+
+/* ── Scroll Reveal ── */
+.reveal {
+  opacity: 0;
+  transition:
+    opacity 0.75s cubic-bezier(0.16, 1, 0.3, 1) var(--delay, 0s),
+    transform 0.75s cubic-bezier(0.16, 1, 0.3, 1) var(--delay, 0s);
+}
+.reveal.is-visible {
+  opacity: 1 !important;
+  transform: none !important;
+}
+
+/* ── Marquee ── */
+@keyframes marquee {
+  from { transform: translateX(0); }
+  to   { transform: translateX(-33.333%); }
+}
+
+/* ── Navbar entrance ── */
+.navbar-enter {
+  transition: transform 0.8s cubic-bezier(0.16, 1, 0.3, 1);
+}
