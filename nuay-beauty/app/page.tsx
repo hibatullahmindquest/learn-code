@@ -3,9 +3,9 @@
 import { useEffect } from 'react';
 import Link from 'next/link';
 import Image from 'next/image';
-import { ArrowRight, Drop, Shield, Star, ArrowUpRight, WhatsappLogo } from '@phosphor-icons/react';
+import { ArrowRight, Drop, Shield, Star, ArrowUpRight } from '@phosphor-icons/react';
 import { useLang } from '@/components/LanguageContext';
-import { content, services, artists, testimonials, WHATSAPP_NUMBER } from '@/lib/data';
+import { content, services, artists, testimonials, faqs } from '@/lib/data';
 import { useSiteData } from '@/components/SiteDataContext';
 
 // ── Asset notes (replace with real photos when ready) ─────────────────────
@@ -523,47 +523,54 @@ export default function HomePage() {
         </div>
       </section>
 
-      {/* ─────────────── CTA ─────────────── */}
-      <section
-        className="py-28 md:py-40 px-6 lg:px-10 relative overflow-hidden"
-        style={{ background: 'linear-gradient(140deg, var(--charcoal) 0%, var(--burgundy-dark) 100%)' }}
-      >
-        <div
-          className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[60vw] h-[60vw] rounded-full pointer-events-none"
-          style={{ background: 'rgba(125,46,53,0.2)', filter: 'blur(100px)' }}
-        />
-        <div className="reveal max-w-2xl mx-auto text-center relative z-10" style={{ transform: 'translateY(32px)' } as React.CSSProperties}>
-          <p className="text-xs tracking-[0.42em] uppercase mb-6" style={{ color: 'rgba(201,169,110,0.75)' }}>
-            {lang === 'en' ? 'Ready?' : 'Bersedia?'}
-          </p>
-          <h2
-            className="text-4xl md:text-6xl leading-tight mb-9"
-            style={{ fontFamily: 'var(--font-cormorant), serif', fontWeight: 300, fontStyle: 'italic', color: 'var(--cream)' }}
-          >
-            {lang === 'en' ? (<>Your best brows<br />&amp; lashes await.</>) : (<>Brows &amp; lashes<br />terbaik menanti anda.</>)}
-          </h2>
-          <div className="flex flex-col sm:flex-row gap-3 justify-center">
-            <a
-              href={contact.bookingUrl}
-              target="_blank"
-              rel="noopener noreferrer"
-              className="inline-flex items-center justify-center gap-2 px-8 py-4 rounded-full text-sm tracking-wide transition-all duration-300 active:scale-[0.98]"
-              style={{ background: 'var(--cream)', color: 'var(--charcoal)' }}
-            >
-              {lang === 'en' ? 'Reserve Appointment' : 'Tempah Temujanji'}
-              <ArrowRight size={14} />
-            </a>
-            <a
-              href={`https://wa.me/${contact.whatsapp || WHATSAPP_NUMBER}`}
-              target="_blank"
-              rel="noopener noreferrer"
-              className="inline-flex items-center justify-center gap-2 px-8 py-4 rounded-full text-sm tracking-wide transition-all duration-300"
-              style={{ border: '1px solid rgba(245,239,230,0.22)', color: 'var(--cream)' }}
-            >
-              <WhatsappLogo size={15} />
-              {lang === 'en' ? 'WhatsApp Us' : 'WhatsApp Kami'}
-            </a>
+      {/* ─────────────── FAQ ─────────────── */}
+      <section className="py-28 md:py-36 px-6 lg:px-10 max-w-7xl mx-auto">
+        <div className="flex flex-col md:flex-row md:items-end justify-between gap-6 mb-14">
+          <div className="reveal" style={{ transform: 'translateY(24px)' } as React.CSSProperties}>
+            <p className="text-xs tracking-[0.38em] uppercase mb-3" style={{ color: 'var(--gold)' }}>
+              FAQ
+            </p>
+            <h2 className="text-4xl md:text-5xl tracking-tight leading-none" style={{ fontFamily: 'var(--font-cormorant), serif', fontWeight: 300, color: 'var(--charcoal)' }}>
+              {t.faq.title}
+            </h2>
           </div>
+          <Link href="/faq" className="reveal flex items-center gap-2 text-sm group self-start md:self-auto" style={{ color: 'var(--burgundy)' }}>
+            {lang === 'en' ? 'View all questions' : 'Lihat semua soalan'}
+            <ArrowRight size={14} className="transition-transform duration-200 group-hover:translate-x-1" />
+          </Link>
+        </div>
+
+        <div className="flex flex-col gap-4">
+          {faqs.slice(0, 3).map((faq, i) => (
+            <details
+              key={i}
+              className="reveal group rounded-2xl"
+              style={{
+                background: 'var(--surface)',
+                border: '1px solid var(--beige)',
+                transform: 'translateY(32px)',
+                '--delay': `${i * 0.08}s`,
+              } as React.CSSProperties}
+            >
+              <summary
+                className="flex items-center justify-between cursor-pointer px-7 py-5 text-base list-none"
+                style={{ fontFamily: 'var(--font-cormorant), serif', fontWeight: 500, color: 'var(--charcoal)' }}
+              >
+                <span className="text-lg">{lang === 'en' ? faq.questionEn : faq.questionBm}</span>
+                <span
+                  className="ml-4 flex-shrink-0 w-7 h-7 rounded-full flex items-center justify-center text-xs transition-transform duration-300 group-open:rotate-45"
+                  style={{ background: 'var(--burgundy)', color: 'var(--cream)' }}
+                >
+                  +
+                </span>
+              </summary>
+              <div className="px-7 pb-6 pt-0">
+                <p className="text-sm leading-relaxed max-w-[65ch]" style={{ color: 'var(--muted)' }}>
+                  {lang === 'en' ? faq.answerEn : faq.answerBm}
+                </p>
+              </div>
+            </details>
+          ))}
         </div>
       </section>
 
