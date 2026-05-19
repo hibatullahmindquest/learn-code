@@ -142,10 +142,19 @@ export default function ArtistsPage() {
           </h2>
 
           <div className="grid grid-cols-2 md:grid-cols-4 gap-3">
-            {Array.from({ length: 8 }).map((_, i) => (
+            {[
+              '/images/nuay-artist.png',
+              '/images/nuay-hero.avif',
+              '/images/nuay-studio-2.avif',
+              '/images/nuay-studio-3.avif',
+              '/images/nuay-studio-4.avif',
+              '/images/nuay-studio-1.avif',
+              '/images/nuay-artist.png',
+              '/images/nuay-hero.avif',
+            ].map((src, i) => (
               <div key={i} className="rounded-xl overflow-hidden" style={{ aspectRatio: '1' }}>
                 <Image
-                  src={`https://picsum.photos/seed/portfolio-${i + 1}/400/400`}
+                  src={src}
                   alt={`Portfolio ${i + 1}`}
                   width={400}
                   height={400}
