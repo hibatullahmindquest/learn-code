@@ -46,13 +46,13 @@ export default function Navbar() {
           <Link href="/" className="flex flex-col leading-none group">
             <span
               className="text-xl tracking-[0.25em] font-semibold transition-colors duration-300"
-              style={{ fontFamily: 'Cormorant Garamond, serif', color: 'var(--burgundy)' }}
+              style={{ fontFamily: 'Cormorant Garamond, serif', color: scrolled ? 'var(--burgundy)' : 'var(--cream)' }}
             >
               NUAY
             </span>
             <span
-              className="text-[9px] tracking-[0.4em] font-light"
-              style={{ color: 'var(--muted)' }}
+              className="text-[9px] tracking-[0.4em] font-light transition-colors duration-300"
+              style={{ color: scrolled ? 'var(--muted)' : 'rgba(245,239,230,0.6)' }}
             >
               BEAUTY
             </span>
@@ -66,7 +66,9 @@ export default function Navbar() {
                 href={l.href}
                 className="text-sm tracking-wide transition-colors duration-200"
                 style={{
-                  color: pathname === l.href ? 'var(--burgundy)' : 'var(--charcoal-mid)',
+                  color: scrolled
+                    ? (pathname === l.href ? 'var(--burgundy)' : 'var(--charcoal-mid)')
+                    : (pathname === l.href ? 'var(--cream)' : 'rgba(245,239,230,0.75)'),
                   fontWeight: pathname === l.href ? '500' : '400',
                 }}
               >
@@ -81,7 +83,10 @@ export default function Navbar() {
             <button
               onClick={() => setLang(lang === 'en' ? 'bm' : 'en')}
               className="text-xs tracking-widest px-2 py-1 rounded transition-colors duration-200"
-              style={{ color: 'var(--muted)', border: '1px solid var(--beige)' }}
+              style={{
+                color: scrolled ? 'var(--muted)' : 'rgba(245,239,230,0.7)',
+                border: scrolled ? '1px solid var(--beige)' : '1px solid rgba(245,239,230,0.3)',
+              }}
             >
               {lang === 'en' ? 'BM' : 'EN'}
             </button>
@@ -105,14 +110,17 @@ export default function Navbar() {
           <div className="flex md:hidden items-center gap-3">
             <button
               onClick={() => setLang(lang === 'en' ? 'bm' : 'en')}
-              className="text-xs tracking-widest px-2 py-1 rounded"
-              style={{ color: 'var(--muted)', border: '1px solid var(--beige)' }}
+              className="text-xs tracking-widest px-2 py-1 rounded transition-colors duration-300"
+              style={{
+                color: scrolled ? 'var(--muted)' : 'rgba(245,239,230,0.7)',
+                border: scrolled ? '1px solid var(--beige)' : '1px solid rgba(245,239,230,0.3)',
+              }}
             >
               {lang === 'en' ? 'BM' : 'EN'}
             </button>
             <button
               onClick={() => setOpen(!open)}
-              style={{ color: 'var(--charcoal)' }}
+              style={{ color: scrolled ? 'var(--charcoal)' : 'var(--cream)' }}
               aria-label="Toggle menu"
             >
               {open ? <X size={22} /> : <List size={22} />}
