@@ -534,7 +534,7 @@ export default function HomePage() {
               {t.faq.title}
             </h2>
           </div>
-          <Link href="/faq" className="reveal flex items-center gap-2 text-sm group self-start md:self-auto" style={{ color: 'var(--burgundy)' }}>
+          <Link href="/about#faq" className="reveal flex items-center gap-2 text-sm group self-start md:self-auto" style={{ color: 'var(--burgundy)' }}>
             {lang === 'en' ? 'View all questions' : 'Lihat semua soalan'}
             <ArrowRight size={14} className="transition-transform duration-200 group-hover:translate-x-1" />
           </Link>
