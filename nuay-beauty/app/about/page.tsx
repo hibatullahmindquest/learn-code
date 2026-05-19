@@ -92,6 +92,7 @@ export default function AboutPage() {
 
       {/* FAQ */}
       <section
+        id="faq"
         className="py-20 px-6 lg:px-10"
         style={{ background: 'var(--cream-dark)' }}
       >
