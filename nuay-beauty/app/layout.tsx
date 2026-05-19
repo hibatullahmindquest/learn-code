@@ -5,6 +5,7 @@ import Navbar from '@/components/Navbar';
 import Footer from '@/components/Footer';
 import WhatsAppButton from '@/components/WhatsAppButton';
 import { LanguageProvider } from '@/components/LanguageContext';
+import { SiteDataProvider } from '@/components/SiteDataContext';
 
 const cormorant = Cormorant_Garamond({
   subsets: ['latin'],
@@ -41,10 +42,12 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
         style={{ fontFamily: 'var(--font-outfit), sans-serif' }}
       >
         <LanguageProvider>
-          <Navbar />
-          <main className="flex-1">{children}</main>
-          <Footer />
-          <WhatsAppButton />
+          <SiteDataProvider>
+            <Navbar />
+            <main className="flex-1">{children}</main>
+            <Footer />
+            <WhatsAppButton />
+          </SiteDataProvider>
         </LanguageProvider>
       </body>
     </html>

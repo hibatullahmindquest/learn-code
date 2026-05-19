@@ -2,12 +2,15 @@
 
 import Image from 'next/image';
 import { useLang } from '@/components/LanguageContext';
-import { content, artists, BOOKING_URL } from '@/lib/data';
+import { content } from '@/lib/data';
+import { useSiteData } from '@/components/SiteDataContext';
 import { ArrowRight, InstagramLogo } from '@phosphor-icons/react';
 
 export default function ArtistsPage() {
   const { lang } = useLang();
   const t = content[lang];
+  const { contact, artists } = useSiteData();
+  const BOOKING_URL = contact.bookingUrl;
 
   return (
     <div style={{ background: 'var(--cream)' }}>

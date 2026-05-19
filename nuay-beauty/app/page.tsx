@@ -4,11 +4,14 @@ import Link from 'next/link';
 import Image from 'next/image';
 import { ArrowRight, Drop, Shield, Star } from '@phosphor-icons/react';
 import { useLang } from '@/components/LanguageContext';
-import { content, services, artists, testimonials, BOOKING_URL } from '@/lib/data';
+import { content } from '@/lib/data';
+import { useSiteData } from '@/components/SiteDataContext';
 
 export default function HomePage() {
   const { lang } = useLang();
   const t = content[lang];
+  const { contact, services, artists, testimonials, images } = useSiteData();
+  const BOOKING_URL = contact.bookingUrl;
 
   const featuredServices = services.slice(0, 4);
   const featured = artists.slice(0, 3);
@@ -24,7 +27,7 @@ export default function HomePage() {
         {/* Background image */}
         <div className="absolute inset-0">
           <Image
-            src="https://picsum.photos/seed/nuay-hero-studio/1600/900"
+            src={images.hero}
             alt="Nuay Beauty Studio"
             fill
             className="object-cover"
@@ -176,7 +179,7 @@ export default function HomePage() {
             style={{ background: 'var(--charcoal)' }}
           >
             <Image
-              src="https://picsum.photos/seed/nuay-lash-lift/600/700"
+              src={artists[0]?.image || 'https://picsum.photos/seed/nuay-lash-lift/600/700'}
               alt="Korean Lash Lift"
               fill
               className="object-cover"
@@ -423,19 +426,19 @@ export default function HomePage() {
         {/* Masonry-like grid */}
         <div className="grid grid-cols-2 md:grid-cols-3 gap-3">
           <div className="col-span-2 md:col-span-1 row-span-2 rounded-2xl overflow-hidden" style={{ aspectRatio: '3/4' }}>
-            <Image src="https://picsum.photos/seed/nuay-studio-1/600/800" alt="Studio" width={600} height={800} className="w-full h-full object-cover" />
+            <Image src={images.studio[0] || 'https://picsum.photos/seed/nuay-studio-1/600/800'} alt="Studio" width={600} height={800} className="w-full h-full object-cover" />
           </div>
           <div className="rounded-2xl overflow-hidden" style={{ aspectRatio: '4/3' }}>
-            <Image src="https://picsum.photos/seed/nuay-studio-2/600/450" alt="Studio" width={600} height={450} className="w-full h-full object-cover" />
+            <Image src={images.studio[1] || 'https://picsum.photos/seed/nuay-studio-2/600/450'} alt="Studio" width={600} height={450} className="w-full h-full object-cover" />
           </div>
           <div className="rounded-2xl overflow-hidden" style={{ aspectRatio: '4/3' }}>
-            <Image src="https://picsum.photos/seed/nuay-studio-3/600/450" alt="Studio" width={600} height={450} className="w-full h-full object-cover" />
+            <Image src={images.studio[2] || 'https://picsum.photos/seed/nuay-studio-3/600/450'} alt="Studio" width={600} height={450} className="w-full h-full object-cover" />
           </div>
           <div className="rounded-2xl overflow-hidden" style={{ aspectRatio: '4/3' }}>
-            <Image src="https://picsum.photos/seed/nuay-studio-4/600/450" alt="Studio" width={600} height={450} className="w-full h-full object-cover" />
+            <Image src={images.studio[3] || 'https://picsum.photos/seed/nuay-studio-4/600/450'} alt="Studio" width={600} height={450} className="w-full h-full object-cover" />
           </div>
           <div className="rounded-2xl overflow-hidden" style={{ aspectRatio: '4/3' }}>
-            <Image src="https://picsum.photos/seed/nuay-studio-5/600/450" alt="Studio" width={600} height={450} className="w-full h-full object-cover" />
+            <Image src={images.studio[4] || 'https://picsum.photos/seed/nuay-studio-5/600/450'} alt="Studio" width={600} height={450} className="w-full h-full object-cover" />
           </div>
         </div>
       </section>

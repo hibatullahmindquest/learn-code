@@ -5,7 +5,8 @@ import Link from 'next/link';
 import { usePathname } from 'next/navigation';
 import { List, X } from '@phosphor-icons/react';
 import { useLang } from './LanguageContext';
-import { content, BOOKING_URL } from '@/lib/data';
+import { content } from '@/lib/data';
+import { useSiteData } from '@/components/SiteDataContext';
 
 export default function Navbar() {
   const [open, setOpen] = useState(false);
@@ -13,6 +14,8 @@ export default function Navbar() {
   const pathname = usePathname();
   const { lang, setLang } = useLang();
   const t = content[lang].nav;
+  const { contact } = useSiteData();
+  const BOOKING_URL = contact.bookingUrl;
 
   useEffect(() => {
     const onScroll = () => setScrolled(window.scrollY > 40);

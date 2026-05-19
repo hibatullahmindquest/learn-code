@@ -1,7 +1,8 @@
 'use client';
 
 import { useLang } from '@/components/LanguageContext';
-import { content, services, BOOKING_URL } from '@/lib/data';
+import { content } from '@/lib/data';
+import { useSiteData } from '@/components/SiteDataContext';
 import { ArrowRight } from '@phosphor-icons/react';
 
 const categoryLabels: Record<string, { en: string; bm: string }> = {
@@ -17,6 +18,8 @@ const categoryOrder = ['lash', 'brow', 'lip', 'facial', 'hair'];
 export default function ServicesPage() {
   const { lang } = useLang();
   const t = content[lang];
+  const { contact, services } = useSiteData();
+  const BOOKING_URL = contact.bookingUrl;
 
   const grouped = categoryOrder.map((cat) => ({
     key: cat,

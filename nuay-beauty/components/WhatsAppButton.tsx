@@ -1,12 +1,13 @@
 'use client';
 
 import { WhatsappLogo } from '@phosphor-icons/react';
-import { WHATSAPP_NUMBER } from '@/lib/data';
+import { useSiteData } from '@/components/SiteDataContext';
 
 export default function WhatsAppButton() {
+  const { contact } = useSiteData();
   return (
     <a
-      href={`https://wa.me/${WHATSAPP_NUMBER}`}
+      href={`https://wa.me/${contact.whatsapp}`}
       target="_blank"
       rel="noopener noreferrer"
       aria-label="Chat on WhatsApp"

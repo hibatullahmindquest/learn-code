@@ -3,11 +3,16 @@
 import Link from 'next/link';
 import { InstagramLogo, FacebookLogo, MapPin, Clock } from '@phosphor-icons/react';
 import { useLang } from './LanguageContext';
-import { content, BOOKING_URL, INSTAGRAM_URL, FACEBOOK_URL } from '@/lib/data';
+import { content } from '@/lib/data';
+import { useSiteData } from '@/components/SiteDataContext';
 
 export default function Footer() {
   const { lang } = useLang();
   const t = content[lang];
+  const { contact } = useSiteData();
+  const { bookingUrl: BOOKING_URL, instagramUrl: INSTAGRAM_URL, facebookUrl: FACEBOOK_URL } = contact;
+  const address = lang === 'en' ? contact.addressEn : contact.addressBm;
+  const hours = lang === 'en' ? contact.hoursEn : contact.hoursBm;
 
   return (
     <footer style={{ background: 'var(--charcoal)', color: 'var(--cream)' }}>
@@ -97,13 +102,13 @@ export default function Footer() {
             <div className="flex items-start gap-3">
               <MapPin size={16} style={{ color: 'var(--gold)', marginTop: 2, flexShrink: 0 }} />
               <span className="text-sm" style={{ color: 'rgba(245,239,230,0.6)' }}>
-                {t.footer.address}
+                {address}
               </span>
             </div>
             <div className="flex items-start gap-3">
               <Clock size={16} style={{ color: 'var(--gold)', marginTop: 2, flexShrink: 0 }} />
               <span className="text-sm" style={{ color: 'rgba(245,239,230,0.6)' }}>
-                {t.footer.hours}
+                {hours}
               </span>
             </div>
           </div>
