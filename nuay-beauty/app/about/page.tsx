@@ -37,11 +37,21 @@ export default function AboutPage() {
 
       {/* ─────────────── HEADER ─────────────── */}
       <section
-        className="relative pt-36 pb-0 px-6 lg:px-10 overflow-hidden"
+        className="relative pt-36 pb-20 md:pb-24 px-6 lg:px-10 overflow-hidden"
         style={{ background: 'var(--charcoal)' }}
       >
-        <div className="max-w-7xl mx-auto grid md:grid-cols-2 gap-10 items-end">
-          <div className="reveal pb-16" style={{ transform: 'translateY(32px)' } as React.CSSProperties}>
+        <div
+          className="absolute top-0 right-0 h-full w-[45vw] md:w-[35vw] pointer-events-none hidden md:block"
+          style={{
+            WebkitMaskImage: 'linear-gradient(to left, rgba(0,0,0,0.4) 0%, transparent 100%)',
+            maskImage: 'linear-gradient(to left, rgba(0,0,0,0.4) 0%, transparent 100%)',
+          }}
+        >
+          <Image src="/images/nuay-studio-2.avif" alt="" fill className="object-cover" style={{ mixBlendMode: 'luminosity', opacity: 0.18 }} />
+        </div>
+
+        <div className="max-w-7xl mx-auto relative z-10">
+          <div className="reveal" style={{ transform: 'translateY(32px)' } as React.CSSProperties}>
             <p className="text-xs tracking-[0.42em] uppercase mb-5" style={{ color: 'var(--gold)' }}>
               {lang === 'en' ? 'Who We Are' : 'Siapa Kami'}
             </p>
@@ -58,17 +68,6 @@ export default function AboutPage() {
             <p className="text-base leading-relaxed max-w-md" style={{ color: 'rgba(245,239,230,0.5)', fontWeight: 300 }}>
               {t.about.sub}
             </p>
-          </div>
-          <div
-            className="reveal relative h-64 md:h-80 rounded-t-3xl overflow-hidden self-end"
-            style={{ transform: 'scale(0.97)', '--delay': '0.12s' } as React.CSSProperties}
-          >
-            <Image
-              src="/images/nuay-studio-2.avif"
-              alt="Nuay Beauty Studio"
-              fill
-              className="object-cover"
-            />
           </div>
         </div>
 
