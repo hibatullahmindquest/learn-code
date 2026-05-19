@@ -47,7 +47,7 @@ export default function AboutPage() {
             maskImage: 'linear-gradient(to left, rgba(0,0,0,0.4) 0%, transparent 100%)',
           }}
         >
-          <Image src="/images/nuay-studio-2.avif" alt="" fill className="object-cover" style={{ mixBlendMode: 'luminosity', opacity: 0.18 }} />
+          <Image src="/images/nuay-studio-4.avif" alt="" fill className="object-cover" style={{ mixBlendMode: 'luminosity', opacity: 0.18 }} />
         </div>
 
         <div className="max-w-7xl mx-auto relative z-10">
