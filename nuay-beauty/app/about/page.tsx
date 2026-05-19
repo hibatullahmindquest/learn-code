@@ -4,11 +4,16 @@ import { useState } from 'react';
 import Image from 'next/image';
 import { Plus, Minus, MapPin } from '@phosphor-icons/react';
 import { useLang } from '@/components/LanguageContext';
-import { content, faqs, BOOKING_URL, GOOGLE_MAPS_EMBED, WHATSAPP_NUMBER } from '@/lib/data';
+import { content, faqs } from '@/lib/data';
+import { useSiteData } from '@/components/SiteDataContext';
 
 export default function AboutPage() {
   const { lang } = useLang();
   const t = content[lang];
+  const { contact } = useSiteData();
+  const BOOKING_URL = contact.bookingUrl;
+  const WHATSAPP_NUMBER = contact.whatsapp;
+  const GOOGLE_MAPS_EMBED = contact.googleMapsEmbed;
   const [openFaq, setOpenFaq] = useState<number | null>(null);
 
   return (
