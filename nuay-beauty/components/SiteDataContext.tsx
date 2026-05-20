@@ -176,12 +176,26 @@ export type FaqItem = {
   answerBm: string;
 };
 
+export type BlogPost = {
+  id: string;
+  slug: string;
+  titleEn: string;
+  titleBm: string;
+  bodyEn: string;
+  bodyBm: string;
+  category: string;
+  featuredImage: string;
+  published: boolean;
+  createdAt: string;
+};
+
 export type SiteData = {
   contact: ContactSettings;
   services: typeof defaultServices;
   artists: typeof defaultArtists;
   testimonials: typeof defaultTestimonials;
   faqs: FaqItem[];
+  blogPosts: BlogPost[];
   images: ImageSettings;
   copy: CopyData;
   loading: boolean;
@@ -230,6 +244,7 @@ const initialData: SiteData = {
   artists: defaultArtists,
   testimonials: defaultTestimonials,
   faqs: [],
+  blogPosts: [],
   images: defaultImages,
   copy: defaultCopy,
   loading: true,
@@ -250,6 +265,7 @@ export function SiteDataProvider({ children }: { children: ReactNode }) {
           artists: settings.artists ?? defaultArtists,
           testimonials: settings.testimonials ?? defaultTestimonials,
           faqs: settings.faqs ?? [],
+          blogPosts: settings.blog_posts ?? [],
           images: settings.images ? { ...defaultImages, ...settings.images } : defaultImages,
           copy: settings.copy ? { ...defaultCopy, ...settings.copy } : defaultCopy,
           loading: false,

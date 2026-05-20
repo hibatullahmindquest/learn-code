@@ -29,6 +29,7 @@ export default function Navbar() {
     { href: '/gallery', label: t.gallery },
     { href: '/artists', label: t.artists },
     { href: '/about', label: t.about },
+    { href: '/blog', label: lang === 'en' ? 'Blog' : 'Blog' },
   ];
 
   return (

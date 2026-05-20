@@ -3,8 +3,9 @@
 import { useState, useEffect, useCallback } from 'react';
 
 import { defaultCopy, type CopyData } from '@/components/SiteDataContext';
+import { MediaPicker } from '@/components/MediaPicker';
 
-type Tab = 'dashboard' | 'contact' | 'artists' | 'services' | 'gallery' | 'faq' | 'testimonials' | 'content';
+type Tab = 'dashboard' | 'contact' | 'artists' | 'services' | 'gallery' | 'faq' | 'testimonials' | 'content' | 'blog';
 type ContentSubTab = 'homepage' | 'about' | 'footer';
 
 type ContactData = {
@@ -71,6 +72,19 @@ type Testimonial = {
   published: boolean;
 };
 
+type BlogPost = {
+  id: string;
+  slug: string;
+  titleEn: string;
+  titleBm: string;
+  bodyEn: string;
+  bodyBm: string;
+  category: string;
+  featuredImage: string;
+  published: boolean;
+  createdAt: string;
+};
+
 // ── Style tokens ────────────────────────────────────────────────────────────
 const INPUT = 'w-full border border-gray-200 rounded-lg px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-rose-300';
 const LABEL = 'block text-xs font-medium text-gray-500 mb-1 uppercase tracking-wide';
@@ -123,6 +137,10 @@ const NAV: { key: Tab; label: string; icon: React.ReactNode }[] = [
     key: 'content', label: 'Content / Copy',
     icon: <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth={1.8} className="w-5 h-5"><path d="M11 4H4a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2v-7"/><path d="M18.5 2.5a2.121 2.121 0 0 1 3 3L12 15l-4 1 1-4 9.5-9.5z"/></svg>,
   },
+  {
+    key: 'blog', label: 'Blog',
+    icon: <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth={1.8} className="w-5 h-5"><path d="M4 19.5A2.5 2.5 0 0 1 6.5 17H20"/><path d="M6.5 2H20v20H6.5A2.5 2.5 0 0 1 4 19.5v-15A2.5 2.5 0 0 1 6.5 2z"/></svg>,
+  },
 ];
 
 const PAGE_TITLES: Record<Tab, string> = {
@@ -134,6 +152,7 @@ const PAGE_TITLES: Record<Tab, string> = {
   faq: 'FAQ',
   testimonials: 'Testimonials',
   content: 'Content / Copy',
+  blog: 'Blog',
 };
 
 // ── Main component ───────────────────────────────────────────────────────────
@@ -154,6 +173,8 @@ export default function AdminPage() {
   const [testimonials, setTestimonials] = useState<Testimonial[]>([]);
   const [copy, setCopy] = useState<CopyData>(defaultCopy);
   const [contentSubTab, setContentSubTab] = useState<ContentSubTab>('homepage');
+  const [blogPosts, setBlogPosts] = useState<BlogPost[]>([]);
+  const [blogEditIdx, setBlogEditIdx] = useState<number | null>(null);
 
   const [statuses, setStatuses] = useState<Record<string, 'idle' | 'saving' | 'saved' | 'error'>>({});
 
@@ -172,6 +193,7 @@ export default function AdminPage() {
     if (data.faqs) setFaqs(data.faqs);
     if (data.testimonials) setTestimonials(data.testimonials);
     if (data.copy) setCopy({ ...defaultCopy, ...data.copy });
+    if (data.blog_posts) setBlogPosts(data.blog_posts);
   }, []);
 
   useEffect(() => { if (authed) loadSettings(); }, [authed, loadSettings]);
@@ -414,8 +436,7 @@ export default function AdminPage() {
                     </div>
                     <div className="md:col-span-2">
                       <label className={LABEL}>URL Gambar</label>
-                      <input className={INPUT} value={artist.image} onChange={(e) => { const u = [...artists]; u[i] = { ...artist, image: e.target.value }; setArtists(u); }} placeholder="https://..." />
-                      {artist.image && <img src={artist.image} alt={artist.name} className="mt-2 h-24 w-20 object-cover rounded-lg border border-gray-200" />}
+                      <MediaPicker value={artist.image} onChange={(url) => { const u = [...artists]; u[i] = { ...artist, image: url }; setArtists(u); }} password={password} label={artist.name || 'Artist Image'} />
                     </div>
                     <div>
                       <label className={LABEL}>Role (English)</label>
@@ -438,10 +459,11 @@ export default function AdminPage() {
                       <div className="flex flex-col gap-2 mt-1">
                         {(artist.gallery ?? []).map((url, gi) => (
                           <div key={gi} className="flex gap-2 items-center">
-                            <input className={INPUT} value={url} placeholder="https://..." onChange={(e) => {
-                              const u = [...artists]; const g = [...(artist.gallery ?? [])]; g[gi] = e.target.value; u[i] = { ...artist, gallery: g }; setArtists(u);
-                            }} />
-                            {url && <img src={url} alt="" className="h-10 w-14 object-cover rounded-md border border-gray-200 flex-shrink-0" />}
+                            <div className="flex-1">
+                              <MediaPicker value={url} onChange={(newUrl) => {
+                                const u = [...artists]; const g = [...(artist.gallery ?? [])]; g[gi] = newUrl; u[i] = { ...artist, gallery: g }; setArtists(u);
+                              }} password={password} label={`${artist.name} Gallery ${gi + 1}`} />
+                            </div>
                             <button className={BTN_DANGER} onClick={() => {
                               const u = [...artists]; const g = (artist.gallery ?? []).filter((_, idx) => idx !== gi); u[i] = { ...artist, gallery: g }; setArtists(u);
                             }}>✕</button>
@@ -529,8 +551,7 @@ export default function AdminPage() {
                   <StatusBadge status={statuses['images'] ?? 'idle'} />
                 </div>
                 <label className={LABEL}>URL Gambar Hero</label>
-                <input className={INPUT} value={images.hero} onChange={(e) => setImages({ ...images, hero: e.target.value })} placeholder="https://..." />
-                {images.hero && <img src={images.hero} alt="Hero" className="mt-3 h-32 w-full object-cover rounded-lg border border-gray-200" />}
+                <MediaPicker value={images.hero} onChange={(url) => setImages({ ...images, hero: url })} password={password} label="Hero Image" />
               </div>
 
               <div className={SECTION}>
@@ -539,10 +560,7 @@ export default function AdminPage() {
                   {images.studio.map((url, i) => (
                     <div key={i}>
                       <label className={LABEL}>Gambar Studio {i + 1}</label>
-                      <div className="flex gap-3 items-start">
-                        <input className={INPUT} value={url} onChange={(e) => { const u = [...images.studio]; u[i] = e.target.value; setImages({ ...images, studio: u }); }} placeholder="https://..." />
-                        {url && <img src={url} alt={`Studio ${i + 1}`} className="h-12 w-16 object-cover rounded-lg border border-gray-200 flex-shrink-0" />}
-                      </div>
+                      <MediaPicker value={url} onChange={(newUrl) => { const u = [...images.studio]; u[i] = newUrl; setImages({ ...images, studio: u }); }} password={password} label={`Studio ${i + 1}`} />
                     </div>
                   ))}
                 </div>
@@ -557,14 +575,11 @@ export default function AdminPage() {
                         <p className="text-sm font-medium text-gray-600">Gambar {i + 1}: {img.label}</p>
                         <button className={BTN_DANGER} onClick={() => setImages({ ...images, gallery: images.gallery.filter((_, idx) => idx !== i) })}>Padam</button>
                       </div>
-                      <div className="flex gap-3 items-start">
-                        <div className="flex-1">
-                          <label className={LABEL}>URL Gambar</label>
-                          <input className={INPUT} value={img.url} onChange={(e) => { const u = [...images.gallery]; u[i] = { ...img, url: e.target.value }; setImages({ ...images, gallery: u }); }} placeholder="https://..." />
-                          <label className={LABEL + ' mt-2'}>Label</label>
-                          <input className={INPUT} value={img.label} onChange={(e) => { const u = [...images.gallery]; u[i] = { ...img, label: e.target.value }; setImages({ ...images, gallery: u }); }} />
-                        </div>
-                        {img.url && <img src={img.url} alt={img.label} className="h-20 w-20 object-cover rounded-lg border border-gray-200 flex-shrink-0" />}
+                      <div className="flex flex-col gap-2">
+                        <label className={LABEL}>URL Gambar</label>
+                        <MediaPicker value={img.url} onChange={(url) => { const u = [...images.gallery]; u[i] = { ...img, url }; setImages({ ...images, gallery: u }); }} password={password} label={img.label || `Gallery ${i + 1}`} />
+                        <label className={LABEL + ' mt-2'}>Label</label>
+                        <input className={INPUT} value={img.label} onChange={(e) => { const u = [...images.gallery]; u[i] = { ...img, label: e.target.value }; setImages({ ...images, gallery: u }); }} />
                       </div>
                     </div>
                   ))}
@@ -577,19 +592,19 @@ export default function AdminPage() {
                 <h2 className="font-semibold text-gray-800 mb-5">Gambar Halaman About (3 foto grid)</h2>
                 <p className="text-xs text-gray-400 mb-4">Foto yang muncul dalam grid 2-kolum di halaman About — kiri (tall), kanan atas, kanan bawah.</p>
                 <div className="flex flex-col gap-4">
-                  {(['Foto Kiri (Tall)', 'Foto Kanan Atas', 'Foto Kanan Bawah'] as const).map((label, idx) => (
+                  {(['Foto Kiri (Tall)', 'Foto Kanan Atas', 'Foto Kanan Bawah'] as const).map((lbl, idx) => (
                     <div key={idx}>
-                      <label className={LABEL}>{label}</label>
-                      <div className="flex gap-3 items-start">
-                        <input className={INPUT} value={images.aboutPhotos?.[idx] ?? ''} onChange={(e) => {
+                      <label className={LABEL}>{lbl}</label>
+                      <MediaPicker
+                        value={images.aboutPhotos?.[idx] ?? ''}
+                        onChange={(url) => {
                           const p: [string, string, string] = [...(images.aboutPhotos ?? ['', '', ''])] as [string, string, string];
-                          p[idx] = e.target.value;
+                          p[idx] = url;
                           setImages({ ...images, aboutPhotos: p });
-                        }} placeholder="https://..." />
-                        {images.aboutPhotos?.[idx] && (
-                          <img src={images.aboutPhotos[idx]} alt={label} className="h-12 w-16 object-cover rounded-lg border border-gray-200 flex-shrink-0" />
-                        )}
-                      </div>
+                        }}
+                        password={password}
+                        label={lbl}
+                      />
                     </div>
                   ))}
                 </div>
@@ -810,6 +825,156 @@ export default function AdminPage() {
                 + Tambah Testimoni
               </button>
               <button onClick={() => save('testimonials', testimonials)} className={BTN_SAVE}>Simpan Semua Testimoni</button>
+            </div>
+          )}
+
+          {/* ── BLOG ──────────────────────────────────────────────────────── */}
+          {tab === 'blog' && (
+            <div className="flex flex-col gap-6">
+              {/* List view */}
+              {blogEditIdx === null ? (
+                <>
+                  <div className="flex items-center justify-between">
+                    <p className="text-sm text-gray-500">
+                      {blogPosts.filter((p) => p.published).length} published &nbsp;·&nbsp;
+                      {blogPosts.filter((p) => !p.published).length} draft
+                    </p>
+                    <div className="flex items-center gap-3">
+                      <StatusBadge status={statuses['blog_posts'] ?? 'idle'} />
+                      <button
+                        className={BTN_SAVE}
+                        onClick={() => {
+                          const newPost: BlogPost = { id: uid(), slug: '', titleEn: '', titleBm: '', bodyEn: '', bodyBm: '', category: '', featuredImage: '', published: false, createdAt: new Date().toISOString() };
+                          const updated = [...blogPosts, newPost];
+                          setBlogPosts(updated);
+                          setBlogEditIdx(updated.length - 1);
+                        }}
+                      >
+                        + Post Baru
+                      </button>
+                    </div>
+                  </div>
+                  {blogPosts.length === 0 ? (
+                    <div className={SECTION + ' text-center py-12'}>
+                      <p className="text-gray-400 text-sm mb-4">Tiada post lagi.</p>
+                      <button className={BTN_SAVE} onClick={() => {
+                        const newPost: BlogPost = { id: uid(), slug: '', titleEn: '', titleBm: '', bodyEn: '', bodyBm: '', category: '', featuredImage: '', published: false, createdAt: new Date().toISOString() };
+                        setBlogPosts([newPost]);
+                        setBlogEditIdx(0);
+                      }}>Cipta Post Pertama</button>
+                    </div>
+                  ) : (
+                    <div className={SECTION + ' p-0 overflow-hidden'}>
+                      <table className="w-full text-sm">
+                        <thead>
+                          <tr className="border-b border-gray-100">
+                            <th className="text-left px-5 py-3 text-xs font-medium text-gray-400 uppercase tracking-wide">Tajuk</th>
+                            <th className="text-left px-4 py-3 text-xs font-medium text-gray-400 uppercase tracking-wide">Kategori</th>
+                            <th className="text-left px-4 py-3 text-xs font-medium text-gray-400 uppercase tracking-wide">Status</th>
+                            <th className="px-4 py-3" />
+                          </tr>
+                        </thead>
+                        <tbody>
+                          {blogPosts.map((post, i) => (
+                            <tr key={post.id} className="border-b border-gray-50 last:border-0 hover:bg-gray-50 transition-colors">
+                              <td className="px-5 py-3.5">
+                                <p className="font-medium text-gray-800">{post.titleEn || '(Tanpa Tajuk)'}</p>
+                                {post.slug && <p className="text-xs text-gray-400 mt-0.5">/{post.slug}</p>}
+                              </td>
+                              <td className="px-4 py-3.5 text-gray-500">{post.category || '—'}</td>
+                              <td className="px-4 py-3.5">
+                                <span className={`text-xs px-2 py-0.5 rounded-full font-medium ${post.published ? 'bg-green-100 text-green-700' : 'bg-yellow-100 text-yellow-700'}`}>
+                                  {post.published ? 'Published' : 'Draft'}
+                                </span>
+                              </td>
+                              <td className="px-4 py-3.5">
+                                <div className="flex items-center justify-end gap-2">
+                                  <button className={BTN_SEC + ' text-xs px-3 py-1.5'} onClick={() => setBlogEditIdx(i)}>Edit</button>
+                                  <button className={BTN_DANGER} onClick={() => { const u = blogPosts.filter((_, idx) => idx !== i); setBlogPosts(u); save('blog_posts', u); }}>Padam</button>
+                                </div>
+                              </td>
+                            </tr>
+                          ))}
+                        </tbody>
+                      </table>
+                    </div>
+                  )}
+                </>
+              ) : (
+                /* Edit form */
+                (() => {
+                  const post = blogPosts[blogEditIdx];
+                  const update = (fields: Partial<BlogPost>) => {
+                    const u = [...blogPosts];
+                    u[blogEditIdx] = { ...post, ...fields };
+                    setBlogPosts(u);
+                  };
+                  return (
+                    <div className="flex flex-col gap-6">
+                      <div className="flex items-center gap-3">
+                        <button className={BTN_SEC} onClick={() => setBlogEditIdx(null)}>← Senarai</button>
+                        <span className="text-gray-400 text-sm">{post.titleEn || 'Post Baru'}</span>
+                      </div>
+
+                      <div className={SECTION}>
+                        <div className="flex items-center justify-between mb-5">
+                          <h2 className="font-semibold text-gray-800">Maklumat Post</h2>
+                          <div className="flex items-center gap-3">
+                            <label className="relative inline-flex items-center cursor-pointer">
+                              <input type="checkbox" className="sr-only peer" checked={post.published}
+                                onChange={(e) => update({ published: e.target.checked })} />
+                              <div className="w-10 h-6 bg-gray-200 rounded-full peer peer-checked:bg-rose-700 peer-checked:after:translate-x-4 after:content-[''] after:absolute after:top-0.5 after:left-0.5 after:bg-white after:rounded-full after:h-5 after:w-5 after:transition-all"></div>
+                              <span className="ml-2 text-sm text-gray-600">Published</span>
+                            </label>
+                          </div>
+                        </div>
+                        <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                          <div>
+                            <label className={LABEL}>Tajuk (English)</label>
+                            <input className={INPUT} value={post.titleEn} onChange={(e) => update({ titleEn: e.target.value })} placeholder="e.g. 5 Tips for Perfect Brows" />
+                          </div>
+                          <div>
+                            <label className={LABEL}>Tajuk (BM)</label>
+                            <input className={INPUT} value={post.titleBm} onChange={(e) => update({ titleBm: e.target.value })} placeholder="cth. 5 Tips untuk Kening Sempurna" />
+                          </div>
+                          <div>
+                            <label className={LABEL}>Slug (URL)</label>
+                            <input className={INPUT} value={post.slug} onChange={(e) => update({ slug: e.target.value.toLowerCase().replace(/\s+/g, '-').replace(/[^a-z0-9-]/g, '') })} placeholder="e.g. tips-for-perfect-brows" />
+                            <p className="text-xs text-gray-400 mt-1">URL: /blog/{post.slug || 'slug'}</p>
+                          </div>
+                          <div>
+                            <label className={LABEL}>Kategori</label>
+                            <input className={INPUT} value={post.category} onChange={(e) => update({ category: e.target.value })} placeholder="e.g. Brow Care, Lash Tips, Studio News" />
+                          </div>
+                          <div className="md:col-span-2">
+                            <label className={LABEL}>Featured Image</label>
+                            <MediaPicker value={post.featuredImage} onChange={(url) => update({ featuredImage: url })} password={password} label="Featured Image" />
+                          </div>
+                        </div>
+                      </div>
+
+                      <div className={SECTION}>
+                        <h2 className="font-semibold text-gray-800 mb-5">Kandungan / Body</h2>
+                        <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                          <div>
+                            <label className={LABEL}>Kandungan (English)</label>
+                            <textarea className={INPUT + ' resize-y'} style={{ minHeight: 240 }} value={post.bodyEn} onChange={(e) => update({ bodyEn: e.target.value })} placeholder={'Write your post content here...\n\nSeparate paragraphs with a blank line.'} />
+                          </div>
+                          <div>
+                            <label className={LABEL}>Kandungan (BM)</label>
+                            <textarea className={INPUT + ' resize-y'} style={{ minHeight: 240 }} value={post.bodyBm} onChange={(e) => update({ bodyBm: e.target.value })} placeholder={'Tulis kandungan post di sini...\n\nPisahkan perenggan dengan baris kosong.'} />
+                          </div>
+                        </div>
+                      </div>
+
+                      <div className="flex gap-3">
+                        <button onClick={() => { save('blog_posts', blogPosts); }} className={BTN_SAVE}>Simpan Post</button>
+                        <button className={BTN_SEC} onClick={() => setBlogEditIdx(null)}>Batal</button>
+                      </div>
+                    </div>
+                  );
+                })()
+              )}
             </div>
           )}
 
