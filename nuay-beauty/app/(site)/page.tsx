@@ -38,7 +38,7 @@ export default function HomePage() {
     return () => observer.disconnect();
   }, []);
 
-  const featuredServices = services.slice(0, 4);
+  const featuredServices = services.filter((s) => s.published !== false).slice(0, 4);
 
   const galleryImages = [
     '/images/nuay-studio-1.avif',

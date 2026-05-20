@@ -200,9 +200,22 @@ export type BlogPost = {
   createdAt: string;
 };
 
+export type ServiceItem = {
+  id: string;
+  category: string;
+  nameEn: string;
+  nameBm: string;
+  descEn: string;
+  descBm: string;
+  price: number;
+  duration: string;
+  badge: string | null;
+  published?: boolean;
+};
+
 export type SiteData = {
   contact: ContactSettings;
-  services: typeof defaultServices;
+  services: ServiceItem[];
   artists: typeof defaultArtists;
   testimonials: Testimonial[];
   faqs: FaqItem[];

@@ -27,7 +27,7 @@ export default function ServicesPage() {
     .map((cat) => ({
       key: cat,
       label: lang === 'en' ? categoryLabels[cat].en : categoryLabels[cat].bm,
-      items: services.filter((s) => s.category === cat),
+      items: services.filter((s) => s.category === cat && s.published !== false),
     }))
     .filter((g) => g.items.length > 0);
 
