@@ -52,7 +52,7 @@ export default function GalleryPage() {
 
       {/* ─────────────── HEADER ─────────────── */}
       <section
-        className="relative pt-36 pb-20 md:pb-24 px-6 lg:px-10 overflow-hidden"
+        className="relative pt-36 md:pt-44 pb-20 md:pb-24 px-6 lg:px-10 overflow-hidden"
         style={{ background: 'var(--charcoal)' }}
       >
         {/* Decorative accent */}

@@ -41,7 +41,7 @@ export default function BlogPostPage() {
 
       {/* ─────────────── HERO ─────────────── */}
       <section
-        className="relative pt-36 pb-16 px-6 lg:px-10 overflow-hidden"
+        className="relative pt-36 md:pt-44 pb-16 px-6 lg:px-10 overflow-hidden"
         style={{ background: 'var(--charcoal)' }}
       >
         <div className="max-w-3xl mx-auto relative z-10">
