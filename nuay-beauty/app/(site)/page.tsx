@@ -117,7 +117,7 @@ export default function HomePage() {
               {t.hero.tagline}
             </p>
             <h1
-              className="text-6xl md:text-7xl lg:text-8xl leading-none tracking-tight mb-7"
+              className="text-5xl md:text-6xl xl:text-7xl 2xl:text-8xl leading-none tracking-tight mb-7"
               style={{ fontFamily: 'var(--font-cormorant), serif', fontWeight: 300, color: 'var(--cream)' }}
             >
               {lang === 'en' ? (
