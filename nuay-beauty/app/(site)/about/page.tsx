@@ -2,7 +2,7 @@
 
 import { useEffect } from 'react';
 import Image from 'next/image';
-import { MapPin, Clock, Phone, ArrowRight, WhatsappLogo } from '@phosphor-icons/react';
+import { MapPin, Clock, Phone, ArrowRight, WhatsappLogo, NavigationArrow } from '@phosphor-icons/react';
 import { useLang } from '@/components/LanguageContext';
 import { useSiteData, getCopy } from '@/components/SiteDataContext';
 
@@ -288,6 +288,28 @@ export default function AboutPage() {
                 <WhatsappLogo size={15} />
                 {lang === 'en' ? 'WhatsApp Us' : 'WhatsApp Kami'}
               </a>
+              <div className="grid grid-cols-2 gap-3">
+                <a
+                  href={`https://maps.google.com/?q=${encodeURIComponent(contact.addressEn)}`}
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  className="inline-flex items-center justify-center gap-2 py-3.5 rounded-full text-sm tracking-wide transition-all duration-300"
+                  style={{ border: '1px solid var(--beige)', color: 'var(--charcoal-mid)' }}
+                >
+                  <NavigationArrow size={14} />
+                  Google Maps
+                </a>
+                <a
+                  href={`https://waze.com/ul?q=${encodeURIComponent(contact.addressEn)}&navigate=yes`}
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  className="inline-flex items-center justify-center gap-2 py-3.5 rounded-full text-sm tracking-wide transition-all duration-300"
+                  style={{ border: '1px solid var(--beige)', color: 'var(--charcoal-mid)' }}
+                >
+                  <NavigationArrow size={14} />
+                  Waze
+                </a>
+              </div>
             </div>
           </div>
 
