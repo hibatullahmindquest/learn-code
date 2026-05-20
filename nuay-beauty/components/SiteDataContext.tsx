@@ -28,6 +28,7 @@ export type ContactSettings = {
 // ── Images ───────────────────────────────────────────────────────────────────
 export type ImageSettings = {
   hero: string;
+  featuredService: string;
   studio: string[];
   gallery: Array<{ url: string; label: string; span: string }>;
   aboutPhotos: [string, string, string];
@@ -239,6 +240,7 @@ const defaultContact: ContactSettings = {
 
 const defaultImages: ImageSettings = {
   hero: '/images/nuay-hero.avif',
+  featuredService: '/images/nuay-hero.avif',
   aboutPhotos: ['/images/nuay-artist.png', '/images/nuay-studio-3.avif', '/images/nuay-studio-4.avif'],
   studio: [
     '/images/nuay-studio-1.avif',

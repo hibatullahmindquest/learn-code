@@ -18,7 +18,7 @@ const T = 'opacity 0.75s cubic-bezier(0.16,1,0.3,1), transform 0.75s cubic-bezie
 
 export default function HomePage() {
   const { lang } = useLang();
-  const { contact, copy, services, artists, testimonials, faqs } = useSiteData();
+  const { contact, copy, services, artists, testimonials, faqs, images } = useSiteData();
   const t = getCopy(copy, lang);
 
   // Scroll reveal — IntersectionObserver adds .is-visible to .reveal elements
@@ -237,7 +237,7 @@ export default function HomePage() {
           >
             {/* REPLACE: real service hero photo — lash lift close-up, dark mood */}
             <Image
-              src="https://picsum.photos/seed/nuay-lash-feat/800/700"
+              src={images.featuredService}
               alt={lang === 'en' ? services[0].nameEn : services[0].nameBm}
               fill
               className="object-cover transition-transform duration-700 group-hover:scale-[1.04]"

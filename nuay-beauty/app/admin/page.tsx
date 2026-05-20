@@ -50,6 +50,7 @@ type GalleryImage = { url: string; label: string; span: string };
 
 type ImageData = {
   hero: string;
+  featuredService: string;
   studio: string[];
   gallery: GalleryImage[];
   aboutPhotos: [string, string, string];
@@ -170,7 +171,7 @@ export default function AdminPage() {
   });
   const [artists, setArtists] = useState<Artist[]>([]);
   const [services, setServices] = useState<Service[]>([]);
-  const [images, setImages] = useState<ImageData>({ hero: '', studio: ['', '', '', '', ''], gallery: [], aboutPhotos: ['', '', ''] });
+  const [images, setImages] = useState<ImageData>({ hero: '', featuredService: '', studio: ['', '', '', '', ''], gallery: [], aboutPhotos: ['', '', ''] });
   const [faqs, setFaqs] = useState<FaqItem[]>([]);
   const [testimonials, setTestimonials] = useState<Testimonial[]>([]);
   const [copy, setCopy] = useState<CopyData>(defaultCopy);
@@ -191,7 +192,7 @@ export default function AdminPage() {
     if (data.contact) setContact(data.contact);
     if (data.artists) setArtists(data.artists);
     if (data.services) setServices(data.services);
-    if (data.images) setImages({ hero: '', studio: ['', '', '', '', ''], gallery: [], aboutPhotos: ['', '', ''], ...data.images });
+    if (data.images) setImages({ hero: '', featuredService: '', studio: ['', '', '', '', ''], gallery: [], aboutPhotos: ['', '', ''], ...data.images });
     if (data.faqs) setFaqs(data.faqs);
     if (data.testimonials) setTestimonials(data.testimonials);
     if (data.copy) setCopy({ ...defaultCopy, ...data.copy });
@@ -562,6 +563,16 @@ export default function AdminPage() {
                 </div>
                 <label className={LABEL}>URL Gambar Hero</label>
                 <MediaPicker value={images.hero} onChange={(url) => setImages({ ...images, hero: url })} password={password} label="Hero Image" />
+              </div>
+
+              <div className={SECTION}>
+                <div className="flex items-center justify-between mb-5">
+                  <h2 className="font-semibold text-gray-800">Gambar Featured Service (Homepage)</h2>
+                  <StatusBadge status={statuses['images'] ?? 'idle'} />
+                </div>
+                <p className="text-xs text-gray-400 mb-3">Gambar latar untuk kad servis featured besar di homepage.</p>
+                <label className={LABEL}>URL Gambar Featured Service</label>
+                <MediaPicker value={images.featuredService ?? ''} onChange={(url) => setImages({ ...images, featuredService: url })} password={password} label="Featured Service Image" />
               </div>
 
               <div className={SECTION}>
