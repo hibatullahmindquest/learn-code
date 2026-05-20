@@ -186,8 +186,16 @@ export default function AdminPage() {
   const [navItems, setNavItems] = useState<NavItemSetting[]>(defaultNavItems);
 
   const [statuses, setStatuses] = useState<Record<string, 'idle' | 'saving' | 'saved' | 'error'>>({});
-  const [isDirty, setIsDirty] = useState(false);
+  const [dirtyTabs, setDirtyTabs] = useState<Set<string>>(new Set());
   const loadingRef = useRef(true);
+
+  const KEY_TO_TAB: Record<string, string> = {
+    contact: 'contact', artists: 'artists', services: 'services',
+    images: 'gallery', faqs: 'faq', testimonials: 'testimonials',
+    copy: 'content', blog_posts: 'blog', nav_items: 'nav',
+  };
+  const markDirty = (tabKey: string) => { if (!loadingRef.current) setDirtyTabs((prev) => new Set([...prev, tabKey])); };
+  const clearDirty = (saveKey: string) => { const t = KEY_TO_TAB[saveKey]; if (t) setDirtyTabs((prev) => { const n = new Set(prev); n.delete(t); return n; }); };
 
   useEffect(() => {
     const saved = sessionStorage.getItem('nuay_admin_pw');
@@ -207,7 +215,7 @@ export default function AdminPage() {
     if (data.copy) setCopy({ ...defaultCopy, ...data.copy });
     if (data.blog_posts) setBlogPosts(data.blog_posts);
     if (data.nav_items) setNavItems(data.nav_items);
-    setTimeout(() => { loadingRef.current = false; setIsDirty(false); }, 0);
+    setTimeout(() => { loadingRef.current = false; setDirtyTabs(new Set()); }, 0);
   }, []);
 
   useEffect(() => { if (authed) loadSettings(); }, [authed, loadSettings]);
@@ -233,30 +241,35 @@ export default function AdminPage() {
       body: JSON.stringify({ key, value }),
     });
     setStatuses((s) => ({ ...s, [key]: res.ok ? 'saved' : 'error' }));
-    if (res.ok) setIsDirty(false);
+    if (res.ok) clearDirty(key);
     setTimeout(() => setStatuses((s) => ({ ...s, [key]: 'idle' })), 3000);
   }
 
   function logout() {
-    if (isDirty && !window.confirm('Ada perubahan yang belum disimpan. Log keluar akan hilangkan semua perubahan. Teruskan?')) return;
+    if (dirtyTabs.size > 0 && !window.confirm('Ada perubahan yang belum disimpan. Log keluar akan hilangkan semua perubahan. Teruskan?')) return;
     sessionStorage.removeItem('nuay_admin_pw');
     setAuthed(false);
     setPassword('');
   }
 
-  // Track unsaved changes
-  useEffect(() => {
-    if (loadingRef.current) return;
-    setIsDirty(true);
-  }, [contact, artists, services, images, faqs, testimonials, copy, blogPosts, navItems]);
+  // Per-tab dirty tracking
+  useEffect(() => { markDirty('contact'); }, [contact]);       // eslint-disable-line react-hooks/exhaustive-deps
+  useEffect(() => { markDirty('artists'); }, [artists]);       // eslint-disable-line react-hooks/exhaustive-deps
+  useEffect(() => { markDirty('services'); }, [services]);     // eslint-disable-line react-hooks/exhaustive-deps
+  useEffect(() => { markDirty('gallery'); }, [images]);        // eslint-disable-line react-hooks/exhaustive-deps
+  useEffect(() => { markDirty('faq'); }, [faqs]);              // eslint-disable-line react-hooks/exhaustive-deps
+  useEffect(() => { markDirty('testimonials'); }, [testimonials]); // eslint-disable-line react-hooks/exhaustive-deps
+  useEffect(() => { markDirty('content'); }, [copy]);          // eslint-disable-line react-hooks/exhaustive-deps
+  useEffect(() => { markDirty('blog'); }, [blogPosts]);        // eslint-disable-line react-hooks/exhaustive-deps
+  useEffect(() => { markDirty('nav'); }, [navItems]);          // eslint-disable-line react-hooks/exhaustive-deps
 
-  // Warn on browser close/refresh when dirty
+  // Warn on browser close/refresh when any tab is dirty
   useEffect(() => {
-    if (!isDirty) return;
+    if (dirtyTabs.size === 0) return;
     const handler = (e: BeforeUnloadEvent) => { e.preventDefault(); e.returnValue = ''; };
     window.addEventListener('beforeunload', handler);
     return () => window.removeEventListener('beforeunload', handler);
-  }, [isDirty]);
+  }, [dirtyTabs]);
 
   // ── Login screen ────────────────────────────────────────────────────────────
   if (!authed) {
@@ -300,6 +313,7 @@ export default function AdminPage() {
         <nav className="flex-1 py-4">
           {NAV.map((item) => {
             const active = tab === item.key;
+            const dirty = dirtyTabs.has(item.key);
             return (
               <button
                 key={item.key}
@@ -312,18 +326,12 @@ export default function AdminPage() {
                 }}
               >
                 <span style={{ color: active ? '#C9A96E' : 'rgba(255,255,255,0.4)' }}>{item.icon}</span>
-                {item.label}
+                <span className="flex-1">{item.label}</span>
+                {dirty && <span className="w-2 h-2 rounded-full flex-shrink-0" style={{ background: '#facc15' }} />}
               </button>
             );
           })}
         </nav>
-
-        {/* Dirty indicator */}
-        {isDirty && (
-          <div className="mx-3 mb-3 px-3 py-2 rounded-lg text-xs" style={{ background: 'rgba(251,191,36,0.1)', color: '#fbbf24', border: '1px solid rgba(251,191,36,0.18)' }}>
-            ● Ada perubahan belum disimpan
-          </div>
-        )}
 
         {/* Footer */}
         <div className="px-5 py-4 border-t" style={{ borderColor: 'rgba(255,255,255,0.08)' }}>
