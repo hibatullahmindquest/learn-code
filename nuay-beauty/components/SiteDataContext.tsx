@@ -276,29 +276,33 @@ const initialData: SiteData = {
   loading: true,
 };
 
+// ── Helper: convert raw site_settings rows into SiteData ─────────────────────
+export function buildSiteData(settings: Record<string, unknown>): SiteData {
+  return {
+    contact: (settings.contact as ContactSettings) ?? defaultContact,
+    services: (settings.services as ServiceItem[]) ?? defaultServices,
+    artists: (settings.artists as typeof defaultArtists) ?? defaultArtists,
+    testimonials: (settings.testimonials as Testimonial[]) ?? [],
+    faqs: (settings.faqs as FaqItem[]) ?? [],
+    blogPosts: (settings.blog_posts as BlogPost[]) ?? [],
+    images: settings.images ? { ...defaultImages, ...(settings.images as Partial<ImageSettings>) } : defaultImages,
+    copy: settings.copy ? { ...defaultCopy, ...(settings.copy as Partial<CopyData>) } : defaultCopy,
+    loading: false,
+  };
+}
+
 const SiteDataContext = createContext<SiteData>(initialData);
 
-export function SiteDataProvider({ children }: { children: ReactNode }) {
-  const [data, setData] = useState<SiteData>(initialData);
+export function SiteDataProvider({ children, prefetched }: { children: ReactNode; prefetched?: SiteData }) {
+  const [data, setData] = useState<SiteData>(prefetched ?? initialData);
 
   useEffect(() => {
+    if (prefetched) return;
     fetch('/api/settings')
       .then((r) => r.json())
-      .then((settings) => {
-        setData({
-          contact: settings.contact ?? defaultContact,
-          services: settings.services ?? defaultServices,
-          artists: settings.artists ?? defaultArtists,
-          testimonials: settings.testimonials ?? [],
-          faqs: settings.faqs ?? [],
-          blogPosts: settings.blog_posts ?? [],
-          images: settings.images ? { ...defaultImages, ...settings.images } : defaultImages,
-          copy: settings.copy ? { ...defaultCopy, ...settings.copy } : defaultCopy,
-          loading: false,
-        });
-      })
+      .then((settings) => setData(buildSiteData(settings)))
       .catch(() => setData((prev) => ({ ...prev, loading: false })));
-  }, []);
+  }, [prefetched]);
 
   return <SiteDataContext.Provider value={data}>{children}</SiteDataContext.Provider>;
 }

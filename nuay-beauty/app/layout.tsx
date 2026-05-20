@@ -2,7 +2,10 @@ import type { Metadata } from 'next';
 import { Playfair_Display, Roboto_Mono } from 'next/font/google';
 import './globals.css';
 import { LanguageProvider } from '@/components/LanguageContext';
-import { SiteDataProvider } from '@/components/SiteDataContext';
+import { SiteDataProvider, buildSiteData } from '@/components/SiteDataContext';
+import { supabase } from '@/lib/supabase';
+
+export const dynamic = 'force-dynamic';
 
 const playfair = Playfair_Display({
   subsets: ['latin'],
@@ -31,7 +34,12 @@ export const metadata: Metadata = {
   },
 };
 
-export default function RootLayout({ children }: { children: React.ReactNode }) {
+export default async function RootLayout({ children }: { children: React.ReactNode }) {
+  const { data: rows } = await supabase.from('site_settings').select('key, value');
+  const settings: Record<string, unknown> = {};
+  for (const row of rows ?? []) settings[row.key] = row.value;
+  const prefetched = buildSiteData(settings);
+
   return (
     <html lang="en" className={`${playfair.variable} ${robotoMono.variable}`}>
       <body
@@ -39,7 +47,7 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
         style={{ fontFamily: 'var(--font-outfit), monospace', letterSpacing: '-0.02em' }}
       >
         <LanguageProvider>
-          <SiteDataProvider>
+          <SiteDataProvider prefetched={prefetched}>
             {children}
           </SiteDataProvider>
         </LanguageProvider>
