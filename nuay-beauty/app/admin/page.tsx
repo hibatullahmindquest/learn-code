@@ -43,6 +43,7 @@ type Service = {
   price: number;
   duration: string;
   badge: string | null;
+  published: boolean;
 };
 
 type GalleryImage = { url: string; label: string; span: string };
@@ -494,8 +495,16 @@ export default function AdminPage() {
                     <div className="flex items-center gap-2">
                       <h2 className="font-semibold text-gray-800">{svc.nameEn || 'Servis Baru'}</h2>
                       <span className="text-xs px-2 py-0.5 rounded-full bg-gray-100 text-gray-500 capitalize">{svc.category}</span>
+                      <span className={`text-xs px-2 py-0.5 rounded-full font-medium ${svc.published !== false ? 'bg-green-100 text-green-700' : 'bg-orange-100 text-orange-700'}`}>
+                        {svc.published !== false ? 'Aktif' : 'Disembunyikan'}
+                      </span>
                     </div>
-                    <div className="flex items-center gap-2">
+                    <div className="flex items-center gap-3">
+                      <label className="relative inline-flex items-center cursor-pointer" title={svc.published !== false ? 'Sembunyikan servis' : 'Tunjuk servis'}>
+                        <input type="checkbox" className="sr-only peer" checked={svc.published !== false}
+                          onChange={(e) => { const u = [...services]; u[i] = { ...svc, published: e.target.checked }; setServices(u); }} />
+                        <div className="w-10 h-6 bg-gray-200 rounded-full peer peer-checked:bg-green-600 peer-checked:after:translate-x-4 after:content-[''] after:absolute after:top-0.5 after:left-0.5 after:bg-white after:rounded-full after:h-5 after:w-5 after:transition-all"></div>
+                      </label>
                       <StatusBadge status={statuses['services'] ?? 'idle'} />
                       <button className={BTN_DANGER} onClick={() => setServices(services.filter((_, idx) => idx !== i))}>Padam</button>
                     </div>
@@ -536,7 +545,7 @@ export default function AdminPage() {
                   </div>
                 </div>
               ))}
-              <button className={BTN_ADD} onClick={() => setServices([...services, { id: uid(), category: '', nameEn: '', nameBm: '', descEn: '', descBm: '', price: 0, duration: '', badge: null }])}>
+              <button className={BTN_ADD} onClick={() => setServices([...services, { id: uid(), category: '', nameEn: '', nameBm: '', descEn: '', descBm: '', price: 0, duration: '', badge: null, published: true }])}>
                 + Tambah Servis
               </button>
               <button onClick={() => save('services', services)} className={BTN_SAVE}>Simpan Semua Servis</button>
