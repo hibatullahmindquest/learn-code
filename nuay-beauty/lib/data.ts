@@ -1,6 +1,6 @@
 export const BOOKING_URL = 'https://bookit.minibookit.com/v2/en/nuaybeauty';
 export const WHATSAPP_NUMBER = '60123456789'; // placeholder
-export const INSTAGRAM_URL = 'https://www.instagram.com/nuaybeauty/';
+export const INSTAGRAM_URL = 'https://www.instagram.com/nuaybeauty_';
 export const FACEBOOK_URL = 'https://www.facebook.com/nuaybeauty/';
 export const GOOGLE_MAPS_EMBED = 'https://www.google.com/maps/embed?pb=!1m18!1m12!1m3!1d3983.5!2d101.5!3d3.1!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s0x0%3A0x0!2zNDAlMTUnNDAuMiJOIDEwMcKwMzAnMDAuMCJF!5e0!3m2!1sen!2smy!4v1234567890';
 
