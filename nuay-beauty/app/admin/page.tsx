@@ -2,10 +2,10 @@
 
 import { useState, useEffect, useCallback } from 'react';
 
-import { defaultCopy, type CopyData } from '@/components/SiteDataContext';
+import { defaultCopy, defaultNavItems, type CopyData, type NavItemSetting } from '@/components/SiteDataContext';
 import { MediaPicker } from '@/components/MediaPicker';
 
-type Tab = 'dashboard' | 'contact' | 'artists' | 'services' | 'gallery' | 'faq' | 'testimonials' | 'content' | 'blog';
+type Tab = 'dashboard' | 'contact' | 'artists' | 'services' | 'gallery' | 'faq' | 'testimonials' | 'content' | 'blog' | 'nav';
 type ContentSubTab = 'homepage' | 'about' | 'footer';
 
 type ContactData = {
@@ -144,6 +144,10 @@ const NAV: { key: Tab; label: string; icon: React.ReactNode }[] = [
     key: 'blog', label: 'Blog',
     icon: <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth={1.8} className="w-5 h-5"><path d="M4 19.5A2.5 2.5 0 0 1 6.5 17H20"/><path d="M6.5 2H20v20H6.5A2.5 2.5 0 0 1 4 19.5v-15A2.5 2.5 0 0 1 6.5 2z"/></svg>,
   },
+  {
+    key: 'nav', label: 'Navigation',
+    icon: <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth={1.8} className="w-5 h-5"><line x1="3" y1="6" x2="21" y2="6"/><line x1="3" y1="12" x2="21" y2="12"/><line x1="3" y1="18" x2="21" y2="18"/></svg>,
+  },
 ];
 
 const PAGE_TITLES: Record<Tab, string> = {
@@ -156,6 +160,7 @@ const PAGE_TITLES: Record<Tab, string> = {
   testimonials: 'Testimonials',
   content: 'Content / Copy',
   blog: 'Blog',
+  nav: 'Navigation',
 };
 
 // ── Main component ───────────────────────────────────────────────────────────
@@ -178,6 +183,7 @@ export default function AdminPage() {
   const [contentSubTab, setContentSubTab] = useState<ContentSubTab>('homepage');
   const [blogPosts, setBlogPosts] = useState<BlogPost[]>([]);
   const [blogEditIdx, setBlogEditIdx] = useState<number | null>(null);
+  const [navItems, setNavItems] = useState<NavItemSetting[]>(defaultNavItems);
 
   const [statuses, setStatuses] = useState<Record<string, 'idle' | 'saving' | 'saved' | 'error'>>({});
 
@@ -197,6 +203,7 @@ export default function AdminPage() {
     if (data.testimonials) setTestimonials(data.testimonials);
     if (data.copy) setCopy({ ...defaultCopy, ...data.copy });
     if (data.blog_posts) setBlogPosts(data.blog_posts);
+    if (data.nav_items) setNavItems(data.nav_items);
   }, []);
 
   useEffect(() => { if (authed) loadSettings(); }, [authed, loadSettings]);
@@ -1023,6 +1030,61 @@ export default function AdminPage() {
                   );
                 })()
               )}
+            </div>
+          )}
+
+          {/* ── NAVIGATION ────────────────────────────────────────────────── */}
+          {tab === 'nav' && (
+            <div className="flex flex-col gap-6">
+              <div className={SECTION}>
+                <div className="flex items-center justify-between mb-2">
+                  <h2 className="font-semibold text-gray-800">Navigation Menu</h2>
+                  <StatusBadge status={statuses['nav_items'] ?? 'idle'} />
+                </div>
+                <p className="text-xs text-gray-400 mb-5">Toggle visibility dan susun semula urutan link di navigation header.</p>
+                <div className="flex flex-col gap-2">
+                  {[...navItems].sort((a, b) => a.order - b.order).map((item, idx, arr) => (
+                    <div key={item.key} className="flex items-center gap-3 p-3 rounded-xl border border-gray-100 bg-gray-50">
+                      <div className="flex flex-col gap-0.5">
+                        <button
+                          onClick={() => {
+                            if (idx === 0) return;
+                            const prev = arr[idx - 1];
+                            setNavItems(navItems.map((n) => {
+                              if (n.key === item.key) return { ...n, order: prev.order };
+                              if (n.key === prev.key) return { ...n, order: item.order };
+                              return n;
+                            }));
+                          }}
+                          disabled={idx === 0}
+                          className="w-6 h-6 flex items-center justify-center rounded text-xs text-gray-400 hover:bg-white hover:text-gray-700 disabled:opacity-25 transition-all"
+                        >↑</button>
+                        <button
+                          onClick={() => {
+                            if (idx === arr.length - 1) return;
+                            const next = arr[idx + 1];
+                            setNavItems(navItems.map((n) => {
+                              if (n.key === item.key) return { ...n, order: next.order };
+                              if (n.key === next.key) return { ...n, order: item.order };
+                              return n;
+                            }));
+                          }}
+                          disabled={idx === arr.length - 1}
+                          className="w-6 h-6 flex items-center justify-center rounded text-xs text-gray-400 hover:bg-white hover:text-gray-700 disabled:opacity-25 transition-all"
+                        >↓</button>
+                      </div>
+                      <span className="flex-1 text-sm font-medium text-gray-700 capitalize">{item.key}</span>
+                      <button
+                        onClick={() => setNavItems(navItems.map((n) => n.key === item.key ? { ...n, visible: !n.visible } : n))}
+                        className={`px-3 py-1 rounded-full text-xs font-medium transition-all ${item.visible ? 'bg-emerald-100 text-emerald-700' : 'bg-gray-200 text-gray-400'}`}
+                      >
+                        {item.visible ? 'Visible' : 'Hidden'}
+                      </button>
+                    </div>
+                  ))}
+                </div>
+              </div>
+              <button onClick={() => save('nav_items', navItems)} className={BTN_SAVE}>Simpan Navigation</button>
             </div>
           )}
 
