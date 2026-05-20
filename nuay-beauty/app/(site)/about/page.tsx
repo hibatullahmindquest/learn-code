@@ -289,7 +289,7 @@ export default function AboutPage() {
                   Google Maps
                 </a>
                 <a
-                  href={`https://waze.com/ul?q=${encodeURIComponent(contact.addressEn)}&navigate=yes`}
+                  href="https://ul.waze.com/ul?place=ChIJmUW_SVxRzDERKZ1a04DTF94&ll=3.16885900%2C101.51710540&navigate=yes"
                   target="_blank"
                   rel="noopener noreferrer"
                   className="inline-flex items-center justify-center gap-2 py-3.5 rounded-full text-sm tracking-wide transition-all duration-300"
