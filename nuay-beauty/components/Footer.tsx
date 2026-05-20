@@ -3,13 +3,12 @@
 import Link from 'next/link';
 import { InstagramLogo, FacebookLogo, MapPin, Clock } from '@phosphor-icons/react';
 import { useLang } from './LanguageContext';
-import { content } from '@/lib/data';
-import { useSiteData } from '@/components/SiteDataContext';
+import { useSiteData, getCopy } from '@/components/SiteDataContext';
 
 export default function Footer() {
   const { lang } = useLang();
-  const t = content[lang];
-  const { contact } = useSiteData();
+  const { contact, copy } = useSiteData();
+  const t = getCopy(copy, lang);
   const { bookingUrl: BOOKING_URL, instagramUrl: INSTAGRAM_URL, facebookUrl: FACEBOOK_URL } = contact;
   const address = lang === 'en' ? contact.addressEn : contact.addressBm;
   const hours = lang === 'en' ? contact.hoursEn : contact.hoursBm;
@@ -22,13 +21,13 @@ export default function Footer() {
         style={{ background: 'var(--burgundy)' }}
       >
         <p className="text-xs tracking-[0.3em] uppercase mb-3" style={{ color: 'rgba(245,239,230,0.6)' }}>
-          {lang === 'en' ? 'Ready to feel beautiful?' : 'Bersedia untuk rasa cantik?'}
+          {t.footer.ctaSub}
         </p>
         <h2
           className="text-4xl md:text-5xl mb-6 tracking-tight"
           style={{ fontFamily: 'var(--font-cormorant), serif', fontWeight: 300 }}
         >
-          {lang === 'en' ? 'Book Your Session' : 'Tempah Sesi Anda'}
+          {t.footer.ctaHeading}
         </h2>
         <a
           href={BOOKING_URL}
