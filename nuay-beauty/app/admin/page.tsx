@@ -99,6 +99,12 @@ const BTN_ADD = 'px-4 py-2 rounded-lg text-sm font-medium border border-dashed b
 
 function uid() { return Math.random().toString(36).slice(2, 9); }
 
+const KEY_TO_TAB: Record<string, string> = {
+  contact: 'contact', artists: 'artists', services: 'services',
+  images: 'gallery', faqs: 'faq', testimonials: 'testimonials',
+  copy: 'content', blog_posts: 'blog', nav_items: 'nav',
+};
+
 function StatusBadge({ status }: { status: 'idle' | 'saving' | 'saved' | 'error' }) {
   if (status === 'idle') return null;
   const map = { saving: 'bg-yellow-100 text-yellow-700', saved: 'bg-green-100 text-green-700', error: 'bg-red-100 text-red-700' };
@@ -189,13 +195,7 @@ export default function AdminPage() {
   const [dirtyTabs, setDirtyTabs] = useState<Set<string>>(new Set());
   const loadingRef = useRef(true);
 
-  const KEY_TO_TAB: Record<string, string> = {
-    contact: 'contact', artists: 'artists', services: 'services',
-    images: 'gallery', faqs: 'faq', testimonials: 'testimonials',
-    copy: 'content', blog_posts: 'blog', nav_items: 'nav',
-  };
-  const markDirty = (tabKey: string) => { if (!loadingRef.current) setDirtyTabs((prev) => new Set([...prev, tabKey])); };
-  const clearDirty = (saveKey: string) => { const t = KEY_TO_TAB[saveKey]; if (t) setDirtyTabs((prev) => { const n = new Set(prev); n.delete(t); return n; }); };
+  const clearDirty = (saveKey: string) => { const t = KEY_TO_TAB[saveKey] ?? saveKey; setDirtyTabs((prev) => { const n = new Set(prev); n.delete(t); return n; }); };
 
   useEffect(() => {
     const saved = sessionStorage.getItem('nuay_admin_pw');
@@ -252,16 +252,16 @@ export default function AdminPage() {
     setPassword('');
   }
 
-  // Per-tab dirty tracking
-  useEffect(() => { markDirty('contact'); }, [contact]);       // eslint-disable-line react-hooks/exhaustive-deps
-  useEffect(() => { markDirty('artists'); }, [artists]);       // eslint-disable-line react-hooks/exhaustive-deps
-  useEffect(() => { markDirty('services'); }, [services]);     // eslint-disable-line react-hooks/exhaustive-deps
-  useEffect(() => { markDirty('gallery'); }, [images]);        // eslint-disable-line react-hooks/exhaustive-deps
-  useEffect(() => { markDirty('faq'); }, [faqs]);              // eslint-disable-line react-hooks/exhaustive-deps
-  useEffect(() => { markDirty('testimonials'); }, [testimonials]); // eslint-disable-line react-hooks/exhaustive-deps
-  useEffect(() => { markDirty('content'); }, [copy]);          // eslint-disable-line react-hooks/exhaustive-deps
-  useEffect(() => { markDirty('blog'); }, [blogPosts]);        // eslint-disable-line react-hooks/exhaustive-deps
-  useEffect(() => { markDirty('nav'); }, [navItems]);          // eslint-disable-line react-hooks/exhaustive-deps
+  // Per-tab dirty tracking — inline setDirtyTabs to avoid stale-closure issues with a markDirty helper
+  useEffect(() => { if (!loadingRef.current) setDirtyTabs((p) => new Set([...p, 'contact'])); }, [contact]);
+  useEffect(() => { if (!loadingRef.current) setDirtyTabs((p) => new Set([...p, 'artists'])); }, [artists]);
+  useEffect(() => { if (!loadingRef.current) setDirtyTabs((p) => new Set([...p, 'services'])); }, [services]);
+  useEffect(() => { if (!loadingRef.current) setDirtyTabs((p) => new Set([...p, 'gallery'])); }, [images]);
+  useEffect(() => { if (!loadingRef.current) setDirtyTabs((p) => new Set([...p, 'faq'])); }, [faqs]);
+  useEffect(() => { if (!loadingRef.current) setDirtyTabs((p) => new Set([...p, 'testimonials'])); }, [testimonials]);
+  useEffect(() => { if (!loadingRef.current) setDirtyTabs((p) => new Set([...p, 'content'])); }, [copy]);
+  useEffect(() => { if (!loadingRef.current) setDirtyTabs((p) => new Set([...p, 'blog'])); }, [blogPosts]);
+  useEffect(() => { if (!loadingRef.current) setDirtyTabs((p) => new Set([...p, 'nav'])); }, [navItems]);
 
   // Warn on browser close/refresh when any tab is dirty
   useEffect(() => {
