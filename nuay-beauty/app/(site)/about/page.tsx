@@ -2,7 +2,7 @@
 
 import { useEffect } from 'react';
 import Image from 'next/image';
-import { MapPin, Clock, Phone, ArrowRight, WhatsappLogo, NavigationArrow } from '@phosphor-icons/react';
+import { MapPin, Clock, Phone, ArrowRight, NavigationArrow } from '@phosphor-icons/react';
 import { useLang } from '@/components/LanguageContext';
 import { useSiteData, getCopy } from '@/components/SiteDataContext';
 
@@ -11,7 +11,6 @@ export default function AboutPage() {
   const { contact, copy, faqs, images } = useSiteData();
   const t = getCopy(copy, lang);
   const BOOKING_URL = contact.bookingUrl;
-  const WHATSAPP_NUMBER = contact.whatsapp;
   const GOOGLE_MAPS_EMBED = contact.googleMapsEmbed;
 
   // Scroll reveal
@@ -277,16 +276,6 @@ export default function AboutPage() {
               >
                 {lang === 'en' ? 'Book Appointment' : 'Tempah Temujanji'}
                 <ArrowRight size={13} />
-              </a>
-              <a
-                href={`https://wa.me/${WHATSAPP_NUMBER}`}
-                target="_blank"
-                rel="noopener noreferrer"
-                className="inline-flex items-center justify-center gap-2 w-full py-3.5 rounded-full text-sm tracking-wide transition-all duration-300"
-                style={{ border: '1px solid var(--beige)', color: 'var(--charcoal-mid)' }}
-              >
-                <WhatsappLogo size={15} />
-                {lang === 'en' ? 'WhatsApp Us' : 'WhatsApp Kami'}
               </a>
               <div className="grid grid-cols-2 gap-3">
                 <a
