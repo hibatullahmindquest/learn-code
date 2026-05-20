@@ -3,14 +3,13 @@
 import { useEffect, useState, useCallback } from 'react';
 import Image from 'next/image';
 import { useLang } from '@/components/LanguageContext';
-import { content } from '@/lib/data';
-import { useSiteData } from '@/components/SiteDataContext';
+import { useSiteData, getCopy } from '@/components/SiteDataContext';
 import { ArrowRight, InstagramLogo, X, CaretLeft, CaretRight } from '@phosphor-icons/react';
 
 export default function ArtistsPage() {
   const { lang } = useLang();
-  const t = content[lang];
-  const { contact, artists } = useSiteData();
+  const { contact, artists, copy } = useSiteData();
+  const t = getCopy(copy, lang);
   const BOOKING_URL = contact.bookingUrl;
 
   // Lightbox: { artistIndex, imageIndex }

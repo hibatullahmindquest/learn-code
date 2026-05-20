@@ -5,8 +5,7 @@ import Link from 'next/link';
 import Image from 'next/image';
 import { ArrowRight, Drop, Shield, Star, ArrowUpRight, X, CaretLeft, CaretRight } from '@phosphor-icons/react';
 import { useLang } from '@/components/LanguageContext';
-import { content, services, artists, testimonials, faqs } from '@/lib/data';
-import { useSiteData } from '@/components/SiteDataContext';
+import { useSiteData, getCopy } from '@/components/SiteDataContext';
 
 // ── Asset notes (replace with real photos when ready) ─────────────────────
 // HERO_BG       → /images/nuay-hero.avif            dark moody studio/treatment shot
@@ -19,8 +18,8 @@ const T = 'opacity 0.75s cubic-bezier(0.16,1,0.3,1), transform 0.75s cubic-bezie
 
 export default function HomePage() {
   const { lang } = useLang();
-  const t = content[lang];
-  const { contact } = useSiteData();
+  const { contact, copy, services, artists, testimonials, faqs } = useSiteData();
+  const t = getCopy(copy, lang);
 
   // Scroll reveal — IntersectionObserver adds .is-visible to .reveal elements
   useEffect(() => {

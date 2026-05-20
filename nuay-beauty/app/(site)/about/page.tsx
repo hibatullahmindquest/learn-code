@@ -4,13 +4,12 @@ import { useEffect } from 'react';
 import Image from 'next/image';
 import { MapPin, Clock, Phone, ArrowRight, WhatsappLogo } from '@phosphor-icons/react';
 import { useLang } from '@/components/LanguageContext';
-import { content, faqs } from '@/lib/data';
-import { useSiteData } from '@/components/SiteDataContext';
+import { useSiteData, getCopy } from '@/components/SiteDataContext';
 
 export default function AboutPage() {
   const { lang } = useLang();
-  const t = content[lang];
-  const { contact } = useSiteData();
+  const { contact, copy, faqs } = useSiteData();
+  const t = getCopy(copy, lang);
   const BOOKING_URL = contact.bookingUrl;
   const WHATSAPP_NUMBER = contact.whatsapp;
   const GOOGLE_MAPS_EMBED = contact.googleMapsEmbed;
@@ -89,11 +88,7 @@ export default function AboutPage() {
                 className="text-4xl md:text-5xl tracking-tight leading-tight mb-7"
                 style={{ fontFamily: 'var(--font-cormorant), serif', fontWeight: 300, color: 'var(--charcoal)' }}
               >
-                {lang === 'en' ? (
-                  <>Beauty that honours<br />your <span style={{ fontStyle: 'italic', fontWeight: 400 }}>faith.</span></>
-                ) : (
-                  <>Kecantikan yang menghormati<br /><span style={{ fontStyle: 'italic', fontWeight: 400 }}>agama</span> anda.</>
-                )}
+                {t.about.beliefHeading}
               </h2>
             </div>
             <div
@@ -101,14 +96,10 @@ export default function AboutPage() {
               style={{ transform: 'translateY(24px)', '--delay': '0.08s' } as React.CSSProperties}
             >
               <p className="text-base leading-relaxed mb-5" style={{ color: 'var(--muted)' }}>
-                {lang === 'en'
-                  ? 'At Nuay Beauty, we believe that a woman should never have to choose between feeling beautiful and fulfilling her religious obligations. That\'s why every product, every technique, and every decision at our studio is made with our Muslimah clients at the forefront.'
-                  : 'Di Nuay Beauty, kami percaya seorang wanita tidak perlu memilih antara berasa cantik dan memenuhi kewajipan agamanya. Itulah sebabnya setiap produk, setiap teknik, dan setiap keputusan di studio kami dibuat dengan mengutamakan pelanggan Muslimah kami.'}
+                {t.about.beliefPara1}
               </p>
               <p className="text-base leading-relaxed" style={{ color: 'var(--muted)' }}>
-                {lang === 'en'
-                  ? 'All products used at Nuay Beauty are water-permeable \u2014 they will not invalidate wudhu. This is not a marketing claim; it is our commitment.'
-                  : 'Semua produk yang digunakan di Nuay Beauty boleh ditembusi air \u2014 ia tidak akan membatalkan wudhu. Ini bukan tuntutan pemasaran; ia adalah komitmen kami.'}
+                {t.about.beliefPara2}
               </p>
             </div>
           </div>
@@ -233,9 +224,7 @@ export default function AboutPage() {
                     {lang === 'en' ? 'Address' : 'Alamat'}
                   </p>
                   <p className="text-sm leading-relaxed" style={{ color: 'var(--muted)' }}>
-                    8-1 Jalan Metafasa U16/5,<br />
-                    Taman Bukit Subang,<br />
-                    Shah Alam, Selangor
+                    {lang === 'en' ? contact.addressEn : contact.addressBm}
                   </p>
                 </div>
               </div>
@@ -252,10 +241,7 @@ export default function AboutPage() {
                     {lang === 'en' ? 'Operating Hours' : 'Waktu Operasi'}
                   </p>
                   <p className="text-sm" style={{ color: 'var(--muted)' }}>
-                    {lang === 'en' ? 'Mon \u2013 Sat: 10:00am \u2013 6:30pm' : 'Isnin \u2013 Sabtu: 10:00pg \u2013 6:30mlm'}
-                  </p>
-                  <p className="text-xs mt-0.5" style={{ color: 'var(--muted)' }}>
-                    {lang === 'en' ? 'Sunday: Closed' : 'Ahad: Tutup'}
+                    {lang === 'en' ? contact.hoursEn : contact.hoursBm}
                   </p>
                 </div>
               </div>
@@ -272,7 +258,7 @@ export default function AboutPage() {
                     {lang === 'en' ? 'Contact' : 'Hubungi'}
                   </p>
                   <p className="text-sm" style={{ color: 'var(--muted)' }}>
-                    +60 11-5411 4028
+                    {t.about.phone}
                   </p>
                 </div>
               </div>

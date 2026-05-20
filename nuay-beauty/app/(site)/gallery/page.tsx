@@ -3,14 +3,13 @@
 import { useEffect, useState, useCallback } from 'react';
 import Image from 'next/image';
 import { useLang } from '@/components/LanguageContext';
-import { content } from '@/lib/data';
-import { useSiteData } from '@/components/SiteDataContext';
+import { useSiteData, getCopy } from '@/components/SiteDataContext';
 import { ArrowUpRight, X, CaretLeft, CaretRight, InstagramLogo } from '@phosphor-icons/react';
 
 export default function GalleryPage() {
   const { lang } = useLang();
-  const t = content[lang];
-  const { contact, images } = useSiteData();
+  const { contact, images, copy } = useSiteData();
+  const t = getCopy(copy, lang);
   const galleryImages = images.gallery;
 
   const [lightbox, setLightbox] = useState<number | null>(null);

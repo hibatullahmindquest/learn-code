@@ -2,7 +2,10 @@
 
 import { useState, useEffect, useCallback } from 'react';
 
-type Tab = 'dashboard' | 'contact' | 'artists' | 'services' | 'gallery' | 'faq' | 'testimonials';
+import { defaultCopy, type CopyData } from '@/components/SiteDataContext';
+
+type Tab = 'dashboard' | 'contact' | 'artists' | 'services' | 'gallery' | 'faq' | 'testimonials' | 'content';
+type ContentSubTab = 'homepage' | 'about' | 'footer';
 
 type ContactData = {
   whatsapp: string;
@@ -114,6 +117,10 @@ const NAV: { key: Tab; label: string; icon: React.ReactNode }[] = [
     key: 'testimonials', label: 'Testimonials',
     icon: <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth={1.8} className="w-5 h-5"><path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z"/></svg>,
   },
+  {
+    key: 'content', label: 'Content / Copy',
+    icon: <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth={1.8} className="w-5 h-5"><path d="M11 4H4a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2v-7"/><path d="M18.5 2.5a2.121 2.121 0 0 1 3 3L12 15l-4 1 1-4 9.5-9.5z"/></svg>,
+  },
 ];
 
 const PAGE_TITLES: Record<Tab, string> = {
@@ -124,6 +131,7 @@ const PAGE_TITLES: Record<Tab, string> = {
   gallery: 'Gallery',
   faq: 'FAQ',
   testimonials: 'Testimonials',
+  content: 'Content / Copy',
 };
 
 // ── Main component ───────────────────────────────────────────────────────────
@@ -142,6 +150,8 @@ export default function AdminPage() {
   const [images, setImages] = useState<ImageData>({ hero: '', studio: ['', '', '', '', ''], gallery: [] });
   const [faqs, setFaqs] = useState<FaqItem[]>([]);
   const [testimonials, setTestimonials] = useState<Testimonial[]>([]);
+  const [copy, setCopy] = useState<CopyData>(defaultCopy);
+  const [contentSubTab, setContentSubTab] = useState<ContentSubTab>('homepage');
 
   const [statuses, setStatuses] = useState<Record<string, 'idle' | 'saving' | 'saved' | 'error'>>({});
 
@@ -159,6 +169,7 @@ export default function AdminPage() {
     if (data.images) setImages(data.images);
     if (data.faqs) setFaqs(data.faqs);
     if (data.testimonials) setTestimonials(data.testimonials);
+    if (data.copy) setCopy({ ...defaultCopy, ...data.copy });
   }, []);
 
   useEffect(() => { if (authed) loadSettings(); }, [authed, loadSettings]);
@@ -582,6 +593,118 @@ export default function AdminPage() {
                 + Tambah Soalan FAQ
               </button>
               <button onClick={() => save('faqs', faqs)} className={BTN_SAVE}>Simpan Semua FAQ</button>
+            </div>
+          )}
+
+          {/* ── CONTENT / COPY ────────────────────────────────────────────── */}
+          {tab === 'content' && (
+            <div className="flex flex-col gap-6">
+              {/* Sub-tabs */}
+              <div className="flex gap-1 bg-white rounded-xl border border-gray-100 p-1 w-fit shadow-sm">
+                {(['homepage', 'about', 'footer'] as ContentSubTab[]).map((st) => (
+                  <button key={st} onClick={() => setContentSubTab(st)}
+                    className={`px-4 py-2 rounded-lg text-sm font-medium transition-all capitalize ${contentSubTab === st ? 'bg-rose-700 text-white' : 'text-gray-500 hover:text-gray-700'}`}>
+                    {st === 'homepage' ? 'Homepage' : st === 'about' ? 'About Page' : 'Footer'}
+                  </button>
+                ))}
+              </div>
+
+              {/* ── Homepage copy ── */}
+              {contentSubTab === 'homepage' && (
+                <div className="flex flex-col gap-6">
+                  <div className={SECTION}>
+                    <div className="flex items-center justify-between mb-5">
+                      <h2 className="font-semibold text-gray-800">Hero Section</h2>
+                      <StatusBadge status={statuses['copy'] ?? 'idle'} />
+                    </div>
+                    <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                      <div><label className={LABEL}>Tagline (English)</label><input className={INPUT} value={copy.hero.taglineEn} onChange={(e) => setCopy({ ...copy, hero: { ...copy.hero, taglineEn: e.target.value } })} /></div>
+                      <div><label className={LABEL}>Tagline (BM)</label><input className={INPUT} value={copy.hero.taglineBm} onChange={(e) => setCopy({ ...copy, hero: { ...copy.hero, taglineBm: e.target.value } })} /></div>
+                      <div><label className={LABEL}>Headline (English)</label><textarea className={INPUT + ' h-16 resize-none'} value={copy.hero.headlineEn} onChange={(e) => setCopy({ ...copy, hero: { ...copy.hero, headlineEn: e.target.value } })} /></div>
+                      <div><label className={LABEL}>Headline (BM)</label><textarea className={INPUT + ' h-16 resize-none'} value={copy.hero.headlineBm} onChange={(e) => setCopy({ ...copy, hero: { ...copy.hero, headlineBm: e.target.value } })} /></div>
+                      <div><label className={LABEL}>Subtitle (English)</label><textarea className={INPUT + ' h-20 resize-none'} value={copy.hero.subtitleEn} onChange={(e) => setCopy({ ...copy, hero: { ...copy.hero, subtitleEn: e.target.value } })} /></div>
+                      <div><label className={LABEL}>Subtitle (BM)</label><textarea className={INPUT + ' h-20 resize-none'} value={copy.hero.subtitleBm} onChange={(e) => setCopy({ ...copy, hero: { ...copy.hero, subtitleBm: e.target.value } })} /></div>
+                      <div><label className={LABEL}>CTA Button (English)</label><input className={INPUT} value={copy.hero.ctaEn} onChange={(e) => setCopy({ ...copy, hero: { ...copy.hero, ctaEn: e.target.value } })} /></div>
+                      <div><label className={LABEL}>CTA Button (BM)</label><input className={INPUT} value={copy.hero.ctaBm} onChange={(e) => setCopy({ ...copy, hero: { ...copy.hero, ctaBm: e.target.value } })} /></div>
+                      <div><label className={LABEL}>Secondary CTA (English)</label><input className={INPUT} value={copy.hero.ctaSubEn} onChange={(e) => setCopy({ ...copy, hero: { ...copy.hero, ctaSubEn: e.target.value } })} /></div>
+                      <div><label className={LABEL}>Secondary CTA (BM)</label><input className={INPUT} value={copy.hero.ctaSubBm} onChange={(e) => setCopy({ ...copy, hero: { ...copy.hero, ctaSubBm: e.target.value } })} /></div>
+                    </div>
+                  </div>
+
+                  <div className={SECTION}>
+                    <h2 className="font-semibold text-gray-800 mb-5">Section Headings</h2>
+                    <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                      <div><label className={LABEL}>Services Title (EN)</label><input className={INPUT} value={copy.sections.servicesTitleEn} onChange={(e) => setCopy({ ...copy, sections: { ...copy.sections, servicesTitleEn: e.target.value } })} /></div>
+                      <div><label className={LABEL}>Services Title (BM)</label><input className={INPUT} value={copy.sections.servicesTitleBm} onChange={(e) => setCopy({ ...copy, sections: { ...copy.sections, servicesTitleBm: e.target.value } })} /></div>
+                      <div><label className={LABEL}>Services Subtitle (EN)</label><input className={INPUT} value={copy.sections.servicesSubEn} onChange={(e) => setCopy({ ...copy, sections: { ...copy.sections, servicesSubEn: e.target.value } })} /></div>
+                      <div><label className={LABEL}>Services Subtitle (BM)</label><input className={INPUT} value={copy.sections.servicesSubBm} onChange={(e) => setCopy({ ...copy, sections: { ...copy.sections, servicesSubBm: e.target.value } })} /></div>
+                      <div><label className={LABEL}>Artists Title (EN)</label><input className={INPUT} value={copy.sections.artistsTitleEn} onChange={(e) => setCopy({ ...copy, sections: { ...copy.sections, artistsTitleEn: e.target.value } })} /></div>
+                      <div><label className={LABEL}>Artists Title (BM)</label><input className={INPUT} value={copy.sections.artistsTitleBm} onChange={(e) => setCopy({ ...copy, sections: { ...copy.sections, artistsTitleBm: e.target.value } })} /></div>
+                      <div><label className={LABEL}>Artists Subtitle (EN)</label><input className={INPUT} value={copy.sections.artistsSubEn} onChange={(e) => setCopy({ ...copy, sections: { ...copy.sections, artistsSubEn: e.target.value } })} /></div>
+                      <div><label className={LABEL}>Artists Subtitle (BM)</label><input className={INPUT} value={copy.sections.artistsSubBm} onChange={(e) => setCopy({ ...copy, sections: { ...copy.sections, artistsSubBm: e.target.value } })} /></div>
+                      <div><label className={LABEL}>Gallery Title (EN)</label><input className={INPUT} value={copy.sections.galleryTitleEn} onChange={(e) => setCopy({ ...copy, sections: { ...copy.sections, galleryTitleEn: e.target.value } })} /></div>
+                      <div><label className={LABEL}>Gallery Title (BM)</label><input className={INPUT} value={copy.sections.galleryTitleBm} onChange={(e) => setCopy({ ...copy, sections: { ...copy.sections, galleryTitleBm: e.target.value } })} /></div>
+                      <div><label className={LABEL}>Gallery Subtitle (EN)</label><input className={INPUT} value={copy.sections.gallerySubEn} onChange={(e) => setCopy({ ...copy, sections: { ...copy.sections, gallerySubEn: e.target.value } })} /></div>
+                      <div><label className={LABEL}>Gallery Subtitle (BM)</label><input className={INPUT} value={copy.sections.gallerySubBm} onChange={(e) => setCopy({ ...copy, sections: { ...copy.sections, gallerySubBm: e.target.value } })} /></div>
+                      <div><label className={LABEL}>Testimonials Title (EN)</label><input className={INPUT} value={copy.sections.testimonialsTitleEn} onChange={(e) => setCopy({ ...copy, sections: { ...copy.sections, testimonialsTitleEn: e.target.value } })} /></div>
+                      <div><label className={LABEL}>Testimonials Title (BM)</label><input className={INPUT} value={copy.sections.testimonialsTitleBm} onChange={(e) => setCopy({ ...copy, sections: { ...copy.sections, testimonialsTitleBm: e.target.value } })} /></div>
+                      <div><label className={LABEL}>FAQ Title (EN)</label><input className={INPUT} value={copy.sections.faqTitleEn} onChange={(e) => setCopy({ ...copy, sections: { ...copy.sections, faqTitleEn: e.target.value } })} /></div>
+                      <div><label className={LABEL}>FAQ Title (BM)</label><input className={INPUT} value={copy.sections.faqTitleBm} onChange={(e) => setCopy({ ...copy, sections: { ...copy.sections, faqTitleBm: e.target.value } })} /></div>
+                    </div>
+                  </div>
+                  <button onClick={() => save('copy', copy)} className={BTN_SAVE}>Simpan Homepage Copy</button>
+                </div>
+              )}
+
+              {/* ── About page copy ── */}
+              {contentSubTab === 'about' && (
+                <div className="flex flex-col gap-6">
+                  <div className={SECTION}>
+                    <div className="flex items-center justify-between mb-5">
+                      <h2 className="font-semibold text-gray-800">Page Header</h2>
+                      <StatusBadge status={statuses['copy'] ?? 'idle'} />
+                    </div>
+                    <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                      <div><label className={LABEL}>Header Subtitle (EN)</label><textarea className={INPUT + ' h-20 resize-none'} value={copy.about.headerSubEn} onChange={(e) => setCopy({ ...copy, about: { ...copy.about, headerSubEn: e.target.value } })} /></div>
+                      <div><label className={LABEL}>Header Subtitle (BM)</label><textarea className={INPUT + ' h-20 resize-none'} value={copy.about.headerSubBm} onChange={(e) => setCopy({ ...copy, about: { ...copy.about, headerSubBm: e.target.value } })} /></div>
+                    </div>
+                  </div>
+                  <div className={SECTION}>
+                    <h2 className="font-semibold text-gray-800 mb-5">Our Belief Section</h2>
+                    <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                      <div><label className={LABEL}>Heading (EN)</label><input className={INPUT} value={copy.about.beliefHeadingEn} onChange={(e) => setCopy({ ...copy, about: { ...copy.about, beliefHeadingEn: e.target.value } })} /></div>
+                      <div><label className={LABEL}>Heading (BM)</label><input className={INPUT} value={copy.about.beliefHeadingBm} onChange={(e) => setCopy({ ...copy, about: { ...copy.about, beliefHeadingBm: e.target.value } })} /></div>
+                      <div><label className={LABEL}>Paragraph 1 (EN)</label><textarea className={INPUT + ' h-28 resize-none'} value={copy.about.beliefPara1En} onChange={(e) => setCopy({ ...copy, about: { ...copy.about, beliefPara1En: e.target.value } })} /></div>
+                      <div><label className={LABEL}>Paragraph 1 (BM)</label><textarea className={INPUT + ' h-28 resize-none'} value={copy.about.beliefPara1Bm} onChange={(e) => setCopy({ ...copy, about: { ...copy.about, beliefPara1Bm: e.target.value } })} /></div>
+                      <div><label className={LABEL}>Paragraph 2 (EN)</label><textarea className={INPUT + ' h-24 resize-none'} value={copy.about.beliefPara2En} onChange={(e) => setCopy({ ...copy, about: { ...copy.about, beliefPara2En: e.target.value } })} /></div>
+                      <div><label className={LABEL}>Paragraph 2 (BM)</label><textarea className={INPUT + ' h-24 resize-none'} value={copy.about.beliefPara2Bm} onChange={(e) => setCopy({ ...copy, about: { ...copy.about, beliefPara2Bm: e.target.value } })} /></div>
+                      <div><label className={LABEL}>Phone Number</label><input className={INPUT} value={copy.about.phoneNumber} onChange={(e) => setCopy({ ...copy, about: { ...copy.about, phoneNumber: e.target.value } })} placeholder="+60 11-XXXX XXXX" /></div>
+                    </div>
+                  </div>
+                  <button onClick={() => save('copy', copy)} className={BTN_SAVE}>Simpan About Page Copy</button>
+                </div>
+              )}
+
+              {/* ── Footer copy ── */}
+              {contentSubTab === 'footer' && (
+                <div className="flex flex-col gap-6">
+                  <div className={SECTION}>
+                    <div className="flex items-center justify-between mb-5">
+                      <h2 className="font-semibold text-gray-800">Footer Text</h2>
+                      <StatusBadge status={statuses['copy'] ?? 'idle'} />
+                    </div>
+                    <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                      <div><label className={LABEL}>Tagline (EN)</label><input className={INPUT} value={copy.footer.taglineEn} onChange={(e) => setCopy({ ...copy, footer: { ...copy.footer, taglineEn: e.target.value } })} /></div>
+                      <div><label className={LABEL}>Tagline (BM)</label><input className={INPUT} value={copy.footer.taglineBm} onChange={(e) => setCopy({ ...copy, footer: { ...copy.footer, taglineBm: e.target.value } })} /></div>
+                      <div><label className={LABEL}>CTA Heading (EN)</label><input className={INPUT} value={copy.footer.ctaHeadingEn} onChange={(e) => setCopy({ ...copy, footer: { ...copy.footer, ctaHeadingEn: e.target.value } })} /></div>
+                      <div><label className={LABEL}>CTA Heading (BM)</label><input className={INPUT} value={copy.footer.ctaHeadingBm} onChange={(e) => setCopy({ ...copy, footer: { ...copy.footer, ctaHeadingBm: e.target.value } })} /></div>
+                      <div><label className={LABEL}>CTA Subtitle (EN)</label><input className={INPUT} value={copy.footer.ctaSubEn} onChange={(e) => setCopy({ ...copy, footer: { ...copy.footer, ctaSubEn: e.target.value } })} /></div>
+                      <div><label className={LABEL}>CTA Subtitle (BM)</label><input className={INPUT} value={copy.footer.ctaSubBm} onChange={(e) => setCopy({ ...copy, footer: { ...copy.footer, ctaSubBm: e.target.value } })} /></div>
+                    </div>
+                  </div>
+                  <button onClick={() => save('copy', copy)} className={BTN_SAVE}>Simpan Footer Copy</button>
+                </div>
+              )}
             </div>
           )}
 
