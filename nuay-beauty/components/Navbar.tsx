@@ -42,7 +42,7 @@ export default function Navbar() {
           borderBottom: scrolled ? '1px solid rgba(200,180,160,0.3)' : 'none',
         }}
       >
-        <div className="max-w-7xl mx-auto px-6 lg:px-10 h-16 flex items-center justify-between">
+        <div className="max-w-7xl mx-auto px-6 lg:px-10 h-16 grid grid-cols-3 items-center">
           {/* Logo */}
           <Link href="/" className="flex flex-col leading-none group">
             <span
@@ -60,7 +60,7 @@ export default function Navbar() {
           </Link>
 
           {/* Desktop Nav */}
-          <nav className="hidden md:flex items-center gap-7">
+          <nav className="hidden md:flex items-center justify-center gap-7">
             {links.map((l) => (
               <Link
                 key={l.href}
@@ -79,7 +79,7 @@ export default function Navbar() {
           </nav>
 
           {/* Right side */}
-          <div className="hidden md:flex items-center gap-4">
+          <div className="hidden md:flex items-center justify-end gap-4">
             {/* Language toggle */}
             <button
               onClick={() => setLang(lang === 'en' ? 'bm' : 'en')}
@@ -108,7 +108,7 @@ export default function Navbar() {
           </div>
 
           {/* Mobile menu button */}
-          <div className="flex md:hidden items-center gap-3">
+          <div className="flex md:hidden items-center justify-end gap-3 col-span-2">
             <button
               onClick={() => setLang(lang === 'en' ? 'bm' : 'en')}
               className="text-xs tracking-widest px-2 py-1 rounded transition-colors duration-300"
