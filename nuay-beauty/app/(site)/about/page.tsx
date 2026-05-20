@@ -279,7 +279,7 @@ export default function AboutPage() {
               </a>
               <div className="grid grid-cols-2 gap-3">
                 <a
-                  href={`https://maps.google.com/?q=${encodeURIComponent(contact.addressEn)}`}
+                  href="https://maps.app.goo.gl/Ec1DMm4QCJpZAaG69"
                   target="_blank"
                   rel="noopener noreferrer"
                   className="inline-flex items-center justify-center gap-2 py-3.5 rounded-full text-sm tracking-wide transition-all duration-300"
