@@ -261,10 +261,10 @@ export default function AdminPage() {
   // ── Login screen ────────────────────────────────────────────────────────────
   if (!authed) {
     return (
-      <div className="min-h-screen flex items-center justify-center" style={{ background: '#faf7f4' }}>
+      <div className="min-h-screen flex items-center justify-center" style={{ background: '#faf7f4', fontFamily: 'system-ui, -apple-system, sans-serif' }}>
         <div className="w-full max-w-sm bg-white rounded-2xl shadow-sm border border-gray-100 p-8">
           <div className="text-center mb-8">
-            <p className="text-2xl font-light tracking-widest text-rose-800" style={{ fontFamily: 'Cormorant Garamond, serif' }}>NUAY</p>
+            <p className="text-2xl font-light tracking-widest text-rose-800" style={{ fontFamily: 'var(--font-cormorant), serif' }}>NUAY</p>
             <p className="text-xs tracking-[0.3em] text-gray-400 mt-0.5">ADMIN PANEL</p>
           </div>
           <form onSubmit={login} className="flex flex-col gap-4">
@@ -283,7 +283,7 @@ export default function AdminPage() {
 
   // ── Authed layout ───────────────────────────────────────────────────────────
   return (
-    <div className="flex min-h-screen">
+    <div className="flex min-h-screen" style={{ fontFamily: 'system-ui, -apple-system, sans-serif' }}>
 
       {/* Sidebar */}
       <aside className="fixed top-0 left-0 bottom-0 flex flex-col z-20" style={{ width: 240, background: '#1C1C1C' }}>
