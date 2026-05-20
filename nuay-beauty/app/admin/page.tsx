@@ -66,6 +66,7 @@ type Testimonial = {
   id: string;
   name: string;
   service: string;
+  location?: string;
   rating: number;
   quoteEn: string;
   quoteBm: string;
@@ -795,6 +796,10 @@ export default function AdminPage() {
                     <div>
                       <label className={LABEL}>Servis Diambil</label>
                       <input className={INPUT} value={t.service} onChange={(e) => { const u = [...testimonials]; u[i] = { ...t, service: e.target.value }; setTestimonials(u); }} placeholder="Eyebrow Lamination" />
+                    </div>
+                    <div>
+                      <label className={LABEL}>Lokasi (pilihan)</label>
+                      <input className={INPUT} value={t.location ?? ''} onChange={(e) => { const u = [...testimonials]; u[i] = { ...t, location: e.target.value }; setTestimonials(u); }} placeholder="Shah Alam" />
                     </div>
                     <div>
                       <label className={LABEL}>Rating (1–5)</label>

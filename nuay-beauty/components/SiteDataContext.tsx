@@ -168,6 +168,17 @@ export function getCopy(copy: CopyData, lang: 'en' | 'bm') {
 }
 
 // ── Context ───────────────────────────────────────────────────────────────────
+export type Testimonial = {
+  id: string;
+  name: string;
+  service: string;
+  location?: string;
+  rating: number;
+  quoteEn: string;
+  quoteBm: string;
+  published: boolean;
+};
+
 export type FaqItem = {
   id: string;
   questionEn: string;
@@ -193,7 +204,7 @@ export type SiteData = {
   contact: ContactSettings;
   services: typeof defaultServices;
   artists: typeof defaultArtists;
-  testimonials: typeof defaultTestimonials;
+  testimonials: Testimonial[];
   faqs: FaqItem[];
   blogPosts: BlogPost[];
   images: ImageSettings;
@@ -242,7 +253,7 @@ const initialData: SiteData = {
   contact: defaultContact,
   services: defaultServices,
   artists: defaultArtists,
-  testimonials: defaultTestimonials,
+  testimonials: [],
   faqs: [],
   blogPosts: [],
   images: defaultImages,
@@ -263,7 +274,7 @@ export function SiteDataProvider({ children }: { children: ReactNode }) {
           contact: settings.contact ?? defaultContact,
           services: settings.services ?? defaultServices,
           artists: settings.artists ?? defaultArtists,
-          testimonials: settings.testimonials ?? defaultTestimonials,
+          testimonials: settings.testimonials ?? [],
           faqs: settings.faqs ?? [],
           blogPosts: settings.blog_posts ?? [],
           images: settings.images ? { ...defaultImages, ...settings.images } : defaultImages,

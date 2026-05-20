@@ -495,16 +495,13 @@ export default function HomePage() {
                   ))}
                 </div>
                 <p className="leading-relaxed mb-5" style={{ fontFamily: 'var(--font-cormorant), serif', fontStyle: 'italic', fontWeight: 300, fontSize: '1.08rem', color: 'rgba(245,239,230,0.72)' }}>
-                  &ldquo;{lang === 'en' ? review.text : review.textBm}&rdquo;
+                  &ldquo;{lang === 'en' ? review.quoteEn : review.quoteBm}&rdquo;
                 </p>
-                <div className="flex items-center justify-between pt-4" style={{ borderTop: '1px solid rgba(245,239,230,0.07)' }}>
-                  <div>
-                    <p className="text-sm font-medium" style={{ color: 'var(--cream)' }}>{review.name}</p>
-                    <p className="text-xs mt-0.5" style={{ color: 'var(--muted)' }}>{review.location} · {review.service}</p>
-                  </div>
-                  <div className="w-9 h-9 rounded-full overflow-hidden flex-shrink-0" style={{ border: '1px solid rgba(201,169,110,0.22)' }}>
-                    <Image src={review.image} alt={review.name} width={36} height={36} className="object-cover" />
-                  </div>
+                <div className="pt-4" style={{ borderTop: '1px solid rgba(245,239,230,0.07)' }}>
+                  <p className="text-sm font-medium" style={{ color: 'var(--cream)' }}>{review.name}</p>
+                  <p className="text-xs mt-0.5" style={{ color: 'var(--muted)' }}>
+                    {review.location ? `${review.location} · ` : ''}{review.service}
+                  </p>
                 </div>
               </div>
             ))}
