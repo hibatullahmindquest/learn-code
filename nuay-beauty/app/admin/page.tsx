@@ -1,6 +1,6 @@
 'use client';
 
-import { useState, useEffect, useCallback, useRef } from 'react';
+import { useState, useEffect, useCallback } from 'react';
 
 import { defaultCopy, defaultNavItems, type CopyData, type NavItemSetting } from '@/components/SiteDataContext';
 import { MediaPicker } from '@/components/MediaPicker';
@@ -193,7 +193,7 @@ export default function AdminPage() {
 
   const [statuses, setStatuses] = useState<Record<string, 'idle' | 'saving' | 'saved' | 'error'>>({});
   const [dirtyTabs, setDirtyTabs] = useState<Set<string>>(new Set());
-  const loadingRef = useRef(true);
+  const [loadCount, setLoadCount] = useState(0);
 
   const clearDirty = (saveKey: string) => { const t = KEY_TO_TAB[saveKey] ?? saveKey; setDirtyTabs((prev) => { const n = new Set(prev); n.delete(t); return n; }); };
 
@@ -203,7 +203,6 @@ export default function AdminPage() {
   }, []);
 
   const loadSettings = useCallback(async () => {
-    loadingRef.current = true;
     const res = await fetch('/api/settings');
     const data = await res.json();
     if (data.contact) setContact(data.contact);
@@ -215,7 +214,7 @@ export default function AdminPage() {
     if (data.copy) setCopy({ ...defaultCopy, ...data.copy });
     if (data.blog_posts) setBlogPosts(data.blog_posts);
     if (data.nav_items) setNavItems(data.nav_items);
-    setTimeout(() => { loadingRef.current = false; setDirtyTabs(new Set()); }, 0);
+    setLoadCount((c) => c + 1);
   }, []);
 
   useEffect(() => { if (authed) loadSettings(); }, [authed, loadSettings]);
@@ -252,16 +251,20 @@ export default function AdminPage() {
     setPassword('');
   }
 
-  // Per-tab dirty tracking — inline setDirtyTabs to avoid stale-closure issues with a markDirty helper
-  useEffect(() => { if (!loadingRef.current) setDirtyTabs((p) => new Set([...p, 'contact'])); }, [contact]);
-  useEffect(() => { if (!loadingRef.current) setDirtyTabs((p) => new Set([...p, 'artists'])); }, [artists]);
-  useEffect(() => { if (!loadingRef.current) setDirtyTabs((p) => new Set([...p, 'services'])); }, [services]);
-  useEffect(() => { if (!loadingRef.current) setDirtyTabs((p) => new Set([...p, 'gallery'])); }, [images]);
-  useEffect(() => { if (!loadingRef.current) setDirtyTabs((p) => new Set([...p, 'faq'])); }, [faqs]);
-  useEffect(() => { if (!loadingRef.current) setDirtyTabs((p) => new Set([...p, 'testimonials'])); }, [testimonials]);
-  useEffect(() => { if (!loadingRef.current) setDirtyTabs((p) => new Set([...p, 'content'])); }, [copy]);
-  useEffect(() => { if (!loadingRef.current) setDirtyTabs((p) => new Set([...p, 'blog'])); }, [blogPosts]);
-  useEffect(() => { if (!loadingRef.current) setDirtyTabs((p) => new Set([...p, 'nav'])); }, [navItems]);
+  // Per-tab dirty tracking
+  useEffect(() => { setDirtyTabs((p) => new Set([...p, 'contact'])); }, [contact]);
+  useEffect(() => { setDirtyTabs((p) => new Set([...p, 'artists'])); }, [artists]);
+  useEffect(() => { setDirtyTabs((p) => new Set([...p, 'services'])); }, [services]);
+  useEffect(() => { setDirtyTabs((p) => new Set([...p, 'gallery'])); }, [images]);
+  useEffect(() => { setDirtyTabs((p) => new Set([...p, 'faq'])); }, [faqs]);
+  useEffect(() => { setDirtyTabs((p) => new Set([...p, 'testimonials'])); }, [testimonials]);
+  useEffect(() => { setDirtyTabs((p) => new Set([...p, 'content'])); }, [copy]);
+  useEffect(() => { setDirtyTabs((p) => new Set([...p, 'blog'])); }, [blogPosts]);
+  useEffect(() => { setDirtyTabs((p) => new Set([...p, 'nav'])); }, [navItems]);
+  // Runs AFTER all dirty effects above (React fires effects in definition order).
+  // When loadCount increments (batched with all setX calls in loadSettings), this
+  // clears the set — overriding any dirty marks from the same render cycle.
+  useEffect(() => { if (loadCount > 0) setDirtyTabs(new Set()); }, [loadCount]);
 
   // Warn on browser close/refresh when any tab is dirty
   useEffect(() => {
