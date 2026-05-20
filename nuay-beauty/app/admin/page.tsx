@@ -432,7 +432,7 @@ export default function AdminPage() {
                     <h2 className="font-semibold text-gray-800">{artist.name || 'Artist Baru'}</h2>
                     <div className="flex items-center gap-2">
                       <StatusBadge status={statuses['artists'] ?? 'idle'} />
-                      <button className={BTN_DANGER} onClick={() => setArtists(artists.filter((_, idx) => idx !== i))}>Padam</button>
+                      <button className={BTN_DANGER} onClick={() => { if (window.confirm('Padam artist ini? Tindakan ini tidak boleh dibatalkan.')) setArtists(artists.filter((_, idx) => idx !== i)); }}>Padam</button>
                     </div>
                   </div>
                   <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
@@ -475,7 +475,7 @@ export default function AdminPage() {
                               }} password={password} label={`${artist.name} Gallery ${gi + 1}`} />
                             </div>
                             <button className={BTN_DANGER} onClick={() => {
-                              const u = [...artists]; const g = (artist.gallery ?? []).filter((_, idx) => idx !== gi); u[i] = { ...artist, gallery: g }; setArtists(u);
+                              if (window.confirm('Padam gambar ini?')) { const u = [...artists]; const g = (artist.gallery ?? []).filter((_, idx) => idx !== gi); u[i] = { ...artist, gallery: g }; setArtists(u); }
                             }}>✕</button>
                           </div>
                         ))}
@@ -514,7 +514,7 @@ export default function AdminPage() {
                         <div className="w-10 h-6 bg-gray-200 rounded-full peer peer-checked:bg-green-600 peer-checked:after:translate-x-4 after:content-[''] after:absolute after:top-0.5 after:left-0.5 after:bg-white after:rounded-full after:h-5 after:w-5 after:transition-all"></div>
                       </label>
                       <StatusBadge status={statuses['services'] ?? 'idle'} />
-                      <button className={BTN_DANGER} onClick={() => setServices(services.filter((_, idx) => idx !== i))}>Padam</button>
+                      <button className={BTN_DANGER} onClick={() => { if (window.confirm('Padam servis ini? Tindakan ini tidak boleh dibatalkan.')) setServices(services.filter((_, idx) => idx !== i)); }}>Padam</button>
                     </div>
                   </div>
                   <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
@@ -601,7 +601,7 @@ export default function AdminPage() {
                     <div key={i} className="border border-gray-100 rounded-lg p-4">
                       <div className="flex items-center justify-between mb-3">
                         <p className="text-sm font-medium text-gray-600">Gambar {i + 1}: {img.label}</p>
-                        <button className={BTN_DANGER} onClick={() => setImages({ ...images, gallery: images.gallery.filter((_, idx) => idx !== i) })}>Padam</button>
+                        <button className={BTN_DANGER} onClick={() => { if (window.confirm('Padam gambar galeri ini?')) setImages({ ...images, gallery: images.gallery.filter((_, idx) => idx !== i) }); }}>Padam</button>
                       </div>
                       <div className="flex flex-col gap-2">
                         <label className={LABEL}>URL Gambar</label>
@@ -653,7 +653,7 @@ export default function AdminPage() {
                 <div key={faq.id} className={SECTION}>
                   <div className="flex items-center justify-between mb-4">
                     <span className="text-xs font-semibold text-gray-400 uppercase tracking-wide">#{i + 1}</span>
-                    <button className={BTN_DANGER} onClick={() => setFaqs(faqs.filter((_, idx) => idx !== i))}>Padam</button>
+                    <button className={BTN_DANGER} onClick={() => { if (window.confirm('Padam soalan FAQ ini?')) setFaqs(faqs.filter((_, idx) => idx !== i)); }}>Padam</button>
                   </div>
                   <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                     <div>
@@ -836,7 +836,7 @@ export default function AdminPage() {
                         {t.published ? 'Published' : 'Pending'}
                       </span>
                     </div>
-                    <button className={BTN_DANGER} onClick={() => setTestimonials(testimonials.filter((_, idx) => idx !== i))}>Padam</button>
+                    <button className={BTN_DANGER} onClick={() => { if (window.confirm('Padam testimoni ini?')) setTestimonials(testimonials.filter((_, idx) => idx !== i)); }}>Padam</button>
                   </div>
                   <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                     <div>
@@ -945,7 +945,7 @@ export default function AdminPage() {
                               <td className="px-4 py-3.5">
                                 <div className="flex items-center justify-end gap-2">
                                   <button className={BTN_SEC + ' text-xs px-3 py-1.5'} onClick={() => setBlogEditIdx(i)}>Edit</button>
-                                  <button className={BTN_DANGER} onClick={() => { const u = blogPosts.filter((_, idx) => idx !== i); setBlogPosts(u); save('blog_posts', u); }}>Padam</button>
+                                  <button className={BTN_DANGER} onClick={() => { if (window.confirm('Padam blog post ini? Tindakan ini tidak boleh dibatalkan.')) { const u = blogPosts.filter((_, idx) => idx !== i); setBlogPosts(u); save('blog_posts', u); } }}>Padam</button>
                                 </div>
                               </td>
                             </tr>
