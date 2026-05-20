@@ -29,6 +29,7 @@ type Artist = {
   services: string[];
   image: string;
   instagram: string | null;
+  gallery: string[];
 };
 
 type Service = {
@@ -49,6 +50,7 @@ type ImageData = {
   hero: string;
   studio: string[];
   gallery: GalleryImage[];
+  aboutPhotos: [string, string, string];
 };
 
 type FaqItem = {
@@ -147,7 +149,7 @@ export default function AdminPage() {
   });
   const [artists, setArtists] = useState<Artist[]>([]);
   const [services, setServices] = useState<Service[]>([]);
-  const [images, setImages] = useState<ImageData>({ hero: '', studio: ['', '', '', '', ''], gallery: [] });
+  const [images, setImages] = useState<ImageData>({ hero: '', studio: ['', '', '', '', ''], gallery: [], aboutPhotos: ['', '', ''] });
   const [faqs, setFaqs] = useState<FaqItem[]>([]);
   const [testimonials, setTestimonials] = useState<Testimonial[]>([]);
   const [copy, setCopy] = useState<CopyData>(defaultCopy);
@@ -166,7 +168,7 @@ export default function AdminPage() {
     if (data.contact) setContact(data.contact);
     if (data.artists) setArtists(data.artists);
     if (data.services) setServices(data.services);
-    if (data.images) setImages(data.images);
+    if (data.images) setImages({ hero: '', studio: ['', '', '', '', ''], gallery: [], aboutPhotos: ['', '', ''], ...data.images });
     if (data.faqs) setFaqs(data.faqs);
     if (data.testimonials) setTestimonials(data.testimonials);
     if (data.copy) setCopy({ ...defaultCopy, ...data.copy });
@@ -431,10 +433,29 @@ export default function AdminPage() {
                       <label className={LABEL}>Bio (BM)</label>
                       <textarea className={INPUT + ' h-20 resize-none'} value={artist.bioBm} onChange={(e) => { const u = [...artists]; u[i] = { ...artist, bioBm: e.target.value }; setArtists(u); }} />
                     </div>
+                    <div className="md:col-span-2">
+                      <label className={LABEL}>Gambar Galeri (Portfolio Lightbox)</label>
+                      <div className="flex flex-col gap-2 mt-1">
+                        {(artist.gallery ?? []).map((url, gi) => (
+                          <div key={gi} className="flex gap-2 items-center">
+                            <input className={INPUT} value={url} placeholder="https://..." onChange={(e) => {
+                              const u = [...artists]; const g = [...(artist.gallery ?? [])]; g[gi] = e.target.value; u[i] = { ...artist, gallery: g }; setArtists(u);
+                            }} />
+                            {url && <img src={url} alt="" className="h-10 w-14 object-cover rounded-md border border-gray-200 flex-shrink-0" />}
+                            <button className={BTN_DANGER} onClick={() => {
+                              const u = [...artists]; const g = (artist.gallery ?? []).filter((_, idx) => idx !== gi); u[i] = { ...artist, gallery: g }; setArtists(u);
+                            }}>✕</button>
+                          </div>
+                        ))}
+                        <button className={BTN_ADD} style={{ marginTop: 4 }} onClick={() => {
+                          const u = [...artists]; u[i] = { ...artist, gallery: [...(artist.gallery ?? []), ''] }; setArtists(u);
+                        }}>+ Tambah Gambar Galeri</button>
+                      </div>
+                    </div>
                   </div>
                 </div>
               ))}
-              <button className={BTN_ADD} onClick={() => setArtists([...artists, { id: uid(), name: '', roleEn: '', roleBm: '', bioEn: '', bioBm: '', services: [], image: '', instagram: null }])}>
+              <button className={BTN_ADD} onClick={() => setArtists([...artists, { id: uid(), name: '', roleEn: '', roleBm: '', bioEn: '', bioBm: '', services: [], image: '', instagram: null, gallery: [] }])}>
                 + Tambah Artist
               </button>
               <button onClick={() => save('artists', artists)} className={BTN_SAVE}>Simpan Semua Artist</button>
@@ -552,6 +573,28 @@ export default function AdminPage() {
                   + Tambah Gambar Galeri
                 </button>
               </div>
+              <div className={SECTION}>
+                <h2 className="font-semibold text-gray-800 mb-5">Gambar Halaman About (3 foto grid)</h2>
+                <p className="text-xs text-gray-400 mb-4">Foto yang muncul dalam grid 2-kolum di halaman About — kiri (tall), kanan atas, kanan bawah.</p>
+                <div className="flex flex-col gap-4">
+                  {(['Foto Kiri (Tall)', 'Foto Kanan Atas', 'Foto Kanan Bawah'] as const).map((label, idx) => (
+                    <div key={idx}>
+                      <label className={LABEL}>{label}</label>
+                      <div className="flex gap-3 items-start">
+                        <input className={INPUT} value={images.aboutPhotos?.[idx] ?? ''} onChange={(e) => {
+                          const p: [string, string, string] = [...(images.aboutPhotos ?? ['', '', ''])] as [string, string, string];
+                          p[idx] = e.target.value;
+                          setImages({ ...images, aboutPhotos: p });
+                        }} placeholder="https://..." />
+                        {images.aboutPhotos?.[idx] && (
+                          <img src={images.aboutPhotos[idx]} alt={label} className="h-12 w-16 object-cover rounded-lg border border-gray-200 flex-shrink-0" />
+                        )}
+                      </div>
+                    </div>
+                  ))}
+                </div>
+              </div>
+
               <button onClick={() => save('images', images)} className={BTN_SAVE}>Simpan Semua Gambar</button>
             </div>
           )}

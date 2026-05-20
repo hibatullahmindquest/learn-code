@@ -8,7 +8,7 @@ import { useSiteData, getCopy } from '@/components/SiteDataContext';
 
 export default function AboutPage() {
   const { lang } = useLang();
-  const { contact, copy, faqs } = useSiteData();
+  const { contact, copy, faqs, images } = useSiteData();
   const t = getCopy(copy, lang);
   const BOOKING_URL = contact.bookingUrl;
   const WHATSAPP_NUMBER = contact.whatsapp;
@@ -110,19 +110,19 @@ export default function AboutPage() {
               className="reveal row-span-2 rounded-3xl overflow-hidden relative group"
               style={{ aspectRatio: '2/3', transform: 'scale(0.97)' } as React.CSSProperties}
             >
-              <Image src="/images/nuay-artist.png" alt="Studio" fill className="object-cover transition-transform duration-700 group-hover:scale-[1.04]" />
+              <Image src={images.aboutPhotos?.[0] || '/images/nuay-artist.png'} alt="Studio" fill className="object-cover transition-transform duration-700 group-hover:scale-[1.04]" />
             </div>
             <div
               className="reveal rounded-3xl overflow-hidden relative group"
               style={{ aspectRatio: '1', transform: 'scale(0.97)', '--delay': '0.06s' } as React.CSSProperties}
             >
-              <Image src="/images/nuay-studio-3.avif" alt="Studio" fill className="object-cover transition-transform duration-700 group-hover:scale-[1.04]" />
+              <Image src={images.aboutPhotos?.[1] || '/images/nuay-studio-3.avif'} alt="Studio" fill className="object-cover transition-transform duration-700 group-hover:scale-[1.04]" />
             </div>
             <div
               className="reveal rounded-3xl overflow-hidden relative group"
               style={{ aspectRatio: '1', transform: 'scale(0.97)', '--delay': '0.12s' } as React.CSSProperties}
             >
-              <Image src="/images/nuay-studio-4.avif" alt="Studio" fill className="object-cover transition-transform duration-700 group-hover:scale-[1.04]" />
+              <Image src={images.aboutPhotos?.[2] || '/images/nuay-studio-4.avif'} alt="Studio" fill className="object-cover transition-transform duration-700 group-hover:scale-[1.04]" />
             </div>
           </div>
         </div>
