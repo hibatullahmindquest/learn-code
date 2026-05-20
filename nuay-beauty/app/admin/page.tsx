@@ -1,6 +1,6 @@
 'use client';
 
-import { useState, useEffect, useCallback } from 'react';
+import { useState, useEffect, useCallback, useRef } from 'react';
 
 import { defaultCopy, defaultNavItems, type CopyData, type NavItemSetting } from '@/components/SiteDataContext';
 import { MediaPicker } from '@/components/MediaPicker';
@@ -186,6 +186,8 @@ export default function AdminPage() {
   const [navItems, setNavItems] = useState<NavItemSetting[]>(defaultNavItems);
 
   const [statuses, setStatuses] = useState<Record<string, 'idle' | 'saving' | 'saved' | 'error'>>({});
+  const [isDirty, setIsDirty] = useState(false);
+  const loadingRef = useRef(true);
 
   useEffect(() => {
     const saved = sessionStorage.getItem('nuay_admin_pw');
@@ -193,6 +195,7 @@ export default function AdminPage() {
   }, []);
 
   const loadSettings = useCallback(async () => {
+    loadingRef.current = true;
     const res = await fetch('/api/settings');
     const data = await res.json();
     if (data.contact) setContact(data.contact);
@@ -204,6 +207,7 @@ export default function AdminPage() {
     if (data.copy) setCopy({ ...defaultCopy, ...data.copy });
     if (data.blog_posts) setBlogPosts(data.blog_posts);
     if (data.nav_items) setNavItems(data.nav_items);
+    setTimeout(() => { loadingRef.current = false; setIsDirty(false); }, 0);
   }, []);
 
   useEffect(() => { if (authed) loadSettings(); }, [authed, loadSettings]);
@@ -229,14 +233,30 @@ export default function AdminPage() {
       body: JSON.stringify({ key, value }),
     });
     setStatuses((s) => ({ ...s, [key]: res.ok ? 'saved' : 'error' }));
+    if (res.ok) setIsDirty(false);
     setTimeout(() => setStatuses((s) => ({ ...s, [key]: 'idle' })), 3000);
   }
 
   function logout() {
+    if (isDirty && !window.confirm('Ada perubahan yang belum disimpan. Log keluar akan hilangkan semua perubahan. Teruskan?')) return;
     sessionStorage.removeItem('nuay_admin_pw');
     setAuthed(false);
     setPassword('');
   }
+
+  // Track unsaved changes
+  useEffect(() => {
+    if (loadingRef.current) return;
+    setIsDirty(true);
+  }, [contact, artists, services, images, faqs, testimonials, copy, blogPosts, navItems]);
+
+  // Warn on browser close/refresh when dirty
+  useEffect(() => {
+    if (!isDirty) return;
+    const handler = (e: BeforeUnloadEvent) => { e.preventDefault(); e.returnValue = ''; };
+    window.addEventListener('beforeunload', handler);
+    return () => window.removeEventListener('beforeunload', handler);
+  }, [isDirty]);
 
   // ── Login screen ────────────────────────────────────────────────────────────
   if (!authed) {
@@ -297,6 +317,13 @@ export default function AdminPage() {
             );
           })}
         </nav>
+
+        {/* Dirty indicator */}
+        {isDirty && (
+          <div className="mx-3 mb-3 px-3 py-2 rounded-lg text-xs" style={{ background: 'rgba(251,191,36,0.1)', color: '#fbbf24', border: '1px solid rgba(251,191,36,0.18)' }}>
+            ● Ada perubahan belum disimpan
+          </div>
+        )}
 
         {/* Footer */}
         <div className="px-5 py-4 border-t" style={{ borderColor: 'rgba(255,255,255,0.08)' }}>
