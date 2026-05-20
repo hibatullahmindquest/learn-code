@@ -18,7 +18,7 @@ const T = 'opacity 0.75s cubic-bezier(0.16,1,0.3,1), transform 0.75s cubic-bezie
 
 export default function HomePage() {
   const { lang } = useLang();
-  const { contact, copy, services, artists, testimonials, faqs, images } = useSiteData();
+  const { contact, copy, services, artists, testimonials, faqs, images, loading } = useSiteData();
   const t = getCopy(copy, lang);
 
   // Scroll reveal — IntersectionObserver adds .is-visible to .reveal elements
@@ -240,8 +240,8 @@ export default function HomePage() {
               src={images.featuredService}
               alt={lang === 'en' ? services[0].nameEn : services[0].nameBm}
               fill
-              className="object-cover transition-transform duration-700 group-hover:scale-[1.04]"
-              style={{ opacity: 0.5 }}
+              className="object-cover group-hover:scale-[1.04]"
+              style={{ opacity: loading ? 0 : 0.5, transition: 'opacity 0.6s ease, transform 0.7s ease' }}
             />
             <div className="absolute inset-0" style={{ background: 'linear-gradient(to top, rgba(28,28,28,0.96) 0%, rgba(28,28,28,0.08) 60%)' }} />
             <div className="relative z-10 p-8 md:p-10">
