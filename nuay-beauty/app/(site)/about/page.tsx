@@ -55,8 +55,8 @@ export default function AboutPage() {
               {lang === 'en' ? 'Who We Are' : 'Siapa Kami'}
             </p>
             <h1
-              className="text-5xl md:text-6xl lg:text-7xl tracking-tight leading-none mb-6"
-              style={{ fontFamily: 'var(--font-cormorant), serif', fontWeight: 300, color: 'var(--cream)' }}
+              className="tracking-tight leading-none mb-6"
+              style={{ fontSize: 'var(--fs-page-title)', fontFamily: 'var(--font-cormorant), serif', fontWeight: 300, color: 'var(--cream)' }}
             >
               {lang === 'en' ? (
                 <>Our <span style={{ fontStyle: 'italic', fontWeight: 400 }}>Story</span></>
@@ -85,8 +85,8 @@ export default function AboutPage() {
                 {lang === 'en' ? 'Our Belief' : 'Kepercayaan Kami'}
               </p>
               <h2
-                className="text-4xl md:text-5xl tracking-tight leading-tight mb-7"
-                style={{ fontFamily: 'var(--font-cormorant), serif', fontWeight: 300, color: 'var(--charcoal)' }}
+                className="tracking-tight leading-tight mb-7"
+                style={{ fontSize: 'var(--fs-section-title)', fontFamily: 'var(--font-cormorant), serif', fontWeight: 300, color: 'var(--charcoal)' }}
               >
                 {t.about.beliefHeading}
               </h2>
@@ -143,8 +143,8 @@ export default function AboutPage() {
               FAQ
             </p>
             <h2
-              className="text-4xl md:text-5xl tracking-tight leading-none"
-              style={{ fontFamily: 'var(--font-cormorant), serif', fontWeight: 300, color: 'var(--charcoal)' }}
+              className="tracking-tight leading-none"
+              style={{ fontSize: 'var(--fs-section-title)', fontFamily: 'var(--font-cormorant), serif', fontWeight: 300, color: 'var(--charcoal)' }}
             >
               {t.faq.title}
             </h2>
@@ -197,8 +197,8 @@ export default function AboutPage() {
                 {lang === 'en' ? 'Find Us' : 'Jumpa Kami'}
               </p>
               <h2
-                className="text-4xl md:text-5xl tracking-tight leading-none mb-10"
-                style={{ fontFamily: 'var(--font-cormorant), serif', fontWeight: 300, color: 'var(--charcoal)' }}
+                className="tracking-tight leading-none mb-10"
+                style={{ fontSize: 'var(--fs-section-title)', fontFamily: 'var(--font-cormorant), serif', fontWeight: 300, color: 'var(--charcoal)' }}
               >
                 {lang === 'en' ? (
                   <>Visit the <span style={{ fontStyle: 'italic', fontWeight: 400 }}>Studio</span></>
