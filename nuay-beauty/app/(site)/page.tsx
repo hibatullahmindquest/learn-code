@@ -40,12 +40,12 @@ export default function HomePage() {
 
   const featuredServices = services.filter((s) => s.published !== false).slice(0, 4);
 
-  const galleryImages = [
+  const galleryImages = images.studio.length >= 5 ? images.studio : [
     '/images/nuay-studio-1.avif',
     '/images/nuay-studio-2.avif',
     '/images/nuay-studio-3.avif',
     '/images/nuay-studio-4.avif',
-    'https://picsum.photos/seed/nuay-studio-5/600/400',
+    '/images/nuay-hero.avif',
   ];
   const [lightbox, setLightbox] = useState<number | null>(null);
 
