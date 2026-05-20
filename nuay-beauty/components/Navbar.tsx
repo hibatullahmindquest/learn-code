@@ -14,7 +14,7 @@ export default function Navbar() {
   const pathname = usePathname();
   const { lang, setLang } = useLang();
   const t = content[lang].nav;
-  const { contact } = useSiteData();
+  const { contact, navItems } = useSiteData();
   const BOOKING_URL = contact.bookingUrl;
 
   useEffect(() => {
@@ -23,14 +23,13 @@ export default function Navbar() {
     return () => window.removeEventListener('scroll', onScroll);
   }, []);
 
-  const links = [
-    { href: '/', label: t.home },
-    { href: '/services', label: t.services },
-    { href: '/gallery', label: t.gallery },
-    { href: '/artists', label: t.artists },
-    { href: '/about', label: t.about },
-    { href: '/blog', label: lang === 'en' ? 'Blog' : 'Blog' },
-  ];
+  const NAV_HREF: Record<string, string> = { home: '/', services: '/services', gallery: '/gallery', artists: '/artists', about: '/about', blog: '/blog' };
+  const NAV_LABEL: Record<string, string> = { home: t.home, services: t.services, gallery: t.gallery, artists: t.artists, about: t.about, blog: 'Blog' };
+
+  const links = [...navItems]
+    .filter((item) => item.visible)
+    .sort((a, b) => a.order - b.order)
+    .map((item) => ({ href: NAV_HREF[item.key], label: NAV_LABEL[item.key] }));
 
   return (
     <>

@@ -251,6 +251,21 @@ export type ServiceItem = {
   published?: boolean;
 };
 
+export type NavItemSetting = {
+  key: string;
+  visible: boolean;
+  order: number;
+};
+
+export const defaultNavItems: NavItemSetting[] = [
+  { key: 'home',     visible: true,  order: 0 },
+  { key: 'services', visible: true,  order: 1 },
+  { key: 'gallery',  visible: true,  order: 2 },
+  { key: 'artists',  visible: true,  order: 3 },
+  { key: 'about',    visible: true,  order: 4 },
+  { key: 'blog',     visible: false, order: 5 },
+];
+
 export type SiteData = {
   contact: ContactSettings;
   services: ServiceItem[];
@@ -260,6 +275,7 @@ export type SiteData = {
   blogPosts: BlogPost[];
   images: ImageSettings;
   copy: CopyData;
+  navItems: NavItemSetting[];
   loading: boolean;
 };
 
@@ -310,6 +326,7 @@ const initialData: SiteData = {
   blogPosts: [],
   images: defaultImages,
   copy: defaultCopy,
+  navItems: defaultNavItems,
   loading: true,
 };
 
@@ -322,6 +339,7 @@ function mapSettings(settings: Record<string, unknown>): SiteData {
     faqs: (settings.faqs as FaqItem[]) ?? [],
     blogPosts: (settings.blog_posts as BlogPost[]) ?? [],
     images: settings.images ? { ...defaultImages, ...(settings.images as Partial<ImageSettings>) } : defaultImages,
+    navItems: (settings.nav_items as NavItemSetting[]) ?? defaultNavItems,
     copy: (() => {
       const s = settings.copy as Partial<CopyData> | undefined;
       if (!s) return defaultCopy;
