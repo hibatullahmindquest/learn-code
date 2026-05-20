@@ -276,8 +276,7 @@ const initialData: SiteData = {
   loading: true,
 };
 
-// ── Helper: convert raw site_settings rows into SiteData ─────────────────────
-export function buildSiteData(settings: Record<string, unknown>): SiteData {
+function mapSettings(settings: Record<string, unknown>): SiteData {
   return {
     contact: (settings.contact as ContactSettings) ?? defaultContact,
     services: (settings.services as ServiceItem[]) ?? defaultServices,
@@ -293,16 +292,18 @@ export function buildSiteData(settings: Record<string, unknown>): SiteData {
 
 const SiteDataContext = createContext<SiteData>(initialData);
 
-export function SiteDataProvider({ children, prefetched }: { children: ReactNode; prefetched?: SiteData }) {
-  const [data, setData] = useState<SiteData>(prefetched ?? initialData);
+export function SiteDataProvider({ children, prefetchedSettings }: { children: ReactNode; prefetchedSettings?: Record<string, unknown> }) {
+  const [data, setData] = useState<SiteData>(
+    prefetchedSettings ? mapSettings(prefetchedSettings) : initialData
+  );
 
   useEffect(() => {
-    if (prefetched) return;
+    if (prefetchedSettings) return;
     fetch('/api/settings')
       .then((r) => r.json())
-      .then((settings) => setData(buildSiteData(settings)))
+      .then((settings) => setData(mapSettings(settings)))
       .catch(() => setData((prev) => ({ ...prev, loading: false })));
-  }, [prefetched]);
+  }, [prefetchedSettings]);
 
   return <SiteDataContext.Provider value={data}>{children}</SiteDataContext.Provider>;
 }
