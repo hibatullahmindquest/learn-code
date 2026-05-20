@@ -30,6 +30,7 @@ export type ImageSettings = {
   hero: string;
   studio: string[];
   gallery: Array<{ url: string; label: string; span: string }>;
+  aboutPhotos: [string, string, string];
 };
 
 // ── Copy (all editable text strings) ─────────────────────────────────────────
@@ -200,6 +201,7 @@ const defaultContact: ContactSettings = {
 
 const defaultImages: ImageSettings = {
   hero: '/images/nuay-hero.avif',
+  aboutPhotos: ['/images/nuay-artist.png', '/images/nuay-studio-3.avif', '/images/nuay-studio-4.avif'],
   studio: [
     '/images/nuay-studio-1.avif',
     '/images/nuay-studio-2.avif',
@@ -248,7 +250,7 @@ export function SiteDataProvider({ children }: { children: ReactNode }) {
           artists: settings.artists ?? defaultArtists,
           testimonials: settings.testimonials ?? defaultTestimonials,
           faqs: settings.faqs ?? [],
-          images: settings.images ?? defaultImages,
+          images: settings.images ? { ...defaultImages, ...settings.images } : defaultImages,
           copy: settings.copy ? { ...defaultCopy, ...settings.copy } : defaultCopy,
           loading: false,
         });

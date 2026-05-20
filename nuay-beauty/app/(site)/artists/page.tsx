@@ -15,7 +15,7 @@ export default function ArtistsPage() {
   // Lightbox: { artistIndex, imageIndex }
   const [lightbox, setLightbox] = useState<{ ai: number; ii: number } | null>(null);
 
-  const currentGallery = lightbox !== null ? artists[lightbox.ai].gallery : [];
+  const currentGallery = lightbox !== null ? (artists[lightbox.ai].gallery ?? []) : [];
 
   const prevImage = useCallback(() => {
     setLightbox((lb) => lb ? { ...lb, ii: (lb.ii - 1 + currentGallery.length) % currentGallery.length } : null);
@@ -175,7 +175,7 @@ export default function ArtistsPage() {
                   </div>
 
                   {/* ── Mini Gallery Grid ── */}
-                  {artist.gallery.length > 0 && (
+                  {(artist.gallery ?? []).length > 0 && (
                     <div
                       className="reveal mb-8"
                       style={{ transform: 'translateY(24px)', '--delay': '0.24s' } as React.CSSProperties}
@@ -184,7 +184,7 @@ export default function ArtistsPage() {
                         {lang === 'en' ? 'Past Work' : 'Hasil Kerja'}
                       </p>
                       <div className="grid grid-cols-4 gap-2">
-                        {artist.gallery.slice(0, 4).map((src, gi) => (
+                        {(artist.gallery ?? []).slice(0, 4).map((src, gi) => (
                           <div
                             key={gi}
                             className="relative overflow-hidden rounded-xl cursor-pointer group/thumb"
@@ -204,7 +204,7 @@ export default function ArtistsPage() {
                                 style={{ background: 'rgba(28,28,28,0.6)' }}
                               >
                                 <span className="text-sm font-mono" style={{ color: 'var(--cream)' }}>
-                                  +{artist.gallery.length - 4}
+                                  +{(artist.gallery ?? []).length - 4}
                                 </span>
                               </div>
                             )}
