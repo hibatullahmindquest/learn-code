@@ -60,6 +60,17 @@ export type CopyData = {
     beliefPara2En: string; beliefPara2Bm: string;
     phoneNumber: string;
   };
+  usp: {
+    headingLine1En: string; headingLine1Bm: string;
+    headingLine2En: string; headingLine2Bm: string;
+    subtitleEn: string; subtitleBm: string;
+    pillar1TitleEn: string; pillar1TitleBm: string;
+    pillar1DescEn: string; pillar1DescBm: string;
+    pillar2TitleEn: string; pillar2TitleBm: string;
+    pillar2DescEn: string; pillar2DescBm: string;
+    pillar3TitleEn: string; pillar3TitleBm: string;
+    pillar3DescEn: string; pillar3DescBm: string;
+  };
   footer: {
     taglineEn: string; taglineBm: string;
     ctaHeadingEn: string; ctaHeadingBm: string;
@@ -104,6 +115,21 @@ export const defaultCopy: CopyData = {
     beliefPara2En: 'All products used at Nuay Beauty are water-permeable \u2014 they will not invalidate wudhu. This is not a marketing claim; it is our commitment.',
     beliefPara2Bm: 'Semua produk yang digunakan di Nuay Beauty boleh ditembusi air \u2014 ia tidak akan membatalkan wudhu. Ini bukan tuntutan pemasaran; ia adalah komitmen kami.',
     phoneNumber: '+60 11-5411 4028',
+  },
+  usp: {
+    headingLine1En: 'Beauty without', headingLine1Bm: 'Cantik tanpa',
+    headingLine2En: 'compromise.', headingLine2Bm: 'kompromi.',
+    subtitleEn: 'Every product we use is water-permeable. You leave our studio looking beautiful \u2014 and ready to pray.',
+    subtitleBm: 'Setiap produk kami boleh ditembusi air. Anda keluar dari studio dengan kecantikan \u2014 dan sedia untuk solat.',
+    pillar1TitleEn: 'Wudhu-Friendly, Always', pillar1TitleBm: 'Mesra Wudhu, Sentiasa',
+    pillar1DescEn: 'Every product \u2014 from lash adhesive to lip treatment \u2014 is water-permeable. No compromise, no exceptions.',
+    pillar1DescBm: 'Setiap produk \u2014 dari pelekat lash hingga rawatan bibir \u2014 boleh ditembusi air. Tiada kompromi, tiada pengecualian.',
+    pillar2TitleEn: 'Private & Dignified', pillar2TitleBm: 'Peribadi & Bermaruah',
+    pillar2DescEn: 'A calm, women-only space designed for your comfort, privacy, and peace of mind.',
+    pillar2DescBm: 'Ruang tenang khusus wanita, direka untuk keselesaan, privasi dan ketenangan anda.',
+    pillar3TitleEn: 'Certified Korean Technique', pillar3TitleBm: 'Teknik Korean Bersijil',
+    pillar3DescEn: 'Our artists are trained in advanced Korean lash and brow methods \u2014 precise, natural, lasting.',
+    pillar3DescBm: 'Artist kami terlatih dalam teknik Korean lash dan brow terkini \u2014 tepat, semula jadi, tahan lama.',
   },
   footer: {
     taglineEn: 'Premium beauty, wudhu-friendly.',
@@ -150,6 +176,17 @@ export function getCopy(copy: CopyData, lang: 'en' | 'bm') {
       beliefPara1: L(copy.about.beliefPara1En, copy.about.beliefPara1Bm),
       beliefPara2: L(copy.about.beliefPara2En, copy.about.beliefPara2Bm),
       phone: copy.about.phoneNumber,
+    },
+    usp: {
+      headingLine1: L(copy.usp.headingLine1En, copy.usp.headingLine1Bm),
+      headingLine2: L(copy.usp.headingLine2En, copy.usp.headingLine2Bm),
+      subtitle: L(copy.usp.subtitleEn, copy.usp.subtitleBm),
+      pillar1Title: L(copy.usp.pillar1TitleEn, copy.usp.pillar1TitleBm),
+      pillar1Desc: L(copy.usp.pillar1DescEn, copy.usp.pillar1DescBm),
+      pillar2Title: L(copy.usp.pillar2TitleEn, copy.usp.pillar2TitleBm),
+      pillar2Desc: L(copy.usp.pillar2DescEn, copy.usp.pillar2DescBm),
+      pillar3Title: L(copy.usp.pillar3TitleEn, copy.usp.pillar3TitleBm),
+      pillar3Desc: L(copy.usp.pillar3DescEn, copy.usp.pillar3DescBm),
     },
     footer: {
       tagline: L(copy.footer.taglineEn, copy.footer.taglineBm),
@@ -285,7 +322,17 @@ function mapSettings(settings: Record<string, unknown>): SiteData {
     faqs: (settings.faqs as FaqItem[]) ?? [],
     blogPosts: (settings.blog_posts as BlogPost[]) ?? [],
     images: settings.images ? { ...defaultImages, ...(settings.images as Partial<ImageSettings>) } : defaultImages,
-    copy: settings.copy ? { ...defaultCopy, ...(settings.copy as Partial<CopyData>) } : defaultCopy,
+    copy: (() => {
+      const s = settings.copy as Partial<CopyData> | undefined;
+      if (!s) return defaultCopy;
+      return {
+        hero: { ...defaultCopy.hero, ...s.hero },
+        sections: { ...defaultCopy.sections, ...s.sections },
+        about: { ...defaultCopy.about, ...s.about },
+        usp: { ...defaultCopy.usp, ...s.usp },
+        footer: { ...defaultCopy.footer, ...s.footer },
+      };
+    })(),
     loading: false,
   };
 }

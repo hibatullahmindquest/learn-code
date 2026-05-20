@@ -731,6 +731,29 @@ export default function AdminPage() {
                       <div><label className={LABEL}>FAQ Title (BM)</label><input className={INPUT} value={copy.sections.faqTitleBm} onChange={(e) => setCopy({ ...copy, sections: { ...copy.sections, faqTitleBm: e.target.value } })} /></div>
                     </div>
                   </div>
+                  <div className={SECTION}>
+                    <h2 className="font-semibold text-gray-800 mb-5">Our Promise Section</h2>
+                    <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                      <div><label className={LABEL}>Heading Line 1 (EN)</label><input className={INPUT} value={copy.usp.headingLine1En} onChange={(e) => setCopy({ ...copy, usp: { ...copy.usp, headingLine1En: e.target.value } })} /></div>
+                      <div><label className={LABEL}>Heading Line 1 (BM)</label><input className={INPUT} value={copy.usp.headingLine1Bm} onChange={(e) => setCopy({ ...copy, usp: { ...copy.usp, headingLine1Bm: e.target.value } })} /></div>
+                      <div><label className={LABEL}>Heading Line 2 — italic (EN)</label><input className={INPUT} value={copy.usp.headingLine2En} onChange={(e) => setCopy({ ...copy, usp: { ...copy.usp, headingLine2En: e.target.value } })} /></div>
+                      <div><label className={LABEL}>Heading Line 2 — italic (BM)</label><input className={INPUT} value={copy.usp.headingLine2Bm} onChange={(e) => setCopy({ ...copy, usp: { ...copy.usp, headingLine2Bm: e.target.value } })} /></div>
+                      <div><label className={LABEL}>Subtitle (EN)</label><textarea className={INPUT + ' h-16 resize-none'} value={copy.usp.subtitleEn} onChange={(e) => setCopy({ ...copy, usp: { ...copy.usp, subtitleEn: e.target.value } })} /></div>
+                      <div><label className={LABEL}>Subtitle (BM)</label><textarea className={INPUT + ' h-16 resize-none'} value={copy.usp.subtitleBm} onChange={(e) => setCopy({ ...copy, usp: { ...copy.usp, subtitleBm: e.target.value } })} /></div>
+                      <div><label className={LABEL}>Pillar 1 Title (EN)</label><input className={INPUT} value={copy.usp.pillar1TitleEn} onChange={(e) => setCopy({ ...copy, usp: { ...copy.usp, pillar1TitleEn: e.target.value } })} /></div>
+                      <div><label className={LABEL}>Pillar 1 Title (BM)</label><input className={INPUT} value={copy.usp.pillar1TitleBm} onChange={(e) => setCopy({ ...copy, usp: { ...copy.usp, pillar1TitleBm: e.target.value } })} /></div>
+                      <div><label className={LABEL}>Pillar 1 Description (EN)</label><textarea className={INPUT + ' h-16 resize-none'} value={copy.usp.pillar1DescEn} onChange={(e) => setCopy({ ...copy, usp: { ...copy.usp, pillar1DescEn: e.target.value } })} /></div>
+                      <div><label className={LABEL}>Pillar 1 Description (BM)</label><textarea className={INPUT + ' h-16 resize-none'} value={copy.usp.pillar1DescBm} onChange={(e) => setCopy({ ...copy, usp: { ...copy.usp, pillar1DescBm: e.target.value } })} /></div>
+                      <div><label className={LABEL}>Pillar 2 Title (EN)</label><input className={INPUT} value={copy.usp.pillar2TitleEn} onChange={(e) => setCopy({ ...copy, usp: { ...copy.usp, pillar2TitleEn: e.target.value } })} /></div>
+                      <div><label className={LABEL}>Pillar 2 Title (BM)</label><input className={INPUT} value={copy.usp.pillar2TitleBm} onChange={(e) => setCopy({ ...copy, usp: { ...copy.usp, pillar2TitleBm: e.target.value } })} /></div>
+                      <div><label className={LABEL}>Pillar 2 Description (EN)</label><textarea className={INPUT + ' h-16 resize-none'} value={copy.usp.pillar2DescEn} onChange={(e) => setCopy({ ...copy, usp: { ...copy.usp, pillar2DescEn: e.target.value } })} /></div>
+                      <div><label className={LABEL}>Pillar 2 Description (BM)</label><textarea className={INPUT + ' h-16 resize-none'} value={copy.usp.pillar2DescBm} onChange={(e) => setCopy({ ...copy, usp: { ...copy.usp, pillar2DescBm: e.target.value } })} /></div>
+                      <div><label className={LABEL}>Pillar 3 Title (EN)</label><input className={INPUT} value={copy.usp.pillar3TitleEn} onChange={(e) => setCopy({ ...copy, usp: { ...copy.usp, pillar3TitleEn: e.target.value } })} /></div>
+                      <div><label className={LABEL}>Pillar 3 Title (BM)</label><input className={INPUT} value={copy.usp.pillar3TitleBm} onChange={(e) => setCopy({ ...copy, usp: { ...copy.usp, pillar3TitleBm: e.target.value } })} /></div>
+                      <div><label className={LABEL}>Pillar 3 Description (EN)</label><textarea className={INPUT + ' h-16 resize-none'} value={copy.usp.pillar3DescEn} onChange={(e) => setCopy({ ...copy, usp: { ...copy.usp, pillar3DescEn: e.target.value } })} /></div>
+                      <div><label className={LABEL}>Pillar 3 Description (BM)</label><textarea className={INPUT + ' h-16 resize-none'} value={copy.usp.pillar3DescBm} onChange={(e) => setCopy({ ...copy, usp: { ...copy.usp, pillar3DescBm: e.target.value } })} /></div>
+                    </div>
+                  </div>
                   <button onClick={() => save('copy', copy)} className={BTN_SAVE}>Simpan Homepage Copy</button>
                 </div>
               )}

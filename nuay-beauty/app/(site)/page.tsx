@@ -345,43 +345,22 @@ export default function HomePage() {
                 className="reveal leading-none tracking-tight"
                 style={{ fontSize: 'var(--fs-section-title)', fontFamily: 'var(--font-cormorant), serif', fontWeight: 300, color: 'var(--cream)', transform: 'translateX(-24px)', '--delay': '0.08s' } as React.CSSProperties}
               >
-                {lang === 'en' ? (
-                  <>Beauty without<br /><span style={{ fontStyle: 'italic', fontWeight: 400 }}>compromise.</span></>
-                ) : (
-                  <>Cantik tanpa<br /><span style={{ fontStyle: 'italic', fontWeight: 400 }}>kompromi.</span></>
-                )}
+                {t.usp.headingLine1}<br /><span style={{ fontStyle: 'italic', fontWeight: 400 }}>{t.usp.headingLine2}</span>
               </h2>
               <p
                 className="reveal mt-6 text-sm leading-relaxed max-w-[34ch]"
                 style={{ color: 'rgba(245,239,230,0.42)', fontWeight: 300, transform: 'translateY(16px)', '--delay': '0.16s' } as React.CSSProperties}
               >
-                {lang === 'en'
-                  ? 'Every product we use is water-permeable. You leave our studio looking beautiful — and ready to pray.'
-                  : 'Setiap produk kami boleh ditembusi air. Anda keluar dari studio dengan kecantikan — dan sedia untuk solat.'}
+                {t.usp.subtitle}
               </p>
             </div>
 
             {/* Numbered pillars */}
             <div className="flex flex-col gap-12 md:gap-16">
               {[
-                {
-                  n: '01', icon: <Drop size={20} weight="fill" style={{ color: 'var(--gold)' }} />,
-                  titleEn: 'Wudhu-Friendly, Always', titleBm: 'Mesra Wudhu, Sentiasa',
-                  descEn: 'Every product — from lash adhesive to lip treatment — is water-permeable. No compromise, no exceptions.',
-                  descBm: 'Setiap produk — dari pelekat lash hingga rawatan bibir — boleh ditembusi air. Tiada kompromi, tiada pengecualian.',
-                },
-                {
-                  n: '02', icon: <Shield size={20} weight="fill" style={{ color: 'var(--gold)' }} />,
-                  titleEn: 'Private & Dignified', titleBm: 'Peribadi & Bermaruah',
-                  descEn: 'A calm, women-only space designed for your comfort, privacy, and peace of mind.',
-                  descBm: 'Ruang tenang khusus wanita, direka untuk keselesaan, privasi dan ketenangan anda.',
-                },
-                {
-                  n: '03', icon: <Star size={20} weight="fill" style={{ color: 'var(--gold)' }} />,
-                  titleEn: 'Certified Korean Technique', titleBm: 'Teknik Korean Bersijil',
-                  descEn: 'Our artists are trained in advanced Korean lash and brow methods — precise, natural, lasting.',
-                  descBm: 'Artist kami terlatih dalam teknik Korean lash dan brow terkini — tepat, semula jadi, tahan lama.',
-                },
+                { n: '01', icon: <Drop size={20} weight="fill" style={{ color: 'var(--gold)' }} />, title: t.usp.pillar1Title, desc: t.usp.pillar1Desc },
+                { n: '02', icon: <Shield size={20} weight="fill" style={{ color: 'var(--gold)' }} />, title: t.usp.pillar2Title, desc: t.usp.pillar2Desc },
+                { n: '03', icon: <Star size={20} weight="fill" style={{ color: 'var(--gold)' }} />, title: t.usp.pillar3Title, desc: t.usp.pillar3Desc },
               ].map((item, i) => (
                 <div
                   key={item.n}
@@ -398,10 +377,10 @@ export default function HomePage() {
                   </div>
                   <div className="mb-3">{item.icon}</div>
                   <h3 className="text-xl md:text-2xl mb-3" style={{ fontFamily: 'var(--font-cormorant), serif', fontWeight: 400, color: 'var(--cream)' }}>
-                    {lang === 'en' ? item.titleEn : item.titleBm}
+                    {item.title}
                   </h3>
                   <p className="text-sm leading-relaxed" style={{ color: 'rgba(245,239,230,0.42)' }}>
-                    {lang === 'en' ? item.descEn : item.descBm}
+                    {item.desc}
                   </p>
                 </div>
               ))}
