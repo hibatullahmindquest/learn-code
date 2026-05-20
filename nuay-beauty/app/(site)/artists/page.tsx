@@ -79,8 +79,8 @@ export default function ArtistsPage() {
               {lang === 'en' ? 'The Team' : 'Pasukan Kami'}
             </p>
             <h1
-              className="text-5xl md:text-6xl lg:text-7xl tracking-tight leading-none mb-6"
-              style={{ fontFamily: 'var(--font-cormorant), serif', fontWeight: 300, color: 'var(--cream)' }}
+              className="tracking-tight leading-none mb-6"
+              style={{ fontSize: 'var(--fs-page-title)', fontFamily: 'var(--font-cormorant), serif', fontWeight: 300, color: 'var(--cream)' }}
             >
               {lang === 'en' ? (
                 <>Meet Our <span style={{ fontStyle: 'italic', fontWeight: 400 }}>Artists</span></>
@@ -143,8 +143,8 @@ export default function ArtistsPage() {
                       {lang === 'en' ? artist.roleEn : artist.roleBm}
                     </p>
                     <h2
-                      className="text-5xl md:text-6xl tracking-tight leading-none mb-6"
-                      style={{ fontFamily: 'var(--font-cormorant), serif', fontWeight: 300, color: 'var(--charcoal)' }}
+                      className="tracking-tight leading-none mb-6"
+                      style={{ fontSize: 'var(--fs-page-title)', fontFamily: 'var(--font-cormorant), serif', fontWeight: 300, color: 'var(--charcoal)' }}
                     >
                       {artist.name}
                     </h2>

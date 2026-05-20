@@ -81,8 +81,8 @@ export default function GalleryPage() {
               {lang === 'en' ? 'Real Results' : 'Keputusan Sebenar'}
             </p>
             <h1
-              className="text-5xl md:text-6xl lg:text-7xl tracking-tight leading-none mb-6"
-              style={{ fontFamily: 'var(--font-cormorant), serif', fontWeight: 300, color: 'var(--cream)' }}
+              className="tracking-tight leading-none mb-6"
+              style={{ fontSize: 'var(--fs-page-title)', fontFamily: 'var(--font-cormorant), serif', fontWeight: 300, color: 'var(--cream)' }}
             >
               {lang === 'en' ? (
                 <>Our <span style={{ fontStyle: 'italic', fontWeight: 400 }}>Work</span></>
@@ -158,8 +158,8 @@ export default function GalleryPage() {
               {lang === 'en' ? 'See More Work' : 'Lihat Lebih Banyak'}
             </p>
             <h2
-              className="text-3xl md:text-4xl tracking-tight leading-none"
-              style={{ fontFamily: 'var(--font-cormorant), serif', fontWeight: 300, color: 'var(--cream)' }}
+              className="tracking-tight leading-none"
+              style={{ fontSize: 'var(--fs-cta-title)', fontFamily: 'var(--font-cormorant), serif', fontWeight: 300, color: 'var(--cream)' }}
             >
               {lang === 'en' ? (
                 <>Follow us on <span style={{ fontStyle: 'italic', fontWeight: 400 }}>Instagram</span></>

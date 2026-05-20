@@ -106,8 +106,8 @@ export default function ServicesPage() {
               {lang === 'en' ? 'Full Menu' : 'Menu Penuh'}
             </p>
             <h1
-              className="text-5xl md:text-6xl lg:text-7xl tracking-tight leading-none mb-6"
-              style={{ fontFamily: 'var(--font-cormorant), serif', fontWeight: 300, color: 'var(--cream)' }}
+              className="tracking-tight leading-none mb-6"
+              style={{ fontSize: 'var(--fs-page-title)', fontFamily: 'var(--font-cormorant), serif', fontWeight: 300, color: 'var(--cream)' }}
             >
               {lang === 'en' ? (
                 <>Our <span style={{ fontStyle: 'italic', fontWeight: 400 }}>Services</span></>
@@ -185,8 +185,8 @@ export default function ServicesPage() {
                     {lang === 'en' ? 'Category' : 'Kategori'}
                   </p>
                   <h2
-                    className="text-4xl md:text-5xl tracking-tight leading-none"
-                    style={{ fontFamily: 'var(--font-cormorant), serif', fontWeight: 300, color: 'var(--charcoal)' }}
+                    className="tracking-tight leading-none"
+                    style={{ fontSize: 'var(--fs-section-title)', fontFamily: 'var(--font-cormorant), serif', fontWeight: 300, color: 'var(--charcoal)' }}
                   >
                     {label}
                   </h2>
@@ -278,8 +278,8 @@ export default function ServicesPage() {
               {lang === 'en' ? 'Not sure which to choose?' : 'Tak pasti nak pilih yang mana?'}
             </p>
             <h2
-              className="text-3xl md:text-4xl lg:text-5xl mb-4 leading-tight"
-              style={{ fontFamily: 'var(--font-cormorant), serif', fontWeight: 300, color: 'var(--cream)' }}
+              className="mb-4 leading-tight"
+              style={{ fontSize: 'var(--fs-cta-title)', fontFamily: 'var(--font-cormorant), serif', fontWeight: 300, color: 'var(--cream)' }}
             >
               {lang === 'en' ? (
                 <>Let us <span style={{ fontStyle: 'italic', fontWeight: 400 }}>guide</span> you.</>

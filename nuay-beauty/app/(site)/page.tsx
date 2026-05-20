@@ -117,8 +117,8 @@ export default function HomePage() {
               {t.hero.tagline}
             </p>
             <h1
-              className="text-5xl md:text-6xl xl:text-7xl 2xl:text-8xl leading-none tracking-tight mb-7"
-              style={{ fontFamily: 'var(--font-cormorant), serif', fontWeight: 300, color: 'var(--cream)' }}
+              className="leading-none tracking-tight mb-7"
+              style={{ fontSize: 'var(--fs-hero)', fontFamily: 'var(--font-cormorant), serif', fontWeight: 300, color: 'var(--cream)' }}
             >
               {lang === 'en' ? (
                 <>Feel Beautiful,<br /><span style={{ fontStyle: 'italic', fontWeight: 400 }}>Stay Pure.</span></>
@@ -215,8 +215,8 @@ export default function HomePage() {
               {lang === 'en' ? 'What We Offer' : 'Apa Yang Kami Tawarkan'}
             </p>
             <h2
-              className="text-4xl md:text-5xl tracking-tight leading-none"
-              style={{ fontFamily: 'var(--font-cormorant), serif', fontWeight: 300, color: 'var(--charcoal)' }}
+              className="tracking-tight leading-none"
+              style={{ fontSize: 'var(--fs-section-title)', fontFamily: 'var(--font-cormorant), serif', fontWeight: 300, color: 'var(--charcoal)' }}
             >
               {t.services.title}
             </h2>
@@ -342,8 +342,8 @@ export default function HomePage() {
                 {lang === 'en' ? 'Our Promise' : 'Janji Kami'}
               </p>
               <h2
-                className="reveal text-4xl md:text-5xl lg:text-[3.4rem] leading-none tracking-tight"
-                style={{ fontFamily: 'var(--font-cormorant), serif', fontWeight: 300, color: 'var(--cream)', transform: 'translateX(-24px)', '--delay': '0.08s' } as React.CSSProperties}
+                className="reveal leading-none tracking-tight"
+                style={{ fontSize: 'var(--fs-section-title)', fontFamily: 'var(--font-cormorant), serif', fontWeight: 300, color: 'var(--cream)', transform: 'translateX(-24px)', '--delay': '0.08s' } as React.CSSProperties}
               >
                 {lang === 'en' ? (
                   <>Beauty without<br /><span style={{ fontStyle: 'italic', fontWeight: 400 }}>compromise.</span></>
@@ -472,7 +472,7 @@ export default function HomePage() {
             <p className="text-xs tracking-[0.38em] uppercase mb-3" style={{ color: 'var(--gold)' }}>
               {lang === 'en' ? 'Client Stories' : 'Cerita Pelanggan'}
             </p>
-            <h2 className="text-4xl md:text-5xl tracking-tight leading-none" style={{ fontFamily: 'var(--font-cormorant), serif', fontWeight: 300, color: 'var(--cream)' }}>
+            <h2 className="tracking-tight leading-none" style={{ fontSize: 'var(--fs-section-title)', fontFamily: 'var(--font-cormorant), serif', fontWeight: 300, color: 'var(--cream)' }}>
               {t.testimonials.title}
             </h2>
           </div>

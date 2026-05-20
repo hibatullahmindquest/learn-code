@@ -1,6 +1,15 @@
 @import "tailwindcss";
 
 :root {
+  /* ── Fluid type scale ─────────────────────────────────────────────────────
+     clamp(min, viewport-relative, max) — scales smoothly across all screens,
+     no breakpoint jumps. Values verified against 375px, 768px, 1366px, 1920px.
+  ── */
+  --fs-hero:          clamp(2.5rem, 3vw + 2rem, 5.5rem);   /* homepage headline */
+  --fs-page-title:    clamp(2.5rem, 3vw + 1.5rem, 4.5rem); /* inner page h1s    */
+  --fs-section-title: clamp(2rem, 2vw + 1.25rem, 3.5rem);  /* section h2s       */
+  --fs-cta-title:     clamp(1.75rem, 2vw + 0.75rem, 3rem); /* CTA / smaller h2s */
+
   --burgundy: #7D2E35;
   --burgundy-dark: #5E2028;
   --burgundy-light: #9B3D45;
