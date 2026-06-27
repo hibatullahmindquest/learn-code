@@ -660,6 +660,12 @@ export default function HeroPage() {
           --font-cormorant: 'Poppins', sans-serif;
           --font-outfit: 'Poppins', sans-serif;
         }
+        body.nuay-hero-fonts header nav {
+          gap: 3rem !important;
+        }
+        body.nuay-hero-fonts header nav a {
+          font-weight: 700 !important;
+        }
       `}</style>
     </div>
   );
