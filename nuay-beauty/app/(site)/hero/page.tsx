@@ -664,7 +664,7 @@ export default function HeroPage() {
           gap: 3rem !important;
         }
         body.nuay-hero-fonts header nav a {
-          font-weight: 700 !important;
+          font-weight: 600 !important;
         }
         body.nuay-hero-fonts footer > div:first-child {
           display: none !important;
