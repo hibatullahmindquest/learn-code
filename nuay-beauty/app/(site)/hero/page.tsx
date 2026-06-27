@@ -666,6 +666,9 @@ export default function HeroPage() {
         body.nuay-hero-fonts header nav a {
           font-weight: 700 !important;
         }
+        body.nuay-hero-fonts footer > div:first-child {
+          display: none !important;
+        }
       `}</style>
     </div>
   );
