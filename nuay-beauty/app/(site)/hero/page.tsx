@@ -2,27 +2,154 @@
 
 import { useEffect, useState } from 'react';
 import Image from 'next/image';
-import { Libre_Baskerville } from 'next/font/google';
-import { GeistSans } from 'geist/font/sans';
-import { ArrowUpRight, Plus, Minus, Star } from '@phosphor-icons/react';
+import { Cormorant_Garamond, Poppins } from 'next/font/google';
+import { ArrowUpRight, Star } from '@phosphor-icons/react';
 import { useLang } from '@/components/LanguageContext';
 import { BOOKING_URL, services, artists, testimonials, faqs } from '@/lib/data';
 
-// Page-scoped fonts — duplicated from sseraskin.webflow.io reference:
-// Libre Baskerville for headings, Geist for nav/body. Scoped to this page
-// only so the rest of the site keeps its existing Cormorant/Outfit fonts.
-const baskerville = Libre_Baskerville({
+// Page-scoped fonts + tokens, ported from the Nuay Beauty Design System
+// (Cormorant Garamond display / Poppins body) — scoped to this page only so
+// the rest of the site keeps its existing fonts/palette.
+const display = Cormorant_Garamond({
   subsets: ['latin'],
-  weight: ['400', '700'],
+  weight: ['400', '500', '600', '700'],
   style: ['normal', 'italic'],
-  variable: '--font-libre-baskerville',
+  variable: '--font-nuay-display',
   display: 'swap',
 });
 
-const HEADING = { fontFamily: 'var(--font-libre-baskerville), serif' };
+const body = Poppins({
+  subsets: ['latin'],
+  weight: ['300', '400', '500', '600', '700'],
+  variable: '--font-nuay-body',
+  display: 'swap',
+});
+
+const TOKENS = {
+  '--wine-950': '#2E0F0F',
+  '--wine-900': '#3A1414',
+  '--wine-800': '#4E1818',
+  '--wine-700': '#5E1F1F',
+  '--wine-600': '#6A2E2E',
+  '--gold-600': '#B0884F',
+  '--gold-500': '#C8A97E',
+  '--gold-300': '#DCC6A4',
+  '--gold-100': '#EFE4D2',
+  '--ink-950': '#1A1410',
+  '--ink-800': '#2B2320',
+  '--ink-600': '#5A4F47',
+  '--ink-400': '#8A7E74',
+  '--sand-500': '#E5DDD5',
+  '--beige-100': '#F5F0EA',
+  '--beige-50': '#F9F6F3',
+  '--line': '#E5DDD3',
+  '--radius-button': '3px',
+  '--radius-card': '8px',
+  '--radius-surface': '16px',
+  '--radius-image': '20px',
+  '--shadow-md': '0 8px 24px rgba(46, 28, 22, 0.07)',
+  '--shadow-lg': '0 18px 48px rgba(46, 28, 22, 0.10)',
+  '--shadow-wine': '0 18px 44px rgba(94, 31, 31, 0.22)',
+  '--ease-out': 'cubic-bezier(0.16, 1, 0.3, 1)',
+} as React.CSSProperties;
+
+const DISPLAY = { fontFamily: 'var(--font-nuay-display), serif' };
+const BODY = { fontFamily: 'var(--font-nuay-body), sans-serif' };
+
+function Eyebrow({ children, tone = 'wine' }: { children: React.ReactNode; tone?: 'wine' | 'gold' | 'onWine' }) {
+  const colors = { wine: 'var(--wine-700)', gold: 'var(--gold-600)', onWine: 'var(--gold-300)' };
+  return (
+    <span
+      style={{
+        ...BODY,
+        display: 'block',
+        fontSize: 12,
+        fontWeight: 500,
+        letterSpacing: '0.18em',
+        textTransform: 'uppercase',
+        color: colors[tone],
+      }}
+    >
+      {children}
+    </span>
+  );
+}
+
+function SectionHead({
+  eyebrow,
+  title,
+  sub,
+  center,
+}: {
+  eyebrow: string;
+  title: React.ReactNode;
+  sub?: string;
+  center?: boolean;
+}) {
+  return (
+    <div
+      style={{
+        textAlign: center ? 'center' : 'left',
+        maxWidth: center ? 660 : 'none',
+        margin: center ? '0 auto 56px' : '0 0 48px',
+      }}
+    >
+      <Eyebrow tone="gold">{eyebrow}</Eyebrow>
+      <h2
+        style={{
+          ...DISPLAY,
+          fontSize: 'clamp(2rem, 1.4vw + 1.6rem, 3.5rem)',
+          fontWeight: 600,
+          lineHeight: 1.08,
+          color: 'var(--ink-950)',
+          margin: '14px 0 0',
+        }}
+      >
+        {title}
+      </h2>
+      {sub && (
+        <p style={{ ...BODY, fontSize: 18, lineHeight: 1.65, color: 'var(--ink-600)', margin: '16px 0 0' }}>{sub}</p>
+      )}
+    </div>
+  );
+}
+
+function Section({
+  children,
+  alt,
+  style = {},
+}: {
+  children: React.ReactNode;
+  alt?: boolean;
+  style?: React.CSSProperties;
+}) {
+  return (
+    <section style={{ background: alt ? 'var(--beige-50)' : 'transparent', padding: '96px 24px', ...style }}>
+      <div style={{ maxWidth: 1280, margin: '0 auto' }}>{children}</div>
+    </section>
+  );
+}
+
+function PriceBadge({ value }: { value: number }) {
+  return (
+    <span
+      style={{
+        ...BODY,
+        fontWeight: 700,
+        fontSize: 15,
+        letterSpacing: '0.02em',
+        color: 'var(--wine-700)',
+        fontVariantNumeric: 'tabular-nums',
+      }}
+    >
+      RM{value.toFixed(2)}
+    </span>
+  );
+}
 
 export default function HeroPage() {
   const { lang } = useLang();
+  const en = lang === 'en';
 
   useEffect(() => {
     const observer = new IntersectionObserver(
@@ -36,45 +163,454 @@ export default function HeroPage() {
       },
       { threshold: 0.08, rootMargin: '0px 0px -50px 0px' }
     );
-    document.querySelectorAll('.hero-reveal').forEach((el) => observer.observe(el));
+    document.querySelectorAll('.nuay-reveal').forEach((el) => observer.observe(el));
     return () => observer.disconnect();
   }, []);
 
   const [openFaq, setOpenFaq] = useState<number | null>(null);
+  const [pos, setPos] = useState(50);
 
-  const featured = services.slice(0, 2);
-  const categories = [
-    { svc: services.find((s) => s.category === 'lash')!, labelEn: 'Lash', labelBm: 'Lash' },
-    { svc: services.find((s) => s.category === 'brow')!, labelEn: 'Brow', labelBm: 'Kening' },
-    { svc: services.find((s) => s.category === 'lip')!, labelEn: 'Lips', labelBm: 'Bibir' },
-    { svc: services.find((s) => s.category === 'facial')!, labelEn: 'Facial', labelBm: 'Wajah' },
-  ];
-  const signature = [services[0], services[5], services[6]];
-  const loop = [...testimonials, ...testimonials, ...testimonials];
+  const featured = services.slice(0, 3);
+  const loop = [...testimonials, ...testimonials];
 
   return (
     <div
-      className={`${baskerville.variable} ${GeistSans.variable}`}
-      style={{ background: 'var(--cream)', fontFamily: 'var(--font-geist-sans), sans-serif' }}
+      className={`${display.variable} ${body.variable}`}
+      style={{ ...TOKENS, ...BODY, background: 'var(--sand-500)' }}
     >
       {/* ── Hero ───────────────────────────────────────────────────────── */}
-      <section
-        className="grid grid-cols-1 md:grid-cols-2 pt-16"
-        style={{ background: 'var(--burgundy-dark)' }}
-      >
-        <div className="flex flex-col justify-center px-8 lg:px-16 py-20 md:py-0">
-          <h1
-            className="text-4xl md:text-5xl lg:text-6xl leading-[1.05] mb-6"
-            style={{ ...HEADING, color: 'var(--cream)', fontWeight: 400 }}
+      <section style={{ position: 'relative', minHeight: 620, overflow: 'hidden' }}>
+        <Image
+          src="/images/nuay-reception.webp"
+          alt="Nuay Beauty studio"
+          fill
+          priority
+          style={{ objectFit: 'cover' }}
+        />
+        <div
+          style={{
+            position: 'absolute',
+            inset: 0,
+            background:
+              'linear-gradient(90deg, rgba(26,20,16,0.66) 0%, rgba(26,20,16,0.32) 55%, rgba(26,20,16,0.08) 100%)',
+          }}
+        />
+        <div
+          style={{
+            position: 'relative',
+            maxWidth: 1280,
+            margin: '0 auto',
+            minHeight: 620,
+            padding: '0 24px',
+            display: 'flex',
+            flexDirection: 'column',
+            justifyContent: 'center',
+          }}
+        >
+          <div style={{ maxWidth: 600 }}>
+            <Eyebrow tone="onWine">{en ? 'Where Beauty Meets Sincerity' : 'Di Mana Kecantikan Bertemu Keikhlasan'}</Eyebrow>
+            <h1
+              style={{
+                ...DISPLAY,
+                fontSize: 'clamp(2.75rem, 3vw + 2rem, 5.25rem)',
+                fontWeight: 600,
+                lineHeight: 1.03,
+                color: 'var(--beige-50)',
+                margin: '20px 0 0',
+              }}
+            >
+              {en ? (
+                <>Feel Beautiful, <span style={{ fontStyle: 'italic', color: 'var(--gold-300)' }}>Stay Pure.</span></>
+              ) : (
+                <>Rasa Cantik, <span style={{ fontStyle: 'italic', color: 'var(--gold-300)' }}>Kekal Suci.</span></>
+              )}
+            </h1>
+            <p style={{ ...BODY, fontSize: 18, lineHeight: 1.65, color: 'rgba(249,246,243,0.82)', margin: '24px 0 36px', maxWidth: 460 }}>
+              {en
+                ? 'Specialist lash, brow & wellness treatments crafted for the modern Muslimah — every product wudhu-friendly.'
+                : 'Rawatan lash, brow & wellness pakar yang direka untuk Muslimah moden — setiap produk mesra wudhu.'}
+            </p>
+            <div style={{ display: 'flex', gap: 16, flexWrap: 'wrap' }}>
+              <a
+                href={BOOKING_URL}
+                target="_blank"
+                rel="noopener noreferrer"
+                style={{
+                  ...BODY,
+                  display: 'inline-flex',
+                  alignItems: 'center',
+                  gap: 8,
+                  padding: '14px 28px',
+                  borderRadius: 'var(--radius-button)',
+                  background: 'var(--wine-700)',
+                  color: 'var(--beige-50)',
+                  fontSize: 13,
+                  fontWeight: 600,
+                  letterSpacing: '0.12em',
+                  textTransform: 'uppercase',
+                  transition: 'background var(--dur-base, 280ms) var(--ease-out)',
+                }}
+              >
+                {en ? 'Reserve Your Appointment' : 'Tempah Temujanji'}
+              </a>
+              <a
+                href="#services"
+                style={{
+                  ...BODY,
+                  display: 'inline-flex',
+                  alignItems: 'center',
+                  gap: 8,
+                  padding: '14px 28px',
+                  borderRadius: 'var(--radius-button)',
+                  border: '1px solid rgba(249,246,243,0.5)',
+                  color: 'var(--beige-50)',
+                  fontSize: 13,
+                  fontWeight: 600,
+                  letterSpacing: '0.12em',
+                  textTransform: 'uppercase',
+                }}
+              >
+                {en ? 'View Our Services' : 'Lihat Servis Kami'}
+              </a>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      {/* ── Stats ──────────────────────────────────────────────────────── */}
+      <section style={{ background: 'var(--wine-700)', padding: '56px 24px' }}>
+        <div style={{ maxWidth: 1280, margin: '0 auto', display: 'grid', gridTemplateColumns: 'repeat(4, 1fr)', gap: 24 }}>
+          {[
+            { value: '2k+', labelEn: 'Happy Clients', labelBm: 'Pelanggan Gembira' },
+            { value: '100%', labelEn: 'Wudhu-Friendly', labelBm: 'Mesra Wudhu' },
+            { value: '3', labelEn: 'Specialist Artists', labelBm: 'Artist Pakar' },
+            { value: '4.9', labelEn: 'Average Rating', labelBm: 'Penilaian Purata' },
+          ].map((s, i) => (
+            <div key={i} style={{ textAlign: 'center', borderLeft: i ? '1px solid rgba(200,169,126,0.28)' : 'none' }}>
+              <div style={{ ...DISPLAY, fontSize: 'clamp(1.75rem, 1vw + 1.4rem, 2.75rem)', fontWeight: 600, color: 'var(--gold-300)', lineHeight: 1 }}>
+                {s.value}
+              </div>
+              <div style={{ ...BODY, fontSize: 11, letterSpacing: '0.16em', textTransform: 'uppercase', color: 'rgba(249,246,243,0.7)', marginTop: 10 }}>
+                {en ? s.labelEn : s.labelBm}
+              </div>
+            </div>
+          ))}
+        </div>
+      </section>
+
+      {/* ── Featured Services ─────────────────────────────────────────── */}
+      <Section alt style={{ paddingTop: '110px' }}>
+        <div id="services" style={{ display: 'flex', alignItems: 'flex-end', justifyContent: 'space-between', flexWrap: 'wrap', gap: 16, marginBottom: 48 }}>
+          <SectionHead
+            eyebrow={en ? 'Signature Treatments' : 'Rawatan Istimewa'}
+            title={en ? 'Featured Services' : 'Servis Pilihan'}
+          />
+        </div>
+        <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(280px, 1fr))', gap: 24 }}>
+          {featured.map((s, idx) => (
+            <a
+              key={s.id}
+              href={BOOKING_URL}
+              target="_blank"
+              rel="noopener noreferrer"
+              className="nuay-card"
+              style={{
+                display: 'block',
+                background: 'var(--white, #fff)',
+                borderRadius: 'var(--radius-card)',
+                overflow: 'hidden',
+                boxShadow: 'var(--shadow-md)',
+                transition: 'transform 280ms var(--ease-out), box-shadow 280ms var(--ease-out)',
+              }}
+            >
+              <div style={{ aspectRatio: '4 / 3', background: 'var(--beige-100)', overflow: 'hidden' }}>
+                <Image
+                  src={['/images/nuay-studio-1.avif', '/images/nuay-studio-2.avif', '/images/nuay-studio-3.avif'][idx % 3]}
+                  alt={en ? s.nameEn : s.nameBm}
+                  width={400}
+                  height={300}
+                  style={{ width: '100%', height: '100%', objectFit: 'cover', display: 'block' }}
+                />
+              </div>
+              <div style={{ padding: 24 }}>
+                <Eyebrow tone="gold">{s.category}</Eyebrow>
+                <h3 style={{ ...DISPLAY, fontSize: 24, fontWeight: 500, color: 'var(--ink-950)', margin: '8px 0 6px' }}>
+                  {en ? s.nameEn : s.nameBm}
+                </h3>
+                <p style={{ ...BODY, fontSize: 14, color: 'var(--ink-600)', margin: '0 0 18px', lineHeight: 1.55 }}>
+                  {en ? s.descEn : s.descBm}
+                </p>
+                <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between' }}>
+                  <span
+                    style={{
+                      ...BODY,
+                      fontSize: 10.5,
+                      letterSpacing: '0.1em',
+                      textTransform: 'uppercase',
+                      color: 'var(--ink-600)',
+                      background: 'var(--beige-100)',
+                      border: '1px solid var(--line)',
+                      borderRadius: 'var(--radius-sm, 4px)',
+                      padding: '4px 8px',
+                    }}
+                  >
+                    {s.duration}
+                  </span>
+                  <PriceBadge value={s.price} />
+                </div>
+              </div>
+            </a>
+          ))}
+        </div>
+      </Section>
+
+      {/* ── Before / After ─────────────────────────────────────────────── */}
+      <Section>
+        <SectionHead
+          center
+          eyebrow={en ? 'The Difference' : 'Perbezaannya'}
+          title={en ? 'Before & After' : 'Sebelum & Selepas'}
+          sub={en ? 'Drag to reveal the refinement of a single session.' : 'Seret untuk lihat hasil selepas satu sesi.'}
+        />
+        <div
+          style={{
+            position: 'relative',
+            maxWidth: 920,
+            margin: '0 auto',
+            aspectRatio: '16 / 9',
+            borderRadius: 'var(--radius-image)',
+            overflow: 'hidden',
+            boxShadow: 'var(--shadow-lg)',
+            userSelect: 'none',
+          }}
+        >
+          <Image src="/images/nuay-lounge.webp" alt="After" fill style={{ objectFit: 'cover' }} />
+          <div style={{ position: 'absolute', inset: 0, width: `${pos}%`, overflow: 'hidden' }}>
+            <div style={{ position: 'relative', width: `${100 / (pos / 100)}%`, height: '100%' }}>
+              <Image
+                src="/images/nuay-reception.webp"
+                alt="Before"
+                fill
+                style={{ objectFit: 'cover', filter: 'saturate(0.7) brightness(0.92)' }}
+              />
+            </div>
+            <span
+              style={{
+                position: 'absolute',
+                left: 18,
+                bottom: 16,
+                ...BODY,
+                fontSize: 11,
+                letterSpacing: '0.16em',
+                color: 'var(--beige-50)',
+                background: 'rgba(26,20,16,0.5)',
+                padding: '5px 10px',
+                borderRadius: 3,
+              }}
+            >
+              {en ? 'BEFORE' : 'SEBELUM'}
+            </span>
+          </div>
+          <span
+            style={{
+              position: 'absolute',
+              right: 18,
+              bottom: 16,
+              ...BODY,
+              fontSize: 11,
+              letterSpacing: '0.16em',
+              color: 'var(--beige-50)',
+              background: 'rgba(94,31,31,0.7)',
+              padding: '5px 10px',
+              borderRadius: 3,
+            }}
           >
-            {lang === 'en' ? (
-              <>Gentle Hands,<br />Confident Beauty.</>
+            {en ? 'AFTER' : 'SELEPAS'}
+          </span>
+          <div style={{ position: 'absolute', top: 0, bottom: 0, left: `${pos}%`, width: 2, background: 'var(--beige-50)', transform: 'translateX(-1px)' }}>
+            <div
+              style={{
+                position: 'absolute',
+                top: '50%',
+                left: '50%',
+                transform: 'translate(-50%,-50%)',
+                width: 44,
+                height: 44,
+                borderRadius: '50%',
+                background: 'var(--beige-50)',
+                boxShadow: 'var(--shadow-md)',
+                display: 'flex',
+                alignItems: 'center',
+                justifyContent: 'center',
+                fontSize: 14,
+                color: 'var(--wine-700)',
+              }}
+            >
+              ↔
+            </div>
+          </div>
+          <input
+            type="range"
+            min="0"
+            max="100"
+            value={pos}
+            onChange={(e) => setPos(+e.target.value)}
+            style={{ position: 'absolute', inset: 0, width: '100%', height: '100%', opacity: 0, cursor: 'ew-resize', margin: 0 }}
+          />
+        </div>
+      </Section>
+
+      {/* ── Why Choose ─────────────────────────────────────────────────── */}
+      <Section alt>
+        <div style={{ display: 'grid', gridTemplateColumns: '0.9fr 1.1fr', gap: 56, alignItems: 'center' }} className="nuay-why-grid">
+          <div style={{ borderRadius: 'var(--radius-image)', overflow: 'hidden', boxShadow: 'var(--shadow-lg)', position: 'relative', aspectRatio: '4/5' }}>
+            <Image src="/images/nuay-lounge.webp" alt="The Nuay studio" fill style={{ objectFit: 'cover' }} />
+          </div>
+          <div>
+            <SectionHead eyebrow={en ? 'Why Nuay' : 'Kenapa Nuay'} title={en ? 'A standard you can feel' : 'Standard yang anda boleh rasa'} />
+            <div style={{ display: 'grid', gap: 26 }}>
+              {[
+                { t: en ? 'Wudhu-Friendly, Always' : 'Mesra Wudhu, Sentiasa', d: en ? 'Every product used is water-permeable — beauty without compromising your worship.' : 'Setiap produk boleh ditembusi air — cantik tanpa mengorbankan ibadah anda.' },
+                { t: en ? 'Specialist Artists Only' : 'Hanya Artist Pakar', d: en ? 'Every guest is paired with a vetted specialist for precise, gentle results.' : 'Setiap pelanggan dipadankan dengan pakar berkemahiran untuk hasil yang teliti dan lembut.' },
+                { t: en ? 'Calm, Private Studio' : 'Studio Tenang & Peribadi', d: en ? 'A cozy, unhurried space designed for full relaxation.' : 'Ruang selesa dan tenang direka untuk relaksasi sepenuhnya.' },
+                { t: en ? 'Clean by Design' : 'Bersih Mengikut Reka Bentuk', d: en ? 'A clean, professional environment for every visit.' : 'Persekitaran bersih dan profesional pada setiap lawatan.' },
+              ].map((p, i) => (
+                <div key={i} style={{ display: 'flex', gap: 18, paddingBottom: 26, borderBottom: i < 3 ? '1px solid var(--line)' : 'none' }}>
+                  <div style={{ ...BODY, fontSize: 14, color: 'var(--gold-600)', flexShrink: 0, paddingTop: 4 }}>0{i + 1}</div>
+                  <div>
+                    <h3 style={{ ...DISPLAY, fontSize: 22, fontWeight: 500, color: 'var(--ink-950)', margin: 0 }}>{p.t}</h3>
+                    <p style={{ ...BODY, fontSize: 15, color: 'var(--ink-600)', margin: '6px 0 0', lineHeight: 1.6 }}>{p.d}</p>
+                  </div>
+                </div>
+              ))}
+            </div>
+          </div>
+        </div>
+      </Section>
+
+      {/* ── Testimonials ───────────────────────────────────────────────── */}
+      <Section>
+        <SectionHead center eyebrow={en ? 'In Their Words' : 'Kata Mereka'} title={en ? 'Held in high regard' : 'Dipandang tinggi'} />
+        <div style={{ overflow: 'hidden' }}>
+          <div
+            style={{ display: 'flex', gap: 24, animation: 'marquee 32s linear infinite', width: 'max-content' }}
+          >
+            {loop.map((t, i) => (
+              <div
+                key={i}
+                style={{
+                  width: 340,
+                  flexShrink: 0,
+                  background: 'var(--beige-100)',
+                  borderRadius: 'var(--radius-surface)',
+                  padding: 32,
+                  boxShadow: 'var(--shadow-md)',
+                }}
+              >
+                <div style={{ display: 'flex', gap: 3, marginBottom: 18 }}>
+                  {Array.from({ length: t.rating }).map((_, j) => (
+                    <Star key={j} size={15} weight="fill" color="var(--wine-700)" />
+                  ))}
+                </div>
+                <p style={{ ...DISPLAY, fontStyle: 'italic', fontSize: 19, color: 'var(--ink-800)', margin: '0 0 24px', lineHeight: 1.4 }}>
+                  &ldquo;{en ? t.text : t.textBm}&rdquo;
+                </p>
+                <div style={{ ...BODY, fontSize: 14, fontWeight: 700, color: 'var(--ink-950)' }}>{t.name}</div>
+                <div style={{ ...BODY, fontSize: 11, letterSpacing: '0.08em', textTransform: 'uppercase', color: 'var(--ink-400)', marginTop: 4 }}>
+                  {t.service}
+                </div>
+              </div>
+            ))}
+          </div>
+        </div>
+      </Section>
+
+      {/* ── Artists ─────────────────────────────────────────────────────── */}
+      <Section alt>
+        <SectionHead center eyebrow={en ? 'Meet Your Artists' : 'Kenali Artist Kami'} title={en ? 'Held with care' : 'Dijaga dengan teliti'} />
+        <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(260px, 1fr))', gap: 24 }}>
+          {artists.map((a) => (
+            <div key={a.id} style={{ background: 'var(--white, #fff)', borderRadius: 'var(--radius-card)', overflow: 'hidden', boxShadow: 'var(--shadow-md)' }}>
+              <div style={{ position: 'relative', aspectRatio: '4/5' }}>
+                <Image src={a.image} alt={a.name} fill style={{ objectFit: 'cover' }} />
+              </div>
+              <div style={{ padding: 24 }}>
+                <h3 style={{ ...DISPLAY, fontSize: 24, fontWeight: 500, color: 'var(--ink-950)', margin: 0 }}>{a.name}</h3>
+                <p style={{ ...BODY, fontSize: 12, letterSpacing: '0.1em', textTransform: 'uppercase', color: 'var(--gold-600)', margin: '6px 0 14px' }}>
+                  {en ? a.roleEn : a.roleBm}
+                </p>
+                <p style={{ ...BODY, fontSize: 14, color: 'var(--ink-600)', margin: 0, lineHeight: 1.6 }}>{en ? a.bioEn : a.bioBm}</p>
+              </div>
+            </div>
+          ))}
+        </div>
+      </Section>
+
+      {/* ── FAQ ─────────────────────────────────────────────────────────── */}
+      <Section>
+        <div style={{ maxWidth: 820, margin: '0 auto' }}>
+          <SectionHead center eyebrow={en ? 'Good to Know' : 'Perlu Tahu'} title={en ? 'Questions, answered' : 'Soalan, dijawab'} />
+          <div style={{ borderTop: '1px solid var(--line)' }}>
+            {faqs.map((f, i) => (
+              <div key={i} style={{ borderBottom: '1px solid var(--line)' }}>
+                <button
+                  onClick={() => setOpenFaq(openFaq === i ? null : i)}
+                  style={{
+                    width: '100%',
+                    display: 'flex',
+                    alignItems: 'center',
+                    justifyContent: 'space-between',
+                    gap: 24,
+                    padding: '24px 4px',
+                    background: 'none',
+                    border: 'none',
+                    cursor: 'pointer',
+                    textAlign: 'left',
+                  }}
+                >
+                  <span style={{ ...DISPLAY, fontSize: 20, fontWeight: 500, color: 'var(--ink-950)' }}>
+                    {en ? f.questionEn : f.questionBm}
+                  </span>
+                  <ArrowUpRight
+                    size={18}
+                    color="var(--gold-600)"
+                    style={{ flexShrink: 0, transform: openFaq === i ? 'rotate(135deg)' : 'none', transition: 'transform 280ms var(--ease-out)' }}
+                  />
+                </button>
+                <div style={{ maxHeight: openFaq === i ? 240 : 0, overflow: 'hidden', transition: 'max-height 280ms var(--ease-out)' }}>
+                  <p style={{ ...BODY, fontSize: 15, color: 'var(--ink-600)', margin: 0, padding: '0 4px 26px', lineHeight: 1.65 }}>
+                    {en ? f.answerEn : f.answerBm}
+                  </p>
+                </div>
+              </div>
+            ))}
+          </div>
+        </div>
+      </Section>
+
+      {/* ── Final CTA ───────────────────────────────────────────────────── */}
+      <section style={{ padding: '0 24px 96px' }}>
+        <div
+          style={{
+            maxWidth: 1280,
+            margin: '0 auto',
+            background: 'var(--wine-700)',
+            borderRadius: 24,
+            padding: '80px 24px',
+            textAlign: 'center',
+            boxShadow: 'var(--shadow-wine)',
+          }}
+        >
+          <Eyebrow tone="onWine">{en ? 'Reserve Your Ritual' : 'Tempah Sekarang'}</Eyebrow>
+          <h2 style={{ ...DISPLAY, fontSize: 'clamp(1.75rem, 1.6vw + 1.4rem, 3rem)', fontWeight: 600, color: 'var(--beige-50)', margin: '16px 0 0' }}>
+            {en ? (
+              <>Your appointment, <span style={{ fontStyle: 'italic', color: 'var(--gold-300)' }}>kept for you</span></>
             ) : (
-              <>Tangan Lembut,<br />Kecantikan Yakin.</>
+              <>Temujanji anda, <span style={{ fontStyle: 'italic', color: 'var(--gold-300)' }}>terjaga untuk anda</span></>
             )}
-          </h1>
-          <p className="text-sm leading-relaxed mb-8 max-w-xs" style={{ color: 'rgba(245,239,230,0.65)' }}>
-            {lang === 'en'
+          </h2>
+          <p style={{ ...BODY, fontSize: 16, color: 'rgba(249,246,243,0.78)', margin: '18px auto 32px', maxWidth: 480, lineHeight: 1.65 }}>
+            {en
               ? 'Specialist lash, brow & wellness treatments — every product wudhu-friendly.'
               : 'Rawatan lash, brow & wellness pakar — setiap produk mesra wudhu.'}
           </p>
@@ -82,273 +618,37 @@ export default function HeroPage() {
             href={BOOKING_URL}
             target="_blank"
             rel="noopener noreferrer"
-            className="inline-flex items-center gap-2 w-fit px-7 py-3 rounded-full text-sm tracking-wide transition-all duration-200 active:scale-95"
-            style={{ background: 'var(--cream)', color: 'var(--burgundy)', fontWeight: 500 }}
+            style={{
+              ...BODY,
+              display: 'inline-flex',
+              alignItems: 'center',
+              gap: 8,
+              padding: '14px 32px',
+              borderRadius: 'var(--radius-button)',
+              background: 'var(--gold-500)',
+              color: 'var(--ink-950)',
+              fontSize: 13,
+              fontWeight: 600,
+              letterSpacing: '0.12em',
+              textTransform: 'uppercase',
+            }}
           >
-            {lang === 'en' ? 'Book Now' : 'Tempah Sekarang'}
+            {en ? 'Reserve Your Appointment' : 'Tempah Temujanji'}
           </a>
         </div>
-
-        <div className="relative" style={{ minHeight: 420 }}>
-          <Image
-            src="https://picsum.photos/seed/nuay-hero-portrait/900/1100"
-            alt="Nuay Beauty client"
-            fill
-            className="object-cover"
-            priority
-          />
-          <div
-            className="absolute bottom-6 right-6 left-6 md:left-auto md:w-64 rounded-xl p-4 shadow-xl"
-            style={{ background: 'var(--surface)' }}
-          >
-            <p className="text-[10px] tracking-[0.2em] uppercase mb-1" style={{ color: 'var(--burgundy)' }}>
-              {lang === 'en' ? 'Featured Treatment' : 'Rawatan Pilihan'}
-            </p>
-            <p className="text-sm mb-2" style={{ ...HEADING, color: 'var(--charcoal)' }}>
-              {featured[0].nameEn}
-            </p>
-            <a
-              href={BOOKING_URL}
-              target="_blank"
-              rel="noopener noreferrer"
-              className="text-xs inline-flex items-center gap-1"
-              style={{ color: 'var(--burgundy)', fontWeight: 500 }}
-            >
-              {lang === 'en' ? 'Shop Now' : 'Tempah'} <ArrowUpRight size={12} />
-            </a>
-          </div>
-        </div>
       </section>
 
-      {/* ── Just In ────────────────────────────────────────────────────── */}
-      <section className="py-20 px-6 lg:px-10 max-w-5xl mx-auto text-center hero-reveal" style={{ '--delay': '0s' } as React.CSSProperties}>
-        <p className="text-xs tracking-[0.3em] uppercase mb-3" style={{ color: 'var(--gold)' }}>
-          {lang === 'en' ? 'Just In' : 'Terkini'}
-        </p>
-        <h2 className="text-3xl md:text-4xl mb-12" style={{ ...HEADING, color: 'var(--charcoal)', fontWeight: 400 }}>
-          {lang === 'en' ? 'Fresh Glow Essentials' : 'Rawatan Glow Terbaharu'}
-        </h2>
-        <div className="grid grid-cols-1 md:grid-cols-2 gap-6 text-left">
-          {featured.map((svc) => (
-            <div key={svc.id} className="flex items-center gap-5 rounded-xl p-5" style={{ background: 'var(--cream-dark)' }}>
-              <div className="relative w-24 h-24 rounded-lg overflow-hidden flex-shrink-0">
-                <Image src={`https://picsum.photos/seed/${svc.id}/200/200`} alt={svc.nameEn} fill className="object-cover" />
-              </div>
-              <div>
-                <p className="text-base mb-1" style={{ ...HEADING, color: 'var(--charcoal)' }}>{lang === 'en' ? svc.nameEn : svc.nameBm}</p>
-                <p className="text-xs mb-2" style={{ color: 'var(--muted)' }}>{svc.duration}</p>
-                <p className="text-sm font-medium" style={{ color: 'var(--burgundy)' }}>RM {svc.price}</p>
-              </div>
-            </div>
-          ))}
-        </div>
-      </section>
-
-      {/* ── Find the Perfect Treatment ────────────────────────────────── */}
-      <section className="py-20 px-6 lg:px-10 max-w-7xl mx-auto hero-reveal">
-        <h2 className="text-3xl md:text-4xl mb-12 text-center" style={{ ...HEADING, color: 'var(--charcoal)', fontWeight: 400 }}>
-          {lang === 'en' ? 'Find the Perfect Treatment for You' : 'Cari Rawatan Sesuai untuk Anda'}
-        </h2>
-        <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
-          {categories.map((c) => (
-            <div key={c.svc.id} className="relative rounded-xl overflow-hidden group" style={{ aspectRatio: '3/4' }}>
-              <Image src={`https://picsum.photos/seed/cat-${c.svc.id}/300/400`} alt={c.labelEn} fill className="object-cover transition-transform duration-500 group-hover:scale-105" />
-              <div className="absolute inset-0" style={{ background: 'linear-gradient(to top, rgba(28,28,28,0.7), transparent 50%)' }} />
-              <p className="absolute bottom-4 left-4 text-sm tracking-wide" style={{ ...HEADING, color: 'var(--cream)' }}>
-                {lang === 'en' ? c.labelEn : c.labelBm}
-              </p>
-            </div>
-          ))}
-        </div>
-      </section>
-
-      {/* ── Testimonials marquee ───────────────────────────────────────── */}
-      <section className="py-20 overflow-hidden hero-reveal" style={{ background: 'var(--beige)' }}>
-        <h2 className="text-3xl md:text-4xl mb-12 text-center px-6" style={{ ...HEADING, color: 'var(--charcoal)', fontWeight: 400 }}>
-          {lang === 'en' ? 'What Nuay Lovers Are Saying' : 'Kata Pelanggan Nuay'}
-        </h2>
-        <div className="w-full overflow-hidden">
-          <div className="flex gap-5 w-fit" style={{ animation: 'marquee 28s linear infinite' }}>
-            {loop.map((t, i) => (
-              <div key={i} className="rounded-xl p-6 flex-shrink-0" style={{ background: 'var(--surface)', width: 300 }}>
-                <div className="flex items-center gap-3 mb-4">
-                  <div className="relative w-10 h-10 rounded-full overflow-hidden">
-                    <Image src={t.image} alt={t.name} fill className="object-cover" />
-                  </div>
-                  <div>
-                    <p className="text-sm font-medium" style={{ color: 'var(--charcoal)' }}>{t.name}</p>
-                    <p className="text-xs" style={{ color: 'var(--muted)' }}>{t.location}</p>
-                  </div>
-                </div>
-                <div className="flex gap-0.5 mb-3">
-                  {Array.from({ length: t.rating }).map((_, j) => (
-                    <Star key={j} size={12} weight="fill" style={{ color: 'var(--gold)' }} />
-                  ))}
-                </div>
-                <p className="text-sm leading-relaxed" style={{ color: 'var(--charcoal-mid)' }}>
-                  {lang === 'en' ? t.text : t.textBm}
-                </p>
-              </div>
-            ))}
-          </div>
-        </div>
-      </section>
-
-      {/* ── Signature Treatments ──────────────────────────────────────── */}
-      <section className="py-20 px-6 lg:px-10 max-w-5xl mx-auto hero-reveal">
-        <h2 className="text-3xl md:text-4xl mb-12 text-center" style={{ ...HEADING, color: 'var(--charcoal)', fontWeight: 400 }}>
-          {lang === 'en' ? 'Signature Treatments' : 'Rawatan Signature'}
-        </h2>
-        <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
-          {signature.map((svc) => (
-            <div key={svc.id} className="text-center">
-              <div className="relative rounded-xl overflow-hidden mb-4" style={{ aspectRatio: '4/5' }}>
-                <Image src={`https://picsum.photos/seed/sig-${svc.id}/300/375`} alt={svc.nameEn} fill className="object-cover" />
-              </div>
-              <p className="text-lg mb-1" style={{ ...HEADING, color: 'var(--charcoal)' }}>{lang === 'en' ? svc.nameEn : svc.nameBm}</p>
-              <p className="text-sm" style={{ color: 'var(--burgundy)' }}>RM {svc.price}</p>
-            </div>
-          ))}
-        </div>
-      </section>
-
-      {/* ── Full-bleed CTA banner ──────────────────────────────────────── */}
-      <section className="relative hero-reveal" style={{ minHeight: 420 }}>
-        <Image src="https://picsum.photos/seed/nuay-cta-banner/1600/700" alt="Nuay Beauty treatment" fill className="object-cover" />
-        <div className="absolute inset-0 flex items-center justify-center px-6">
-          <div className="rounded-xl p-8 text-center max-w-sm" style={{ background: 'var(--surface)' }}>
-            <p className="text-xs tracking-[0.2em] uppercase mb-3" style={{ color: 'var(--gold)' }}>
-              {lang === 'en' ? 'Begin Your Routine' : 'Mulakan Rawatan Anda'}
-            </p>
-            <h3 className="text-2xl mb-5" style={{ ...HEADING, color: 'var(--charcoal)', fontWeight: 400 }}>
-              {lang === 'en' ? 'Ready to Start Your Nuay Journey?' : 'Sedia untuk Mulakan Perjalanan Nuay Anda?'}
-            </h3>
-            <a
-              href={BOOKING_URL}
-              target="_blank"
-              rel="noopener noreferrer"
-              className="inline-block px-7 py-3 rounded-full text-sm tracking-wide"
-              style={{ background: 'var(--burgundy)', color: 'var(--cream)', fontWeight: 500 }}
-            >
-              {lang === 'en' ? 'Book Now' : 'Tempah Sekarang'}
-            </a>
-          </div>
-        </div>
-      </section>
-
-      {/* ── Loved by the Community ──────────────────────────────────────── */}
-      <section className="py-20 px-6 lg:px-10 max-w-7xl mx-auto hero-reveal">
-        <h2 className="text-3xl md:text-4xl mb-12 text-center" style={{ ...HEADING, color: 'var(--charcoal)', fontWeight: 400 }}>
-          {lang === 'en' ? 'Loved by the Nuay Community' : 'Disayangi Komuniti Nuay'}
-        </h2>
-        <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
-          {artists.concat(artists.slice(0, 1)).slice(0, 4).map((a, i) => (
-            <div key={i} className="text-center">
-              <div className="relative rounded-xl overflow-hidden mb-3" style={{ aspectRatio: '3/4' }}>
-                <Image src={`https://picsum.photos/seed/loved-${a.id}-${i}/300/400`} alt={a.name} fill className="object-cover" />
-                <span
-                  className="absolute top-2 left-2 text-[10px] tracking-wide uppercase px-2 py-1 rounded-full"
-                  style={{ background: 'var(--burgundy)', color: 'var(--cream)' }}
-                >
-                  {lang === 'en' ? 'Specialist' : 'Pakar'}
-                </span>
-              </div>
-              <p className="text-sm" style={{ ...HEADING, color: 'var(--charcoal)' }}>{a.name}</p>
-            </div>
-          ))}
-        </div>
-      </section>
-
-      {/* ── Limited Offers ──────────────────────────────────────────────── */}
-      <section className="py-20 px-6 lg:px-10 max-w-6xl mx-auto hero-reveal">
-        <h2 className="text-3xl md:text-4xl mb-12 text-center" style={{ ...HEADING, color: 'var(--charcoal)', fontWeight: 400 }}>
-          {lang === 'en' ? 'Limited Offers for Your Best Skin Yet' : 'Tawaran Terhad untuk Kulit Terbaik Anda'}
-        </h2>
-        <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-          <div className="relative rounded-xl overflow-hidden" style={{ minHeight: 220 }}>
-            <Image src="https://picsum.photos/seed/offer-1/700/450" alt="New client offer" fill className="object-cover" />
-            <div className="absolute inset-0" style={{ background: 'rgba(28,28,28,0.45)' }} />
-            <div className="absolute bottom-6 left-6">
-              <p className="text-3xl mb-2" style={{ ...HEADING, color: 'var(--cream)' }}>-20% Off</p>
-              <p className="text-sm mb-4" style={{ color: 'rgba(245,239,230,0.8)' }}>
-                {lang === 'en' ? 'For first-time clients' : 'Untuk pelanggan baharu'}
-              </p>
-              <a href={BOOKING_URL} target="_blank" rel="noopener noreferrer" className="inline-block px-5 py-2 rounded-full text-xs tracking-wide" style={{ background: 'var(--cream)', color: 'var(--charcoal)' }}>
-                {lang === 'en' ? 'Book Now' : 'Tempah'}
-              </a>
-            </div>
-          </div>
-          <div className="relative rounded-xl overflow-hidden" style={{ minHeight: 220 }}>
-            <Image src="https://picsum.photos/seed/offer-2/700/450" alt="Bundle offer" fill className="object-cover" />
-            <div className="absolute inset-0" style={{ background: 'rgba(28,28,28,0.45)' }} />
-            <div className="absolute bottom-6 left-6">
-              <p className="text-3xl mb-2" style={{ ...HEADING, color: 'var(--cream)' }}>{lang === 'en' ? 'Free Add-On' : 'Add-On Percuma'}</p>
-              <p className="text-sm mb-4" style={{ color: 'rgba(245,239,230,0.8)' }}>
-                {lang === 'en' ? 'On bookings above RM200' : 'Untuk tempahan atas RM200'}
-              </p>
-              <a href={BOOKING_URL} target="_blank" rel="noopener noreferrer" className="inline-block px-5 py-2 rounded-full text-xs tracking-wide" style={{ background: 'var(--cream)', color: 'var(--charcoal)' }}>
-                {lang === 'en' ? 'Book Now' : 'Tempah'}
-              </a>
-            </div>
-          </div>
-        </div>
-      </section>
-
-      {/* ── Why Clients Love Nuay ───────────────────────────────────────── */}
-      <section className="py-20 px-6 lg:px-10 max-w-7xl mx-auto hero-reveal">
-        <h2 className="text-3xl md:text-4xl mb-12 text-center" style={{ ...HEADING, color: 'var(--charcoal)', fontWeight: 400 }}>
-          {lang === 'en' ? 'Why Clients Love Nuay' : 'Mengapa Pelanggan Sayang Nuay'}
-        </h2>
-        <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
-          <div className="relative rounded-xl overflow-hidden md:row-span-2" style={{ aspectRatio: '3/4' }}>
-            <Image src="https://picsum.photos/seed/why-1/400/600" alt="Studio" fill className="object-cover" />
-          </div>
-          {[
-            { titleEn: 'Mesra Wudhu', titleBm: 'Mesra Wudhu', descEn: 'Every product is water-permeable.', descBm: 'Setiap produk boleh ditembusi air.' },
-            { titleEn: 'Private Studio', titleBm: 'Studio Peribadi', descEn: 'A calm, comfortable space just for you.', descBm: 'Ruang tenang dan selesa khusus untuk anda.' },
-            { titleEn: 'Expert Artists', titleBm: 'Artist Pakar', descEn: 'Skilled specialists for every treatment.', descBm: 'Pakar berkemahiran untuk setiap rawatan.' },
-          ].map((f, i) => (
-            <div key={i} className="rounded-xl p-6" style={{ background: 'var(--cream-dark)' }}>
-              <p className="text-lg mb-2" style={{ ...HEADING, color: 'var(--burgundy)' }}>{lang === 'en' ? f.titleEn : f.titleBm}</p>
-              <p className="text-sm leading-relaxed" style={{ color: 'var(--muted)' }}>{lang === 'en' ? f.descEn : f.descBm}</p>
-            </div>
-          ))}
-        </div>
-      </section>
-
-      {/* ── Help Center / FAQ ────────────────────────────────────────────── */}
-      <section className="py-20 px-6 lg:px-10 hero-reveal" style={{ background: 'var(--cream-dark)' }}>
-        <div className="max-w-3xl mx-auto">
-          <h2 className="text-3xl md:text-4xl mb-12 text-center" style={{ ...HEADING, color: 'var(--charcoal)', fontWeight: 400 }}>
-            {lang === 'en' ? 'Nuay Help Center' : 'Pusat Bantuan Nuay'}
-          </h2>
-          <div className="flex flex-col">
-            {faqs.map((faq, i) => (
-              <div
-                key={i}
-                className="py-5 cursor-pointer"
-                style={{ borderTop: '1px solid var(--beige)' }}
-                onClick={() => setOpenFaq(openFaq === i ? null : i)}
-              >
-                <div className="flex items-start justify-between gap-4">
-                  <h3 className="text-base leading-snug" style={{ ...HEADING, color: 'var(--charcoal)', fontWeight: 400 }}>
-                    {lang === 'en' ? faq.questionEn : faq.questionBm}
-                  </h3>
-                  {openFaq === i
-                    ? <Minus size={18} style={{ color: 'var(--burgundy)', flexShrink: 0, marginTop: 3 }} />
-                    : <Plus size={18} style={{ color: 'var(--muted)', flexShrink: 0, marginTop: 3 }} />}
-                </div>
-                {openFaq === i && (
-                  <p className="text-sm leading-relaxed mt-3" style={{ color: 'var(--muted)' }}>
-                    {lang === 'en' ? faq.answerEn : faq.answerBm}
-                  </p>
-                )}
-              </div>
-            ))}
-            <div style={{ borderTop: '1px solid var(--beige)' }} />
-          </div>
-        </div>
-      </section>
+      <style jsx global>{`
+        .nuay-card:hover {
+          transform: translateY(-4px);
+          box-shadow: var(--shadow-lg);
+        }
+        @media (max-width: 860px) {
+          .nuay-why-grid {
+            grid-template-columns: 1fr !important;
+          }
+        }
+      `}</style>
     </div>
   );
 }
