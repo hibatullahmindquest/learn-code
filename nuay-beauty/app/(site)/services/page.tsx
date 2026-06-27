@@ -211,26 +211,38 @@ export default function ServicesPage() {
                       onMouseEnter={(e) => (e.currentTarget.style.background = 'var(--surface)')}
                       onMouseLeave={(e) => (e.currentTarget.style.background = 'transparent')}
                     >
-                      <div className="flex-1">
-                        <div className="flex items-center gap-3 mb-1.5">
-                          <h3
-                            className="text-xl md:text-[1.35rem]"
-                            style={{ fontFamily: 'var(--font-cormorant), serif', fontWeight: 400, color: 'var(--charcoal)' }}
-                          >
-                            {lang === 'en' ? svc.nameEn : svc.nameBm}
-                          </h3>
-                          {svc.badge && (
-                            <span
-                              className="text-[9px] tracking-widest uppercase px-2.5 py-0.5 rounded-full"
-                              style={{ background: 'var(--burgundy)', color: 'var(--cream)' }}
+                      <div className="flex items-center gap-4 flex-1 min-w-0">
+                        {svc.image && (
+                          <div className="relative w-16 h-16 rounded-xl overflow-hidden flex-shrink-0 hidden sm:block">
+                            <Image src={svc.image} alt={lang === 'en' ? svc.nameEn : svc.nameBm} fill className="object-cover" />
+                          </div>
+                        )}
+                        <div className="flex-1 min-w-0">
+                          <div className="flex items-center gap-3 mb-1.5">
+                            <h3
+                              className="text-xl md:text-[1.35rem]"
+                              style={{ fontFamily: 'var(--font-cormorant), serif', fontWeight: 400, color: 'var(--charcoal)' }}
                             >
-                              {svc.badge}
-                            </span>
+                              {lang === 'en' ? svc.nameEn : svc.nameBm}
+                            </h3>
+                            {svc.badge && (
+                              <span
+                                className="text-[9px] tracking-widest uppercase px-2.5 py-0.5 rounded-full"
+                                style={{ background: 'var(--burgundy)', color: 'var(--cream)' }}
+                              >
+                                {svc.badge}
+                              </span>
+                            )}
+                          </div>
+                          <p className="text-sm leading-relaxed max-w-lg" style={{ color: 'var(--muted)' }}>
+                            {lang === 'en' ? svc.descEn : svc.descBm}
+                          </p>
+                          {(lang === 'en' ? svc.longevityEn : svc.longevityBm) && (
+                            <p className="text-xs mt-1" style={{ color: 'var(--gold)' }}>
+                              {lang === 'en' ? svc.longevityEn : svc.longevityBm}
+                            </p>
                           )}
                         </div>
-                        <p className="text-sm leading-relaxed max-w-lg" style={{ color: 'var(--muted)' }}>
-                          {lang === 'en' ? svc.descEn : svc.descBm}
-                        </p>
                       </div>
 
                       <div className="flex items-center gap-6 md:gap-8 flex-shrink-0">
@@ -246,7 +258,7 @@ export default function ServicesPage() {
                           </p>
                         </div>
                         <a
-                          href={BOOKING_URL}
+                          href={svc.bookingUrl || BOOKING_URL}
                           target="_blank"
                           rel="noopener noreferrer"
                           className="flex items-center gap-1.5 text-sm px-5 py-2.5 rounded-full transition-all duration-200 active:scale-[0.97] whitespace-nowrap"
