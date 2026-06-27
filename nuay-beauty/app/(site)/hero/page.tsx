@@ -130,13 +130,22 @@ function Section({
   );
 }
 
+function Rating({ score }: { score: number }) {
+  return (
+    <span style={{ display: 'inline-flex', alignItems: 'center', gap: 7 }}>
+      <Star size={14} weight="fill" color="var(--wine-700)" />
+      <span style={{ ...BODY, fontSize: 14, fontWeight: 700, color: 'var(--ink-950)' }}>{score.toFixed(1)}</span>
+    </span>
+  );
+}
+
 function PriceBadge({ value }: { value: number }) {
   return (
     <span
       style={{
         ...BODY,
         fontWeight: 700,
-        fontSize: 15,
+        fontSize: 18,
         letterSpacing: '0.02em',
         color: 'var(--wine-700)',
         fontVariantNumeric: 'tabular-nums',
@@ -243,38 +252,39 @@ export default function HeroPage() {
                 href={BOOKING_URL}
                 target="_blank"
                 rel="noopener noreferrer"
+                className="nuay-btn nuay-btn-primary"
                 style={{
                   ...BODY,
                   display: 'inline-flex',
                   alignItems: 'center',
-                  gap: 8,
+                  gap: 10,
                   padding: '14px 28px',
                   borderRadius: 'var(--radius-button)',
                   background: 'var(--wine-700)',
                   color: 'var(--beige-50)',
                   fontSize: 13,
                   fontWeight: 600,
-                  letterSpacing: '0.12em',
+                  letterSpacing: '0.14em',
                   textTransform: 'uppercase',
-                  transition: 'background var(--dur-base, 280ms) var(--ease-out)',
                 }}
               >
                 {en ? 'Reserve Your Appointment' : 'Tempah Temujanji'}
               </a>
               <a
                 href="#services"
+                className="nuay-btn nuay-btn-ghost-onwine"
                 style={{
                   ...BODY,
                   display: 'inline-flex',
                   alignItems: 'center',
-                  gap: 8,
+                  gap: 10,
                   padding: '14px 28px',
                   borderRadius: 'var(--radius-button)',
                   border: '1px solid rgba(249,246,243,0.5)',
                   color: 'var(--beige-50)',
                   fontSize: 13,
                   fontWeight: 600,
-                  letterSpacing: '0.12em',
+                  letterSpacing: '0.14em',
                   textTransform: 'uppercase',
                 }}
               >
@@ -325,30 +335,39 @@ export default function HeroPage() {
               style={{
                 display: 'block',
                 background: 'var(--white, #fff)',
-                borderRadius: 'var(--radius-card)',
+                borderRadius: 'var(--radius-surface)',
                 overflow: 'hidden',
-                boxShadow: 'var(--shadow-md)',
+                boxShadow: 'var(--shadow-sm, var(--shadow-md))',
                 transition: 'transform 280ms var(--ease-out), box-shadow 280ms var(--ease-out)',
               }}
             >
-              <div style={{ aspectRatio: '4 / 3', background: 'var(--beige-100)', overflow: 'hidden' }}>
+              <div className="nuay-card-image" style={{ aspectRatio: '4 / 3', background: 'var(--beige-100)', overflow: 'hidden' }}>
                 <Image
                   src={['/images/nuay-studio-1.avif', '/images/nuay-studio-2.avif', '/images/nuay-studio-3.avif'][idx % 3]}
                   alt={en ? s.nameEn : s.nameBm}
                   width={400}
                   height={300}
-                  style={{ width: '100%', height: '100%', objectFit: 'cover', display: 'block' }}
+                  style={{ width: '100%', height: '100%', objectFit: 'cover', display: 'block', transition: 'transform 520ms var(--ease-out)' }}
                 />
               </div>
-              <div style={{ padding: 24 }}>
+              <div style={{ padding: '22px 24px 26px' }}>
                 <Eyebrow tone="gold">{s.category}</Eyebrow>
-                <h3 style={{ ...DISPLAY, fontSize: 24, fontWeight: 500, color: 'var(--ink-950)', margin: '8px 0 6px' }}>
+                <h3 style={{ ...DISPLAY, fontSize: 26, fontWeight: 500, color: 'var(--ink-950)', margin: '8px 0 6px', lineHeight: 1.1 }}>
                   {en ? s.nameEn : s.nameBm}
                 </h3>
-                <p style={{ ...BODY, fontSize: 14, color: 'var(--ink-600)', margin: '0 0 18px', lineHeight: 1.55 }}>
+                <p style={{ ...BODY, fontSize: 14, color: 'var(--ink-600)', margin: '0 0 16px', lineHeight: 1.55 }}>
                   {en ? s.descEn : s.descBm}
                 </p>
-                <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between' }}>
+                <div
+                  style={{
+                    display: 'flex',
+                    alignItems: 'center',
+                    justifyContent: 'space-between',
+                    marginTop: 8,
+                    paddingTop: 16,
+                    borderTop: '1px solid var(--line)',
+                  }}
+                >
                   <span
                     style={{
                       ...BODY,
@@ -359,7 +378,7 @@ export default function HeroPage() {
                       background: 'var(--beige-100)',
                       border: '1px solid var(--line)',
                       borderRadius: 'var(--radius-sm, 4px)',
-                      padding: '4px 8px',
+                      padding: '5px 11px',
                     }}
                   >
                     {s.duration}
@@ -515,10 +534,8 @@ export default function HeroPage() {
                   boxShadow: 'var(--shadow-md)',
                 }}
               >
-                <div style={{ display: 'flex', gap: 3, marginBottom: 18 }}>
-                  {Array.from({ length: t.rating }).map((_, j) => (
-                    <Star key={j} size={15} weight="fill" color="var(--wine-700)" />
-                  ))}
+                <div style={{ marginBottom: 18 }}>
+                  <Rating score={t.rating} />
                 </div>
                 <p style={{ ...DISPLAY, fontStyle: 'italic', fontSize: 19, color: 'var(--ink-800)', margin: '0 0 24px', lineHeight: 1.4 }}>
                   &ldquo;{en ? t.text : t.textBm}&rdquo;
@@ -626,18 +643,19 @@ export default function HeroPage() {
             href={BOOKING_URL}
             target="_blank"
             rel="noopener noreferrer"
+            className="nuay-btn nuay-btn-gold"
             style={{
               ...BODY,
               display: 'inline-flex',
               alignItems: 'center',
-              gap: 8,
-              padding: '14px 32px',
+              gap: 12,
+              padding: '18px 38px',
               borderRadius: 'var(--radius-button)',
               background: 'var(--gold-500)',
               color: 'var(--ink-950)',
-              fontSize: 13,
+              fontSize: 14,
               fontWeight: 600,
-              letterSpacing: '0.12em',
+              letterSpacing: '0.16em',
               textTransform: 'uppercase',
             }}
           >
@@ -650,6 +668,23 @@ export default function HeroPage() {
         .nuay-card:hover {
           transform: translateY(-4px);
           box-shadow: var(--shadow-lg);
+        }
+        .nuay-card:hover .nuay-card-image img {
+          transform: scale(1.05);
+        }
+        .nuay-btn {
+          transition: background var(--dur-fast, 160ms) var(--ease-out), color var(--dur-fast, 160ms) var(--ease-out),
+            border-color var(--dur-fast, 160ms) var(--ease-out);
+        }
+        .nuay-btn-primary:hover {
+          background: var(--wine-800) !important;
+        }
+        .nuay-btn-ghost-onwine:hover {
+          background: rgba(249, 246, 243, 0.12) !important;
+          border-color: var(--beige-50) !important;
+        }
+        .nuay-btn-gold:hover {
+          background: var(--gold-600) !important;
         }
         @media (max-width: 860px) {
           .nuay-why-grid {
