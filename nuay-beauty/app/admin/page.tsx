@@ -42,9 +42,16 @@ type Service = {
   descBm: string;
   price: number;
   duration: string;
+  longevityEn: string;
+  longevityBm: string;
+  image: string;
   badge: string | null;
+  bookingUrl: string | null;
+  featured: boolean;
   published: boolean;
 };
+
+const SERVICE_DEFAULTS = { longevityEn: '', longevityBm: '', image: '', bookingUrl: null, featured: false };
 
 type GalleryImage = { url: string; label: string; span: string };
 
@@ -207,7 +214,7 @@ export default function AdminPage() {
     const data = await res.json();
     if (data.contact) setContact(data.contact);
     if (data.artists) setArtists(data.artists);
-    if (data.services) setServices(data.services);
+    if (data.services) setServices((data.services as Service[]).map((s) => ({ ...SERVICE_DEFAULTS, ...s })));
     if (data.images) setImages({ hero: '', featuredService: '', studio: ['', '', '', '', ''], gallery: [], aboutPhotos: ['', '', ''], ...data.images });
     if (data.faqs) setFaqs(data.faqs);
     if (data.testimonials) setTestimonials(data.testimonials);
@@ -544,6 +551,9 @@ export default function AdminPage() {
                       <span className={`text-xs px-2 py-0.5 rounded-full font-medium ${svc.published !== false ? 'bg-green-100 text-green-700' : 'bg-orange-100 text-orange-700'}`}>
                         {svc.published !== false ? 'Aktif' : 'Disembunyikan'}
                       </span>
+                      {svc.featured && (
+                        <span className="text-xs px-2 py-0.5 rounded-full font-medium bg-amber-100 text-amber-700">Featured (Homepage)</span>
+                      )}
                     </div>
                     <div className="flex items-center gap-3">
                       <label className="relative inline-flex items-center cursor-pointer" title={svc.published !== false ? 'Sembunyikan servis' : 'Tunjuk servis'}>
@@ -554,6 +564,10 @@ export default function AdminPage() {
                       <StatusBadge status={statuses['services'] ?? 'idle'} />
                       <button className={BTN_DANGER} onClick={() => { if (window.confirm('Padam servis ini? Tindakan ini tidak boleh dibatalkan.')) setServices(services.filter((_, idx) => idx !== i)); }}>Padam</button>
                     </div>
+                  </div>
+                  <div className="mb-4">
+                    <label className={LABEL}>Gambar Servis</label>
+                    <MediaPicker value={svc.image} onChange={(url) => { const u = [...services]; u[i] = { ...svc, image: url }; setServices(u); }} password={password} label={svc.nameEn || 'Servis Baru'} />
                   </div>
                   <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                     <div>
@@ -566,7 +580,7 @@ export default function AdminPage() {
                     </div>
                     <div>
                       <label className={LABEL}>Harga (RM)</label>
-                      <input type="number" className={INPUT} value={svc.price} onChange={(e) => { const u = [...services]; u[i] = { ...svc, price: Number(e.target.value) }; setServices(u); }} />
+                      <input type="number" min={0} className={INPUT} value={svc.price} onChange={(e) => { const u = [...services]; u[i] = { ...svc, price: Number(e.target.value) || 0 }; setServices(u); }} />
                     </div>
                     <div>
                       <label className={LABEL}>Tempoh Masa</label>
@@ -581,6 +595,14 @@ export default function AdminPage() {
                       <textarea className={INPUT + ' h-16 resize-none'} value={svc.descBm} onChange={(e) => { const u = [...services]; u[i] = { ...svc, descBm: e.target.value }; setServices(u); }} />
                     </div>
                     <div>
+                      <label className={LABEL}>Ketahanan (English)</label>
+                      <input className={INPUT} value={svc.longevityEn} onChange={(e) => { const u = [...services]; u[i] = { ...svc, longevityEn: e.target.value }; setServices(u); }} placeholder="Lasts 6-8 weeks" />
+                    </div>
+                    <div>
+                      <label className={LABEL}>Ketahanan (BM)</label>
+                      <input className={INPUT} value={svc.longevityBm} onChange={(e) => { const u = [...services]; u[i] = { ...svc, longevityBm: e.target.value }; setServices(u); }} placeholder="Tahan 6-8 minggu" />
+                    </div>
+                    <div>
                       <label className={LABEL}>Kategori</label>
                       <input className={INPUT} value={svc.category} onChange={(e) => { const u = [...services]; u[i] = { ...svc, category: e.target.value }; setServices(u); }} placeholder="eyebrows / lashes / lips / body" />
                     </div>
@@ -588,10 +610,18 @@ export default function AdminPage() {
                       <label className={LABEL}>Badge (kosongkan jika tiada)</label>
                       <input className={INPUT} value={svc.badge ?? ''} onChange={(e) => { const u = [...services]; u[i] = { ...svc, badge: e.target.value || null }; setServices(u); }} placeholder="Most Popular / New / Bestseller" />
                     </div>
+                    <div>
+                      <label className={LABEL}>Booking Link (kosongkan untuk guna link default)</label>
+                      <input className={INPUT} value={svc.bookingUrl ?? ''} onChange={(e) => { const u = [...services]; u[i] = { ...svc, bookingUrl: e.target.value || null }; setServices(u); }} placeholder="https://..." />
+                    </div>
                   </div>
+                  <label className="mt-4 flex items-center gap-2 cursor-pointer w-fit">
+                    <input type="checkbox" checked={svc.featured} onChange={(e) => { const u = [...services]; u[i] = { ...svc, featured: e.target.checked }; setServices(u); }} />
+                    <span className="text-sm text-gray-700">Papar di Homepage (Featured Services) — 3 pertama yang ditanda akan dipaparkan</span>
+                  </label>
                 </div>
               ))}
-              <button className={BTN_ADD} onClick={() => setServices([...services, { id: uid(), category: '', nameEn: '', nameBm: '', descEn: '', descBm: '', price: 0, duration: '', badge: null, published: true }])}>
+              <button className={BTN_ADD} onClick={() => setServices([...services, { id: uid(), category: '', nameEn: '', nameBm: '', descEn: '', descBm: '', price: 0, duration: '', longevityEn: '', longevityBm: '', image: '', badge: null, bookingUrl: null, featured: false, published: true }])}>
                 + Tambah Servis
               </button>
               <button onClick={() => save('services', services)} className={BTN_SAVE}>Simpan Semua Servis</button>

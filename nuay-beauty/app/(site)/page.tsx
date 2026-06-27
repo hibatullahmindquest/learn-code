@@ -6,7 +6,7 @@ import { Cormorant_Garamond, Poppins } from 'next/font/google';
 import { ArrowUpRight, Star } from '@phosphor-icons/react';
 import { useLang } from '@/components/LanguageContext';
 import { useSiteData } from '@/components/SiteDataContext';
-import { BOOKING_URL, services, artists, testimonials, faqs } from '@/lib/data';
+import { BOOKING_URL, artists, testimonials, faqs } from '@/lib/data';
 
 // Page-scoped fonts + tokens, ported from the Nuay Beauty Design System
 // (Cormorant Garamond display / Poppins body) — scoped to this page only so
@@ -159,7 +159,7 @@ function PriceBadge({ value }: { value: number }) {
 
 export default function HomePage() {
   const { lang } = useLang();
-  const { images } = useSiteData();
+  const { images, services, contact } = useSiteData();
   const en = lang === 'en';
 
   useEffect(() => {
@@ -181,7 +181,7 @@ export default function HomePage() {
   const [openFaq, setOpenFaq] = useState<number | null>(null);
   const [pos, setPos] = useState(50);
 
-  const featured = services.slice(0, 3);
+  const featured = services.filter((s) => s.featured && s.published !== false).slice(0, 3);
   const loop = [...testimonials, ...testimonials];
 
   return (
@@ -319,10 +319,10 @@ export default function HomePage() {
           />
         </div>
         <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(280px, 1fr))', gap: 24 }}>
-          {featured.map((s, idx) => (
+          {featured.map((s) => (
             <a
               key={s.id}
-              href={BOOKING_URL}
+              href={s.bookingUrl || contact.bookingUrl}
               target="_blank"
               rel="noopener noreferrer"
               className="nuay-card"
@@ -337,7 +337,7 @@ export default function HomePage() {
             >
               <div className="nuay-card-image" style={{ aspectRatio: '4 / 3', background: 'var(--beige-100)', overflow: 'hidden' }}>
                 <Image
-                  src={['/images/nuay-studio-1.avif', '/images/nuay-studio-2.avif', '/images/nuay-studio-3.avif'][idx % 3]}
+                  src={s.image || '/images/nuay-hero.avif'}
                   alt={en ? s.nameEn : s.nameBm}
                   width={400}
                   height={300}

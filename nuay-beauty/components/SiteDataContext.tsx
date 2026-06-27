@@ -247,9 +247,19 @@ export type ServiceItem = {
   descBm: string;
   price: number;
   duration: string;
+  longevityEn: string;
+  longevityBm: string;
+  image: string;
   badge: string | null;
+  bookingUrl?: string | null;
+  featured: boolean;
   published?: boolean;
 };
+
+const SERVICE_DEFAULTS = { longevityEn: '', longevityBm: '', image: '', bookingUrl: null, featured: false };
+function normalizeServices(items: ServiceItem[]): ServiceItem[] {
+  return items.map((s) => ({ ...SERVICE_DEFAULTS, ...s }));
+}
 
 export type NavItemSetting = {
   key: string;
@@ -317,9 +327,11 @@ const defaultImages: ImageSettings = {
   ],
 };
 
+const normalizedDefaultServices = normalizeServices(defaultServices as ServiceItem[]);
+
 const initialData: SiteData = {
   contact: defaultContact,
-  services: defaultServices,
+  services: normalizedDefaultServices,
   artists: defaultArtists,
   testimonials: [],
   faqs: [],
@@ -333,7 +345,7 @@ const initialData: SiteData = {
 function mapSettings(settings: Record<string, unknown>): SiteData {
   return {
     contact: (settings.contact as ContactSettings) ?? defaultContact,
-    services: (settings.services as ServiceItem[]) ?? defaultServices,
+    services: normalizeServices((settings.services as ServiceItem[]) ?? normalizedDefaultServices),
     artists: (settings.artists as typeof defaultArtists) ?? defaultArtists,
     testimonials: (settings.testimonials as Testimonial[]) ?? [],
     faqs: (settings.faqs as FaqItem[]) ?? [],
