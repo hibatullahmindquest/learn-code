@@ -178,14 +178,6 @@ export default function HomePage() {
     return () => observer.disconnect();
   }, []);
 
-  // Force the shared Navbar/Footer onto Poppins only while this page is
-  // mounted — they read `--font-cormorant`/`--font-outfit` from the body,
-  // so this doesn't touch the components themselves and reverts elsewhere.
-  useEffect(() => {
-    document.body.classList.add('nuay-hero-fonts');
-    return () => document.body.classList.remove('nuay-hero-fonts');
-  }, []);
-
   const [openFaq, setOpenFaq] = useState<number | null>(null);
   const [pos, setPos] = useState(50);
 
@@ -692,19 +684,6 @@ export default function HomePage() {
           .nuay-why-grid {
             grid-template-columns: 1fr !important;
           }
-        }
-        body.nuay-hero-fonts {
-          --font-cormorant: 'Poppins', sans-serif;
-          --font-outfit: 'Poppins', sans-serif;
-        }
-        body.nuay-hero-fonts header nav {
-          gap: 3rem !important;
-        }
-        body.nuay-hero-fonts header nav a {
-          font-weight: 600 !important;
-        }
-        body.nuay-hero-fonts footer > div:first-child {
-          display: none !important;
         }
       `}</style>
     </div>

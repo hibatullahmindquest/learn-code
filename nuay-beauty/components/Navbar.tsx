@@ -3,10 +3,18 @@
 import { useState, useEffect } from 'react';
 import Link from 'next/link';
 import { usePathname } from 'next/navigation';
+import { Poppins } from 'next/font/google';
 import { List, X } from '@phosphor-icons/react';
 import { useLang } from './LanguageContext';
 import { content } from '@/lib/data';
 import { useSiteData } from '@/components/SiteDataContext';
+
+const poppins = Poppins({
+  subsets: ['latin'],
+  weight: ['400', '500', '600', '700'],
+  variable: '--font-nav',
+  display: 'swap',
+});
 
 export default function Navbar() {
   const [open, setOpen] = useState(false);
@@ -32,7 +40,7 @@ export default function Navbar() {
     .map((item) => ({ href: NAV_HREF[item.key], label: NAV_LABEL[item.key] }));
 
   return (
-    <>
+    <div className={poppins.variable} style={{ fontFamily: 'var(--font-nav), sans-serif' }}>
       <header
         className="fixed top-0 left-0 right-0 z-50 transition-all duration-500"
         style={{
@@ -46,7 +54,7 @@ export default function Navbar() {
           <Link href="/" className="flex flex-col leading-none group">
             <span
               className="text-xl tracking-[0.25em] font-semibold transition-colors duration-300"
-              style={{ fontFamily: 'var(--font-cormorant), serif', color: scrolled ? 'var(--burgundy)' : 'var(--cream)' }}
+              style={{ color: scrolled ? 'var(--burgundy)' : 'var(--cream)' }}
             >
               NUAY
             </span>
@@ -59,7 +67,7 @@ export default function Navbar() {
           </Link>
 
           {/* Desktop Nav */}
-          <nav className="hidden md:flex items-center justify-center gap-7">
+          <nav className="hidden md:flex items-center justify-center" style={{ gap: '3rem' }}>
             {links.map((l) => (
               <Link
                 key={l.href}
@@ -69,7 +77,7 @@ export default function Navbar() {
                   color: scrolled
                     ? (pathname === l.href ? 'var(--burgundy)' : 'var(--charcoal-mid)')
                     : (pathname === l.href ? 'var(--cream)' : 'rgba(245,239,230,0.75)'),
-                  fontWeight: pathname === l.href ? '500' : '400',
+                  fontWeight: 600,
                 }}
               >
                 {l.label}
@@ -143,9 +151,8 @@ export default function Navbar() {
                 onClick={() => setOpen(false)}
                 className="text-2xl tracking-tight"
                 style={{
-                  fontFamily: 'var(--font-cormorant), serif',
                   color: pathname === l.href ? 'var(--burgundy)' : 'var(--charcoal)',
-                  fontWeight: pathname === l.href ? '500' : '300',
+                  fontWeight: pathname === l.href ? '700' : '600',
                 }}
               >
                 {l.label}
@@ -164,6 +171,6 @@ export default function Navbar() {
           </a>
         </div>
       )}
-    </>
+    </div>
   );
 }
