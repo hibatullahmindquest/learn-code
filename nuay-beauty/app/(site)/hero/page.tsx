@@ -167,9 +167,9 @@ export default function HeroPage() {
     return () => observer.disconnect();
   }, []);
 
-  // Swap the shared Navbar/Footer font tokens while this page is mounted —
-  // they read `--font-cormorant`/`--font-outfit` from the body, so this
-  // doesn't touch the components themselves and reverts on other pages.
+  // Force the shared Navbar/Footer onto Poppins only while this page is
+  // mounted — they read `--font-cormorant`/`--font-outfit` from the body,
+  // so this doesn't touch the components themselves and reverts elsewhere.
   useEffect(() => {
     document.body.classList.add('nuay-hero-fonts');
     return () => document.body.classList.remove('nuay-hero-fonts');
@@ -657,7 +657,7 @@ export default function HeroPage() {
           }
         }
         body.nuay-hero-fonts {
-          --font-cormorant: 'Cormorant Garamond', serif;
+          --font-cormorant: 'Poppins', sans-serif;
           --font-outfit: 'Poppins', sans-serif;
         }
       `}</style>
