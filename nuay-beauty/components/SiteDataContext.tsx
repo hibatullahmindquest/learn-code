@@ -292,7 +292,7 @@ const defaultContact: ContactSettings = {
 };
 
 const defaultImages: ImageSettings = {
-  hero: '/images/nuay-hero.avif',
+  hero: 'https://fsyqbpaafdorxrjqkemb.supabase.co/storage/v1/object/public/media/uploads/1782574018884-5sa1j.png',
   featuredService: '/images/nuay-hero.avif',
   aboutPhotos: ['/images/nuay-artist.png', '/images/nuay-studio-3.avif', '/images/nuay-studio-4.avif'],
   studio: [
