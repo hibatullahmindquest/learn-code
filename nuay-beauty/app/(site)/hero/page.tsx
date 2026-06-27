@@ -198,8 +198,8 @@ export default function HeroPage() {
       {/* ── Hero ───────────────────────────────────────────────────────── */}
       <section style={{ position: 'relative', minHeight: 620, overflow: 'hidden' }}>
         <Image
-          src="/images/nuay-reception.webp"
-          alt="Nuay Beauty studio"
+          src="https://fsyqbpaafdorxrjqkemb.supabase.co/storage/v1/object/public/media/uploads/1782574018884-5sa1j.png"
+          alt="Close-up beauty portrait with lash and brow detail"
           fill
           priority
           style={{ objectFit: 'cover' }}
@@ -209,7 +209,7 @@ export default function HeroPage() {
             position: 'absolute',
             inset: 0,
             background:
-              'linear-gradient(90deg, rgba(26,20,16,0.66) 0%, rgba(26,20,16,0.32) 55%, rgba(26,20,16,0.08) 100%)',
+              'linear-gradient(90deg, rgba(26,20,16,0.82) 0%, rgba(26,20,16,0.5) 55%, rgba(26,20,16,0.15) 100%)',
           }}
         />
         <div
