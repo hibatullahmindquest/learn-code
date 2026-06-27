@@ -167,6 +167,14 @@ export default function HeroPage() {
     return () => observer.disconnect();
   }, []);
 
+  // Swap the shared Navbar/Footer font tokens while this page is mounted —
+  // they read `--font-cormorant`/`--font-outfit` from the body, so this
+  // doesn't touch the components themselves and reverts on other pages.
+  useEffect(() => {
+    document.body.classList.add('nuay-hero-fonts');
+    return () => document.body.classList.remove('nuay-hero-fonts');
+  }, []);
+
   const [openFaq, setOpenFaq] = useState<number | null>(null);
   const [pos, setPos] = useState(50);
 
@@ -647,6 +655,10 @@ export default function HeroPage() {
           .nuay-why-grid {
             grid-template-columns: 1fr !important;
           }
+        }
+        body.nuay-hero-fonts {
+          --font-cormorant: 'Cormorant Garamond', serif;
+          --font-outfit: 'Poppins', sans-serif;
         }
       `}</style>
     </div>
