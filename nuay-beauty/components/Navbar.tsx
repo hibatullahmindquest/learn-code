@@ -31,27 +31,37 @@ export default function Navbar() {
     .sort((a, b) => a.order - b.order)
     .map((item) => ({ href: NAV_HREF[item.key], label: NAV_LABEL[item.key] }));
 
+  const isHome = pathname === '/';
+  // Inner pages: always solid burgundy. Homepage: original transparent-to-light-beige on scroll.
+  const burgundy = !isHome;
+  const dark = !isHome && scrolled;
+
   return (
     <div style={{ fontFamily: 'var(--font-nuay-body), sans-serif' }}>
       <header
         className="fixed top-0 left-0 right-0 z-50 transition-all duration-500"
-        style={{
-          background: 'var(--wine-700)',
-          boxShadow: scrolled ? 'var(--shadow-md)' : 'none',
-        }}
+        style={
+          burgundy
+            ? { background: 'var(--wine-700)', boxShadow: scrolled ? 'var(--shadow-md)' : 'none' }
+            : {
+                background: scrolled ? 'rgba(249,246,243,0.95)' : 'transparent',
+                backdropFilter: scrolled ? 'blur(12px)' : 'none',
+                borderBottom: scrolled ? '1px solid rgba(200,180,160,0.3)' : 'none',
+              }
+        }
       >
         <div className="max-w-7xl mx-auto px-6 lg:px-10 h-16 grid grid-cols-3 items-center">
           {/* Logo */}
           <Link href="/" className="flex flex-col leading-none group">
             <span
-              className="text-xl tracking-[0.25em] font-semibold"
-              style={{ color: 'var(--beige-50)' }}
+              className="text-xl tracking-[0.25em] font-semibold transition-colors duration-300"
+              style={{ color: burgundy ? 'var(--beige-50)' : (dark ? 'var(--wine-700)' : 'var(--beige-50)') }}
             >
               NUAY
             </span>
             <span
-              className="text-[9px] tracking-[0.4em] font-light"
-              style={{ color: 'var(--gold-300)' }}
+              className="text-[9px] tracking-[0.4em] font-light transition-colors duration-300"
+              style={{ color: burgundy ? 'var(--gold-300)' : (dark ? 'var(--ink-400)' : 'rgba(249,246,243,0.6)') }}
             >
               BEAUTY
             </span>
@@ -65,7 +75,11 @@ export default function Navbar() {
                 href={l.href}
                 className="text-sm tracking-wide transition-colors duration-200"
                 style={{
-                  color: pathname === l.href ? 'var(--gold-300)' : 'rgba(249,246,243,0.85)',
+                  color: burgundy
+                    ? (pathname === l.href ? 'var(--gold-300)' : 'rgba(249,246,243,0.85)')
+                    : dark
+                      ? (pathname === l.href ? 'var(--wine-700)' : 'var(--ink-800)')
+                      : (pathname === l.href ? 'var(--beige-50)' : 'rgba(249,246,243,0.75)'),
                   fontWeight: 600,
                 }}
               >
@@ -81,8 +95,8 @@ export default function Navbar() {
               onClick={() => setLang(lang === 'en' ? 'bm' : 'en')}
               className="text-xs tracking-widest px-2 py-1 rounded transition-colors duration-200"
               style={{
-                color: 'rgba(249,246,243,0.8)',
-                border: '1px solid rgba(249,246,243,0.35)',
+                color: burgundy ? 'rgba(249,246,243,0.8)' : (dark ? 'var(--ink-400)' : 'rgba(249,246,243,0.7)'),
+                border: burgundy ? '1px solid rgba(249,246,243,0.35)' : (dark ? '1px solid var(--line)' : '1px solid rgba(249,246,243,0.3)'),
               }}
             >
               {lang === 'en' ? 'BM' : 'EN'}
@@ -93,12 +107,11 @@ export default function Navbar() {
               target="_blank"
               rel="noopener noreferrer"
               className="text-sm px-5 py-2 transition-all duration-200 active:scale-95"
-              style={{
-                background: 'var(--gold-500)',
-                color: 'var(--ink-950)',
-                letterSpacing: '0.05em',
-                borderRadius: 'var(--radius-button)',
-              }}
+              style={
+                burgundy
+                  ? { background: 'var(--gold-500)', color: 'var(--ink-950)', letterSpacing: '0.05em', borderRadius: 'var(--radius-button)' }
+                  : { background: 'var(--wine-700)', color: 'var(--beige-50)', letterSpacing: '0.05em', borderRadius: 'var(--radius-button)' }
+              }
             >
               {t.bookNow}
             </a>
@@ -110,15 +123,15 @@ export default function Navbar() {
               onClick={() => setLang(lang === 'en' ? 'bm' : 'en')}
               className="text-xs tracking-widest px-2 py-1 rounded transition-colors duration-300"
               style={{
-                color: 'rgba(249,246,243,0.8)',
-                border: '1px solid rgba(249,246,243,0.35)',
+                color: burgundy ? 'rgba(249,246,243,0.8)' : (dark ? 'var(--ink-400)' : 'rgba(249,246,243,0.7)'),
+                border: burgundy ? '1px solid rgba(249,246,243,0.35)' : (dark ? '1px solid var(--line)' : '1px solid rgba(249,246,243,0.3)'),
               }}
             >
               {lang === 'en' ? 'BM' : 'EN'}
             </button>
             <button
               onClick={() => setOpen(!open)}
-              style={{ color: 'var(--beige-50)' }}
+              style={{ color: burgundy ? 'var(--beige-50)' : (dark ? 'var(--ink-950)' : 'var(--beige-50)') }}
               aria-label="Toggle menu"
             >
               {open ? <X size={22} /> : <List size={22} />}
