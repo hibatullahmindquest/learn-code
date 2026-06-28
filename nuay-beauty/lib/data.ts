@@ -234,8 +234,7 @@ export const artists = [
   {
     id: 'farah',
     name: 'Farah',
-    roleEn: 'Lash & Brow Specialist',
-    roleBm: 'Pakar Lash & Brow',
+    tier: 'senior' as const,
     bioEn: 'Farah brings precision and artistry to every lash lift and brow treatment. Her gentle technique and keen eye for detail have made her a client favourite.',
     bioBm: 'Farah membawa ketepatan dan kesenian pada setiap rawatan lash dan brow. Teknik lembutnya dan mata tajam untuk detail menjadikannya kegemaran pelanggan.',
     services: ['Korean Lash Lift + Tint', 'Brow Lamination', 'Brow Tint', 'Brow Wax', 'Brow Bleach'],
@@ -251,8 +250,7 @@ export const artists = [
   {
     id: 'zafirah',
     name: 'Zafirah',
-    roleEn: 'Lash & Brow Specialist',
-    roleBm: 'Pakar Lash & Brow',
+    tier: 'senior' as const,
     bioEn: 'Zafirah is known for her calm approach and consistent results. She specialises in creating natural-looking lash lifts that complement each client\'s unique features.',
     bioBm: 'Zafirah dikenali dengan pendekatan tenang dan keputusan yang konsisten. Beliau pakar dalam mencipta lash lift semula jadi yang melengkapi ciri unik setiap pelanggan.',
     services: ['Korean Lash Lift + Tint', 'Brow Lamination', 'Brow Tint', 'Brow Wax', 'Brow Bleach'],
@@ -268,8 +266,7 @@ export const artists = [
   {
     id: 'thila',
     name: 'Thila',
-    roleEn: 'Facial & Wellness Specialist',
-    roleBm: 'Pakar Rawatan Wajah & Wellness',
+    tier: 'junior' as const,
     bioEn: 'Thila\'s expertise in traditional facial techniques and brow artistry creates a holistic beauty experience. Her totok wajah treatments are deeply relaxing and visibly effective.',
     bioBm: 'Kepakaran Thila dalam teknik rawatan wajah tradisional dan seni brow mencipta pengalaman kecantikan yang holistik. Rawatan totok wajahnya sangat menenangkan dan berkesan.',
     services: ['Totok Wajah', 'Brow Tint', 'Brow Wax', 'Brow Bleach'],

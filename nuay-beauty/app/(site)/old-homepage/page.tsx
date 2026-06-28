@@ -430,7 +430,7 @@ export default function HomePage() {
                   {artist.name}
                 </h3>
                 <p className="text-xs tracking-wide" style={{ color: 'rgba(245,239,230,0.58)' }}>
-                  {lang === 'en' ? artist.roleEn : artist.roleBm}
+                  {artist.tier === 'junior' ? (lang === 'en' ? 'Junior Artist' : 'Artis Junior') : (lang === 'en' ? 'Senior Artist' : 'Artis Senior')}
                 </p>
                 <p
                   className="text-xs leading-relaxed mt-2 max-w-[28ch] translate-y-3 opacity-0 group-hover:translate-y-0 group-hover:opacity-100"
