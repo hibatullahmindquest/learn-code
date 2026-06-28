@@ -287,14 +287,14 @@ export default function ServicesPage() {
                       <div
                         className="overflow-hidden transition-all duration-300"
                         style={{
-                          maxHeight: isExpanded ? '640px' : '0px',
+                          maxHeight: isExpanded ? '1100px' : '0px',
                           background: 'var(--beige-50)',
                           borderRadius: '0 0 var(--radius-card) var(--radius-card)',
                           boxShadow: isExpanded ? 'var(--shadow-sm)' : 'none',
                         }}
                       >
-                        <div className="p-5 md:p-6 flex flex-col md:flex-row gap-6" style={{ borderTop: '1px solid var(--line)' }}>
-                          <div className="flex-1 min-w-0">
+                        <div className="p-5 md:p-6 flex flex-col gap-5" style={{ borderTop: '1px solid var(--line)' }}>
+                          <div className="max-w-2xl">
                             <p className="text-[10px] tracking-[0.35em] uppercase mb-3" style={{ color: 'var(--gold-600)' }}>
                               {lang === 'en' ? 'About this treatment' : 'Tentang rawatan ini'}
                             </p>
@@ -302,19 +302,28 @@ export default function ServicesPage() {
                               {lang === 'en' ? MOCK_DETAIL.textEn : MOCK_DETAIL.textBm}
                             </p>
                           </div>
-                          <div className="flex flex-col sm:flex-row gap-4 md:w-[420px] flex-shrink-0">
-                            <div
-                              className="flex-1 aspect-[4/3] rounded-xl flex items-center justify-center text-xs"
-                              style={{ background: 'var(--beige-100)', border: '1px dashed var(--line)', color: 'var(--ink-400)' }}
+
+                          {/* Gallery — first image shown, click opens lightbox w/ nav */}
+                          <button
+                            type="button"
+                            className="relative w-full aspect-[16/7] rounded-xl overflow-hidden flex items-center justify-center text-xs cursor-pointer"
+                            style={{ background: 'var(--beige-100)', border: '1px dashed var(--line)', color: 'var(--ink-400)' }}
+                          >
+                            {lang === 'en' ? 'Gallery cover image' : 'Imej utama galeri'}
+                            <span
+                              className="absolute bottom-3 right-3 text-[11px] px-2.5 py-1 rounded-full"
+                              style={{ background: 'rgba(26,20,16,0.65)', color: 'var(--beige-50)' }}
                             >
-                              {lang === 'en' ? 'Image goes here' : 'Imej di sini'}
-                            </div>
-                            <div
-                              className="flex-1 aspect-[4/3] rounded-xl flex items-center justify-center text-xs"
-                              style={{ background: 'var(--ink-950)', color: 'var(--beige-50)' }}
-                            >
-                              ▶ {lang === 'en' ? 'Video goes here' : 'Video di sini'}
-                            </div>
+                              1 / 8 — {lang === 'en' ? 'view gallery' : 'lihat galeri'}
+                            </span>
+                          </button>
+
+                          {/* Video — full width below gallery, only if videoUrl is set */}
+                          <div
+                            className="relative w-full aspect-[16/7] rounded-xl flex items-center justify-center text-xs"
+                            style={{ background: 'var(--ink-950)', color: 'var(--beige-50)' }}
+                          >
+                            ▶ {lang === 'en' ? 'Video goes here (only if a video link is set)' : 'Video di sini (jika link video diisi)'}
                           </div>
                         </div>
                       </div>
