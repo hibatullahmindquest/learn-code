@@ -4,7 +4,9 @@ import { useEffect, useState, useCallback } from 'react';
 import Image from 'next/image';
 import { useLang } from '@/components/LanguageContext';
 import { useSiteData, getCopy } from '@/components/SiteDataContext';
-import { ArrowUpRight, X, CaretLeft, CaretRight, InstagramLogo } from '@phosphor-icons/react';
+import { ArrowUpRight, MagnifyingGlassPlus, X, CaretLeft, CaretRight, InstagramLogo } from '@phosphor-icons/react';
+
+const GALLERY_HINT_KEY = 'nuay-gallery-hint-seen';
 
 export default function GalleryPage() {
   const { lang } = useLang();
@@ -13,6 +15,20 @@ export default function GalleryPage() {
   const galleryImages = images.gallery;
 
   const [lightbox, setLightbox] = useState<number | null>(null);
+  const [hintSeen, setHintSeen] = useState(true);
+
+  useEffect(() => {
+    // eslint-disable-next-line react-hooks/set-state-in-effect -- syncing from localStorage, a browser-only external system
+    setHintSeen(localStorage.getItem(GALLERY_HINT_KEY) === '1');
+  }, []);
+
+  const openLightbox = (i: number) => {
+    setLightbox(i);
+    if (!hintSeen) {
+      localStorage.setItem(GALLERY_HINT_KEY, '1');
+      setHintSeen(true);
+    }
+  };
 
   const prevImage = useCallback(() => setLightbox((i) => (i !== null ? (i - 1 + galleryImages.length) % galleryImages.length : null)), [galleryImages.length]);
   const nextImage = useCallback(() => setLightbox((i) => (i !== null ? (i + 1) % galleryImages.length : null)), [galleryImages.length]);
@@ -98,7 +114,7 @@ export default function GalleryPage() {
               key={i}
               className={`reveal relative overflow-hidden rounded-2xl md:rounded-3xl group cursor-pointer ${img.span}`}
               style={{ transform: 'scale(0.96)', '--delay': `${i * 0.04}s` } as React.CSSProperties}
-              onClick={() => setLightbox(i)}
+              onClick={() => openLightbox(i)}
             >
               <Image
                 src={img.url}
@@ -106,6 +122,17 @@ export default function GalleryPage() {
                 fill
                 className="object-cover transition-transform duration-700 group-hover:scale-[1.06]"
               />
+
+              {/* First-visit "tap to view" hint */}
+              {i === 0 && !hintSeen && (
+                <span
+                  className="absolute top-3 right-3 w-8 h-8 rounded-full flex items-center justify-center animate-pulse pointer-events-none group-hover:opacity-0 transition-opacity duration-200"
+                  style={{ background: 'var(--gold-500)', boxShadow: 'var(--shadow-sm)' }}
+                >
+                  <MagnifyingGlassPlus size={15} weight="bold" style={{ color: 'var(--ink-950)' }} />
+                </span>
+              )}
+
               {/* Hover overlay */}
               <div
                 className="absolute inset-0 opacity-0 group-hover:opacity-100 transition-opacity duration-400 flex items-end justify-between p-4 md:p-5"
