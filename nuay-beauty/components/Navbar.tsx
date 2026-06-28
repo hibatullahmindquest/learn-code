@@ -34,7 +34,7 @@ export default function Navbar() {
   const isHome = pathname === '/';
   // Inner pages: always solid burgundy. Homepage: original transparent-to-light-beige on scroll.
   const burgundy = !isHome;
-  const dark = !isHome && scrolled;
+  const dark = isHome && scrolled;
 
   return (
     <div style={{ fontFamily: 'var(--font-nuay-body), sans-serif' }}>
