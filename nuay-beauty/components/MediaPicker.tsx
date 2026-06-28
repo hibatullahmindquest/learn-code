@@ -2,6 +2,8 @@
 
 import { useState, useRef, useEffect, useCallback } from 'react';
 import Image from 'next/image';
+import { ImageSquare, Plus, X, Trash, Check } from '@phosphor-icons/react';
+import { inputClass } from '@/components/admin/AdminUI';
 
 type MediaFile = { name: string; url: string };
 
@@ -11,8 +13,6 @@ type Props = {
   password: string;
   label?: string;
 };
-
-const INPUT = 'w-full border border-gray-200 rounded-lg px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-rose-300';
 
 export function MediaPicker({ value, onChange, password, label }: Props) {
   const [open, setOpen] = useState(false);
@@ -110,7 +110,7 @@ export function MediaPicker({ value, onChange, password, label }: Props) {
         )}
         <div className="flex-1 flex flex-col gap-1.5">
           <input
-            className={INPUT}
+            className={inputClass}
             value={value}
             onChange={(e) => onChange(e.target.value)}
             placeholder="https://... atau pilih dari library"
@@ -118,8 +118,9 @@ export function MediaPicker({ value, onChange, password, label }: Props) {
           <button
             type="button"
             onClick={() => setOpen(true)}
-            className="text-xs px-3 py-1.5 rounded-lg border border-gray-200 text-gray-600 hover:bg-gray-50 transition-all w-fit"
+            className="text-xs px-3 py-1.5 rounded-lg border border-gray-200 text-gray-600 hover:bg-gray-50 transition-all w-fit inline-flex items-center gap-1.5"
           >
+            <ImageSquare size={13} weight="bold" />
             Browse Media Library
           </button>
         </div>
@@ -149,12 +150,14 @@ export function MediaPicker({ value, onChange, password, label }: Props) {
                 <button
                   onClick={() => fileRef.current?.click()}
                   disabled={uploading}
-                  className="px-4 py-2 rounded-lg text-sm font-medium text-white transition-all disabled:opacity-50"
-                  style={{ background: '#8B2252' }}
+                  className="px-4 py-2 rounded-lg text-sm font-medium text-white transition-all disabled:opacity-50 inline-flex items-center gap-2"
+                  style={{ background: 'var(--wine-700)' }}
                 >
-                  {uploading ? 'Uploading…' : '+ Upload Gambar'}
+                  {uploading ? 'Uploading…' : (<><Plus size={14} weight="bold" />Upload Gambar</>)}
                 </button>
-                <button onClick={() => setOpen(false)} className="text-gray-400 hover:text-gray-600 transition-colors text-xl leading-none">&times;</button>
+                <button onClick={() => setOpen(false)} aria-label="Tutup" className="text-gray-400 hover:text-gray-600 transition-colors leading-none">
+                  <X size={18} weight="bold" />
+                </button>
               </div>
             </div>
 
@@ -173,8 +176,9 @@ export function MediaPicker({ value, onChange, password, label }: Props) {
                   <p className="text-sm text-gray-400">Tiada gambar lagi.</p>
                   <button
                     onClick={() => fileRef.current?.click()}
-                    className="text-sm px-4 py-2 rounded-lg border border-dashed border-gray-300 text-gray-500 hover:border-gray-400 transition-all"
+                    className="text-sm px-4 py-2 rounded-lg border border-dashed border-gray-300 text-gray-500 hover:border-gray-400 transition-all inline-flex items-center gap-2"
                   >
+                    <Plus size={14} weight="bold" />
                     Upload gambar pertama
                   </button>
                 </div>
@@ -186,7 +190,7 @@ export function MediaPicker({ value, onChange, password, label }: Props) {
                       className="relative group rounded-xl overflow-hidden border-2 transition-all hover:border-rose-600"
                       style={{
                         aspectRatio: '1',
-                        borderColor: value === f.url ? '#8B2252' : 'transparent',
+                        borderColor: value === f.url ? 'var(--wine-700)' : 'transparent',
                       }}
                     >
                       <button
@@ -197,7 +201,7 @@ export function MediaPicker({ value, onChange, password, label }: Props) {
                         <Image src={f.url} alt={f.name} fill className="object-cover" />
                         {value === f.url && (
                           <div className="absolute inset-0 flex items-center justify-center" style={{ background: 'rgba(139,34,82,0.4)' }}>
-                            <span className="text-white text-lg">✓</span>
+                            <Check size={20} weight="bold" className="text-white" />
                           </div>
                         )}
                       </button>
@@ -209,7 +213,7 @@ export function MediaPicker({ value, onChange, password, label }: Props) {
                         className="absolute top-1.5 right-1.5 w-6 h-6 rounded-full flex items-center justify-center text-white text-xs opacity-0 group-hover:opacity-100 transition-opacity disabled:opacity-100"
                         style={{ background: 'rgba(0,0,0,0.6)' }}
                       >
-                        {deleting === f.name ? '…' : '🗑'}
+                        {deleting === f.name ? '…' : <Trash size={13} weight="bold" />}
                       </button>
                     </div>
                   ))}

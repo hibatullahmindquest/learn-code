@@ -2,10 +2,10 @@
 
 import { useState, useCallback, useEffect } from 'react';
 import Image from 'next/image';
+import { Copy, Check, Trash, ArrowsClockwise } from '@phosphor-icons/react';
+import { sectionClass } from '@/components/admin/AdminUI';
 
 type MediaFile = { name: string; url: string };
-
-const SECTION = 'bg-white rounded-xl border border-gray-100 p-6 shadow-sm';
 
 export function MediaLibraryTab({ password }: { password: string }) {
   const [files, setFiles] = useState<MediaFile[]>([]);
@@ -70,7 +70,7 @@ export function MediaLibraryTab({ password }: { password: string }) {
 
   return (
     <div className="flex flex-col gap-6">
-      <div className={SECTION}>
+      <div className={sectionClass}>
         <div className="flex items-center justify-between mb-5">
           <div>
             <h2 className="font-semibold text-gray-800">Media Library</h2>
@@ -78,8 +78,9 @@ export function MediaLibraryTab({ password }: { password: string }) {
           </div>
           <button
             onClick={loadMedia}
-            className="text-xs px-3 py-1.5 rounded-lg border border-gray-200 text-gray-600 hover:bg-gray-50 transition-all"
+            className="text-xs px-3 py-1.5 rounded-lg border border-gray-200 text-gray-600 hover:bg-gray-50 transition-all inline-flex items-center gap-1.5"
           >
+            <ArrowsClockwise size={13} weight="bold" />
             Muat Semula
           </button>
         </div>
@@ -107,7 +108,7 @@ export function MediaLibraryTab({ password }: { password: string }) {
                     className="w-6 h-6 rounded-full flex items-center justify-center text-white text-xs"
                     style={{ background: 'rgba(0,0,0,0.6)' }}
                   >
-                    {copied === f.url ? '✓' : '🔗'}
+                    {copied === f.url ? <Check size={13} weight="bold" /> : <Copy size={13} weight="bold" />}
                   </button>
                   <button
                     type="button"
@@ -117,7 +118,7 @@ export function MediaLibraryTab({ password }: { password: string }) {
                     className="w-6 h-6 rounded-full flex items-center justify-center text-white text-xs disabled:opacity-100"
                     style={{ background: 'rgba(139,0,0,0.75)' }}
                   >
-                    {deleting === f.name ? '…' : '🗑'}
+                    {deleting === f.name ? '…' : <Trash size={13} weight="bold" />}
                   </button>
                 </div>
                 <p className="px-2 py-1.5 text-[11px] text-gray-400 truncate" title={f.name}>{f.name}</p>
