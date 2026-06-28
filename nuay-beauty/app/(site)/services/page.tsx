@@ -77,30 +77,14 @@ export default function ServicesPage() {
 
       {/* ─────────────── HEADER ─────────────── */}
       <section
-        className="relative pt-36 md:pt-44 pb-20 md:pb-24 px-6 lg:px-10 overflow-hidden"
-        style={{
-          background: `
-            radial-gradient(ellipse 60% 80% at 100% 0%, rgba(201,169,110,0.16), transparent 60%),
-            radial-gradient(ellipse 50% 60% at 0% 100%, rgba(122,32,40,0.06), transparent 60%),
-            var(--beige-100)
-          `,
-          borderBottom: '1px solid var(--line)',
-        }}
+        className="relative pt-36 md:pt-44 pb-20 md:pb-24 px-6 lg:px-10"
+        style={{ background: 'var(--beige-100)', borderBottom: '1px solid var(--line)' }}
       >
-        {/* Fine hairline texture */}
-        <div
-          className="absolute inset-0 pointer-events-none"
-          style={{
-            backgroundImage: 'repeating-linear-gradient(115deg, rgba(122,32,40,0.035) 0px, rgba(122,32,40,0.035) 1px, transparent 1px, transparent 64px)',
-          }}
-        />
-
         <div className="max-w-7xl mx-auto relative z-10">
           <div
             className="reveal"
             style={{ transform: 'translateY(32px)' } as React.CSSProperties}
           >
-            <div className="w-10 h-px mb-5" style={{ background: 'var(--gold-600)' }} />
             <p className="text-xs tracking-[0.42em] uppercase mb-5" style={{ color: 'var(--gold-600)' }}>
               {lang === 'en' ? 'Full Menu' : 'Menu Penuh'}
             </p>

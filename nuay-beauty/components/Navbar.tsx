@@ -17,10 +17,6 @@ export default function Navbar() {
   const { contact, navItems } = useSiteData();
   const BOOKING_URL = contact.bookingUrl;
 
-  // Only the homepage has a dark hero behind the navbar; every inner page
-  // now has a light beige header, so the navbar should read dark there too.
-  const dark = scrolled || pathname !== '/';
-
   useEffect(() => {
     const onScroll = () => setScrolled(window.scrollY > 40);
     window.addEventListener('scroll', onScroll, { passive: true });
@@ -40,23 +36,22 @@ export default function Navbar() {
       <header
         className="fixed top-0 left-0 right-0 z-50 transition-all duration-500"
         style={{
-          background: scrolled ? 'rgba(249,246,243,0.95)' : 'transparent',
-          backdropFilter: scrolled ? 'blur(12px)' : 'none',
-          borderBottom: scrolled ? '1px solid rgba(200,180,160,0.3)' : 'none',
+          background: 'var(--wine-700)',
+          boxShadow: scrolled ? 'var(--shadow-md)' : 'none',
         }}
       >
         <div className="max-w-7xl mx-auto px-6 lg:px-10 h-16 grid grid-cols-3 items-center">
           {/* Logo */}
           <Link href="/" className="flex flex-col leading-none group">
             <span
-              className="text-xl tracking-[0.25em] font-semibold transition-colors duration-300"
-              style={{ color: dark ? 'var(--wine-700)' : 'var(--beige-50)' }}
+              className="text-xl tracking-[0.25em] font-semibold"
+              style={{ color: 'var(--beige-50)' }}
             >
               NUAY
             </span>
             <span
-              className="text-[9px] tracking-[0.4em] font-light transition-colors duration-300"
-              style={{ color: dark ? 'var(--ink-400)' : 'rgba(249,246,243,0.6)' }}
+              className="text-[9px] tracking-[0.4em] font-light"
+              style={{ color: 'var(--gold-300)' }}
             >
               BEAUTY
             </span>
@@ -70,9 +65,7 @@ export default function Navbar() {
                 href={l.href}
                 className="text-sm tracking-wide transition-colors duration-200"
                 style={{
-                  color: dark
-                    ? (pathname === l.href ? 'var(--wine-700)' : 'var(--ink-800)')
-                    : (pathname === l.href ? 'var(--beige-50)' : 'rgba(249,246,243,0.75)'),
+                  color: pathname === l.href ? 'var(--gold-300)' : 'rgba(249,246,243,0.85)',
                   fontWeight: 600,
                 }}
               >
@@ -88,8 +81,8 @@ export default function Navbar() {
               onClick={() => setLang(lang === 'en' ? 'bm' : 'en')}
               className="text-xs tracking-widest px-2 py-1 rounded transition-colors duration-200"
               style={{
-                color: dark ? 'var(--ink-400)' : 'rgba(249,246,243,0.7)',
-                border: dark ? '1px solid var(--line)' : '1px solid rgba(249,246,243,0.3)',
+                color: 'rgba(249,246,243,0.8)',
+                border: '1px solid rgba(249,246,243,0.35)',
               }}
             >
               {lang === 'en' ? 'BM' : 'EN'}
@@ -101,8 +94,8 @@ export default function Navbar() {
               rel="noopener noreferrer"
               className="text-sm px-5 py-2 transition-all duration-200 active:scale-95"
               style={{
-                background: 'var(--wine-700)',
-                color: 'var(--beige-50)',
+                background: 'var(--gold-500)',
+                color: 'var(--ink-950)',
                 letterSpacing: '0.05em',
                 borderRadius: 'var(--radius-button)',
               }}
@@ -117,15 +110,15 @@ export default function Navbar() {
               onClick={() => setLang(lang === 'en' ? 'bm' : 'en')}
               className="text-xs tracking-widest px-2 py-1 rounded transition-colors duration-300"
               style={{
-                color: dark ? 'var(--ink-400)' : 'rgba(249,246,243,0.7)',
-                border: dark ? '1px solid var(--line)' : '1px solid rgba(249,246,243,0.3)',
+                color: 'rgba(249,246,243,0.8)',
+                border: '1px solid rgba(249,246,243,0.35)',
               }}
             >
               {lang === 'en' ? 'BM' : 'EN'}
             </button>
             <button
               onClick={() => setOpen(!open)}
-              style={{ color: dark ? 'var(--ink-950)' : 'var(--beige-50)' }}
+              style={{ color: 'var(--beige-50)' }}
               aria-label="Toggle menu"
             >
               {open ? <X size={22} /> : <List size={22} />}
