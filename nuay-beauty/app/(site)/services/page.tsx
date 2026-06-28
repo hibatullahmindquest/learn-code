@@ -301,44 +301,46 @@ export default function ServicesPage() {
                         </div>
                       </div>
 
-                      <div className="flex items-center gap-6 md:gap-8 flex-shrink-0">
-                        <div className="flex items-center gap-4">
-                          <span className="text-xs tracking-wide px-3 py-1 rounded-full" style={{ border: '1px solid var(--line)', color: 'var(--ink-400)' }}>
+                      <div className="flex items-center justify-between gap-3 md:gap-8 flex-shrink-0">
+                        <div className="flex items-center gap-2 md:gap-4">
+                          <span className="hidden sm:inline-flex text-xs tracking-wide px-3 py-1 rounded-full" style={{ border: '1px solid var(--line)', color: 'var(--ink-400)' }}>
                             {svc.duration}
                           </span>
                           <p
-                            className="text-2xl"
+                            className="text-lg md:text-2xl whitespace-nowrap"
                             style={{ fontFamily: 'var(--font-nuay-display), serif', fontWeight: 500, color: 'var(--wine-700)' }}
                           >
                             RM {svc.price}
                           </p>
                         </div>
-                        {hasDetail && (
-                          <button
-                            type="button"
-                            onClick={() => setExpandedId(isExpanded ? null : svc.id)}
-                            aria-expanded={isExpanded}
-                            className="flex items-center gap-1.5 text-sm px-4 py-2.5 transition-all duration-200 active:scale-[0.97] whitespace-nowrap"
-                            style={{ border: '1px solid var(--line)', color: 'var(--ink-600)', borderRadius: 'var(--radius-button)' }}
+                        <div className="flex items-center gap-2 md:gap-4">
+                          {hasDetail && (
+                            <button
+                              type="button"
+                              onClick={() => setExpandedId(isExpanded ? null : svc.id)}
+                              aria-expanded={isExpanded}
+                              className="flex items-center gap-1 md:gap-1.5 text-xs md:text-sm px-3 md:px-4 py-2 md:py-2.5 transition-all duration-200 active:scale-[0.97] whitespace-nowrap"
+                              style={{ border: '1px solid var(--line)', color: 'var(--ink-600)', borderRadius: 'var(--radius-button)' }}
+                            >
+                              {lang === 'en' ? 'Details' : 'Butiran'}
+                              <CaretDown
+                                size={13}
+                                className="transition-transform duration-300"
+                                style={{ transform: isExpanded ? 'rotate(180deg)' : 'none' }}
+                              />
+                            </button>
+                          )}
+                          <a
+                            href={svc.bookingUrl || BOOKING_URL}
+                            target="_blank"
+                            rel="noopener noreferrer"
+                            className="flex items-center gap-1 md:gap-1.5 text-xs md:text-sm px-3.5 md:px-5 py-2 md:py-2.5 transition-all duration-200 active:scale-[0.97] whitespace-nowrap"
+                            style={{ background: 'var(--ink-950)', color: 'var(--beige-50)', borderRadius: 'var(--radius-button)' }}
                           >
-                            {lang === 'en' ? 'Details' : 'Butiran'}
-                            <CaretDown
-                              size={13}
-                              className="transition-transform duration-300"
-                              style={{ transform: isExpanded ? 'rotate(180deg)' : 'none' }}
-                            />
-                          </button>
-                        )}
-                        <a
-                          href={svc.bookingUrl || BOOKING_URL}
-                          target="_blank"
-                          rel="noopener noreferrer"
-                          className="flex items-center gap-1.5 text-sm px-5 py-2.5 transition-all duration-200 active:scale-[0.97] whitespace-nowrap"
-                          style={{ background: 'var(--ink-950)', color: 'var(--beige-50)', borderRadius: 'var(--radius-button)' }}
-                        >
-                          {lang === 'en' ? 'Book' : 'Tempah'}
-                          <ArrowUpRight size={13} className="transition-transform duration-200 group-hover:translate-x-0.5 group-hover:-translate-y-0.5" />
-                        </a>
+                            {lang === 'en' ? 'Book' : 'Tempah'}
+                            <ArrowUpRight size={13} className="transition-transform duration-200 group-hover:translate-x-0.5 group-hover:-translate-y-0.5" />
+                          </a>
+                        </div>
                       </div>
                     </div>
 
