@@ -1,10 +1,42 @@
 'use client';
 
-import { useEffect, useState } from 'react';
+import { useEffect, useState, useCallback, useRef } from 'react';
 import Image from 'next/image';
 import { useLang } from '@/components/LanguageContext';
 import { useSiteData, getCopy } from '@/components/SiteDataContext';
-import { ArrowRight, ArrowUpRight, Drop } from '@phosphor-icons/react';
+import { ArrowRight, ArrowUpRight, CaretDown, CaretLeft, CaretRight, Drop, InstagramLogo, Play, X } from '@phosphor-icons/react';
+
+type VideoEmbed =
+  | { type: 'youtube'; embedUrl: string }
+  | { type: 'tiktok'; embedUrl: string }
+  | { type: 'instagram'; originalUrl: string }
+  | null;
+
+function getVideoEmbed(url: string | null | undefined): VideoEmbed {
+  if (!url) return null;
+  try {
+    const u = new URL(url);
+    const host = u.hostname.replace('www.', '');
+    if (host === 'youtube.com' || host === 'm.youtube.com') {
+      const id = u.pathname.startsWith('/shorts/') ? u.pathname.split('/')[2] : u.searchParams.get('v');
+      if (id) return { type: 'youtube', embedUrl: `https://www.youtube.com/embed/${id}` };
+    }
+    if (host === 'youtu.be') {
+      const id = u.pathname.slice(1);
+      if (id) return { type: 'youtube', embedUrl: `https://www.youtube.com/embed/${id}` };
+    }
+    if (host === 'tiktok.com') {
+      const match = u.pathname.match(/\/video\/(\d+)/);
+      if (match) return { type: 'tiktok', embedUrl: `https://www.tiktok.com/embed/v2/${match[1]}` };
+    }
+    if (host === 'instagram.com') {
+      return { type: 'instagram', originalUrl: url };
+    }
+  } catch {
+    return null;
+  }
+  return null;
+}
 
 const categoryLabels: Record<string, { en: string; bm: string }> = {
   lash: { en: 'Lash', bm: 'Lash' },
@@ -22,6 +54,19 @@ export default function ServicesPage() {
   const t = getCopy(copy, lang);
   const BOOKING_URL = contact.bookingUrl;
   const [activeCategory, setActiveCategory] = useState(categoryOrder[0]);
+  const [expandedId, setExpandedId] = useState<string | null>(null);
+  const [videoLightboxFor, setVideoLightboxFor] = useState<string | null>(null);
+  const [lightbox, setLightbox] = useState<{ serviceId: string; index: number } | null>(null);
+  const touchStartX = useRef<number | null>(null);
+
+  const lightboxImages = lightbox ? services.find((s) => s.id === lightbox.serviceId)?.detailImages ?? [] : [];
+
+  const prevImage = useCallback(() => {
+    setLightbox((cur) => (cur ? { ...cur, index: (cur.index - 1 + lightboxImages.length) % lightboxImages.length } : null));
+  }, [lightboxImages.length]);
+  const nextImage = useCallback(() => {
+    setLightbox((cur) => (cur ? { ...cur, index: (cur.index + 1) % lightboxImages.length } : null));
+  }, [lightboxImages.length]);
 
   const grouped = categoryOrder
     .map((cat) => ({
@@ -66,6 +111,30 @@ export default function ServicesPage() {
     });
     return () => observer.disconnect();
   }, []);
+
+  // Video lightbox keyboard support
+  useEffect(() => {
+    if (!videoLightboxFor) return;
+    const onKey = (e: KeyboardEvent) => {
+      if (e.key === 'Escape') setVideoLightboxFor(null);
+    };
+    document.body.style.overflow = 'hidden';
+    window.addEventListener('keydown', onKey);
+    return () => { window.removeEventListener('keydown', onKey); document.body.style.overflow = ''; };
+  }, [videoLightboxFor]);
+
+  // Gallery lightbox keyboard support
+  useEffect(() => {
+    if (!lightbox) return;
+    const onKey = (e: KeyboardEvent) => {
+      if (e.key === 'Escape') setLightbox(null);
+      if (e.key === 'ArrowLeft') prevImage();
+      if (e.key === 'ArrowRight') nextImage();
+    };
+    document.body.style.overflow = 'hidden';
+    window.addEventListener('keydown', onKey);
+    return () => { window.removeEventListener('keydown', onKey); document.body.style.overflow = ''; };
+  }, [lightbox, prevImage, nextImage]);
 
   const scrollToCategory = (cat: string) => {
     const el = document.getElementById(`cat-${cat}`);
@@ -178,7 +247,13 @@ export default function ServicesPage() {
 
               {/* Service rows */}
               <div className="flex flex-col gap-4">
-                {items.map((svc, i) => (
+                {items.map((svc, i) => {
+                  const detailText = lang === 'en' ? svc.detailTextEn : svc.detailTextBm;
+                  const detailImages = svc.detailImages ?? [];
+                  const videoEmbed = getVideoEmbed(svc.videoUrl);
+                  const hasDetail = Boolean(detailText || detailImages.length > 0 || videoEmbed);
+                  const isExpanded = hasDetail && expandedId === svc.id;
+                  return (
                   <div
                     key={svc.id}
                     className="reveal group"
@@ -186,7 +261,11 @@ export default function ServicesPage() {
                   >
                     <div
                       className="p-5 md:p-6 flex flex-col md:flex-row md:items-center justify-between gap-4 transition-all duration-300 hover:-translate-y-1 hover:shadow-[var(--shadow-lg)]"
-                      style={{ background: 'var(--white)', borderRadius: 'var(--radius-card)', boxShadow: 'var(--shadow-sm)' }}
+                      style={{
+                        background: 'var(--white)',
+                        borderRadius: isExpanded ? 'var(--radius-card) var(--radius-card) 0 0' : 'var(--radius-card)',
+                        boxShadow: 'var(--shadow-sm)',
+                      }}
                     >
                       <div className="flex items-center gap-4 flex-1 min-w-0">
                         {svc.image && (
@@ -234,6 +313,22 @@ export default function ServicesPage() {
                             RM {svc.price}
                           </p>
                         </div>
+                        {hasDetail && (
+                          <button
+                            type="button"
+                            onClick={() => setExpandedId(isExpanded ? null : svc.id)}
+                            aria-expanded={isExpanded}
+                            className="flex items-center gap-1.5 text-sm px-4 py-2.5 transition-all duration-200 active:scale-[0.97] whitespace-nowrap"
+                            style={{ border: '1px solid var(--line)', color: 'var(--ink-600)', borderRadius: 'var(--radius-button)' }}
+                          >
+                            {lang === 'en' ? 'Details' : 'Butiran'}
+                            <CaretDown
+                              size={13}
+                              className="transition-transform duration-300"
+                              style={{ transform: isExpanded ? 'rotate(180deg)' : 'none' }}
+                            />
+                          </button>
+                        )}
                         <a
                           href={svc.bookingUrl || BOOKING_URL}
                           target="_blank"
@@ -246,8 +341,86 @@ export default function ServicesPage() {
                         </a>
                       </div>
                     </div>
+
+                    {/* ── Detail accordion ── */}
+                    {hasDetail && (
+                      <div
+                        className="overflow-hidden transition-all duration-300"
+                        style={{
+                          maxHeight: isExpanded ? '640px' : '0px',
+                          background: 'var(--beige-50)',
+                          borderRadius: '0 0 var(--radius-card) var(--radius-card)',
+                          boxShadow: isExpanded ? 'var(--shadow-sm)' : 'none',
+                        }}
+                      >
+                        <div className="p-5 md:p-6 flex flex-col md:flex-row gap-6" style={{ borderTop: '1px solid var(--line)' }}>
+                          {detailText && (
+                            <div className="flex-1 min-w-0">
+                              <p className="text-[10px] tracking-[0.35em] uppercase mb-3" style={{ color: 'var(--gold-600)' }}>
+                                {lang === 'en' ? 'About this treatment' : 'Tentang rawatan ini'}
+                              </p>
+                              <p className="text-sm leading-relaxed" style={{ color: 'var(--ink-600)' }}>
+                                {detailText}
+                              </p>
+                            </div>
+                          )}
+
+                          {(detailImages.length > 0 || videoEmbed) && (
+                            <div className="flex flex-col sm:flex-row gap-4 md:w-[420px] flex-shrink-0">
+                              {/* Gallery — first image shown, click opens lightbox w/ nav */}
+                              {detailImages.length > 0 && (
+                                <button
+                                  type="button"
+                                  onClick={() => setLightbox({ serviceId: svc.id, index: 0 })}
+                                  className="relative flex-1 aspect-[4/3] rounded-xl overflow-hidden cursor-pointer"
+                                  style={{ background: 'var(--beige-100)' }}
+                                >
+                                  <Image src={detailImages[0]} alt={lang === 'en' ? svc.nameEn : svc.nameBm} fill className="object-cover" />
+                                  {detailImages.length > 1 && (
+                                    <span
+                                      className="absolute bottom-2 right-2 text-[10px] px-2 py-0.5 rounded-full"
+                                      style={{ background: 'rgba(26,20,16,0.65)', color: 'var(--beige-50)' }}
+                                    >
+                                      1 / {detailImages.length}
+                                    </span>
+                                  )}
+                                </button>
+                              )}
+
+                              {/* Video thumbnail — click opens video in a lightbox (Instagram opens externally) */}
+                              {videoEmbed && (
+                                videoEmbed.type === 'instagram' ? (
+                                  <a
+                                    href={videoEmbed.originalUrl}
+                                    target="_blank"
+                                    rel="noopener noreferrer"
+                                    className="relative flex-1 aspect-[4/3] rounded-xl overflow-hidden flex flex-col items-center justify-center gap-2 text-xs"
+                                    style={{ background: 'var(--ink-950)', color: 'var(--beige-50)' }}
+                                  >
+                                    <InstagramLogo size={24} />
+                                    {lang === 'en' ? 'Watch on Instagram' : 'Tonton di Instagram'}
+                                  </a>
+                                ) : (
+                                  <button
+                                    type="button"
+                                    onClick={() => setVideoLightboxFor(svc.id)}
+                                    className="relative flex-1 aspect-[4/3] rounded-xl overflow-hidden flex items-center justify-center cursor-pointer"
+                                    style={{ background: 'var(--ink-950)' }}
+                                  >
+                                    <span className="flex items-center justify-center w-12 h-12 rounded-full" style={{ background: 'var(--wine-700)' }}>
+                                      <Play size={18} weight="fill" color="var(--beige-50)" />
+                                    </span>
+                                  </button>
+                                )
+                              )}
+                            </div>
+                          )}
+                        </div>
+                      </div>
+                    )}
                   </div>
-                ))}
+                  );
+                })}
               </div>
             </div>
           ))}
@@ -295,6 +468,94 @@ export default function ServicesPage() {
           </div>
         </div>
       </section>
+
+      {/* ─────────────── GALLERY LIGHTBOX ─────────────── */}
+      {lightbox && lightboxImages.length > 0 && (
+        <div
+          className="fixed inset-0 z-50 flex items-center justify-center"
+          style={{ background: 'rgba(28,28,28,0.95)' }}
+          onClick={() => setLightbox(null)}
+          onTouchStart={(e) => { touchStartX.current = e.touches[0].clientX; }}
+          onTouchEnd={(e) => {
+            if (touchStartX.current === null) return;
+            const dx = e.changedTouches[0].clientX - touchStartX.current;
+            touchStartX.current = null;
+            if (dx > 50) prevImage();
+            else if (dx < -50) nextImage();
+          }}
+        >
+          <button
+            className="absolute top-6 right-6 w-10 h-10 rounded-full flex items-center justify-center transition-opacity duration-200 hover:opacity-70"
+            style={{ background: 'rgba(249,246,243,0.1)', color: 'var(--beige-50)' }}
+            onClick={() => setLightbox(null)}
+          >
+            <X size={18} />
+          </button>
+
+          {lightboxImages.length > 1 && (
+            <button
+              className="absolute left-4 md:left-8 w-10 h-10 rounded-full flex items-center justify-center transition-opacity duration-200 hover:opacity-70"
+              style={{ background: 'rgba(249,246,243,0.1)', color: 'var(--beige-50)' }}
+              onClick={(e) => { e.stopPropagation(); prevImage(); }}
+            >
+              <CaretLeft size={18} />
+            </button>
+          )}
+
+          <div className="relative w-[90vw] h-[70vh] md:w-[75vw] md:h-[80vh]" onClick={(e) => e.stopPropagation()}>
+            <Image src={lightboxImages[lightbox.index]} alt="" fill className="object-contain" sizes="90vw" />
+          </div>
+
+          {lightboxImages.length > 1 && (
+            <button
+              className="absolute right-4 md:right-8 w-10 h-10 rounded-full flex items-center justify-center transition-opacity duration-200 hover:opacity-70"
+              style={{ background: 'rgba(249,246,243,0.1)', color: 'var(--beige-50)' }}
+              onClick={(e) => { e.stopPropagation(); nextImage(); }}
+            >
+              <CaretRight size={18} />
+            </button>
+          )}
+
+          {lightboxImages.length > 1 && (
+            <p className="absolute bottom-6 left-1/2 -translate-x-1/2 text-xs tracking-widest" style={{ color: 'rgba(249,246,243,0.4)' }}>
+              {lightbox.index + 1} / {lightboxImages.length}
+            </p>
+          )}
+        </div>
+      )}
+
+      {/* ─────────────── VIDEO LIGHTBOX ─────────────── */}
+      {videoLightboxFor && (() => {
+        const svc = services.find((s) => s.id === videoLightboxFor);
+        const embed = getVideoEmbed(svc?.videoUrl);
+        if (!embed || embed.type === 'instagram') return null;
+        return (
+          <div
+            className="fixed inset-0 z-50 flex items-center justify-center"
+            style={{ background: 'rgba(28,28,28,0.95)' }}
+            onClick={() => setVideoLightboxFor(null)}
+          >
+            <button
+              className="absolute top-6 right-6 w-10 h-10 rounded-full flex items-center justify-center transition-opacity duration-200 hover:opacity-70"
+              style={{ background: 'rgba(249,246,243,0.1)', color: 'var(--beige-50)' }}
+              onClick={() => setVideoLightboxFor(null)}
+            >
+              <X size={18} />
+            </button>
+            <div
+              className="relative w-[90vw] md:w-[70vw] aspect-video rounded-xl overflow-hidden"
+              onClick={(e) => e.stopPropagation()}
+            >
+              <iframe
+                src={embed.embedUrl}
+                className="absolute inset-0 w-full h-full"
+                allow="autoplay; encrypted-media; fullscreen"
+                allowFullScreen
+              />
+            </div>
+          </div>
+        );
+      })()}
     </div>
   );
 }

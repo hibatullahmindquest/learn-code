@@ -39,9 +39,18 @@ export type Service = {
   bookingUrl: string | null;
   featured: boolean;
   published: boolean;
+  detailTextEn: string;
+  detailTextBm: string;
+  detailImages: string[];
+  videoUrl: string | null;
 };
 
-export const SERVICE_DEFAULTS = { longevityEn: '', longevityBm: '', image: '', bookingUrl: null, featured: false };
+export const SERVICE_DETAIL_IMAGES_MAX = 8;
+
+export const SERVICE_DEFAULTS = {
+  longevityEn: '', longevityBm: '', image: '', bookingUrl: null, featured: false,
+  detailTextEn: '', detailTextBm: '', detailImages: [] as string[], videoUrl: null,
+};
 
 export type FaqItem = {
   id: string;
