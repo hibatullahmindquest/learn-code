@@ -1,13 +1,13 @@
 import { createServiceClient } from '@/lib/supabase';
+import { isAuthedRequest } from '@/lib/adminSession';
 import { NextRequest, NextResponse } from 'next/server';
 
-function checkAuth(request: NextRequest) {
-  const password = request.headers.get('x-admin-password');
-  return password && password === process.env.ADMIN_PASSWORD;
-}
+// Storage object names are server-generated basenames (see upload/route.ts);
+// reject anything else to prevent path traversal in the storage key.
+const SAFE_FILENAME = /^[A-Za-z0-9._-]+$/;
 
 export async function GET(request: NextRequest) {
-  if (!checkAuth(request)) {
+  if (!isAuthedRequest(request)) {
     return NextResponse.json({ error: 'Unauthorized' }, { status: 401 });
   }
 
@@ -44,13 +44,13 @@ export async function GET(request: NextRequest) {
 }
 
 export async function DELETE(request: NextRequest) {
-  if (!checkAuth(request)) {
+  if (!isAuthedRequest(request)) {
     return NextResponse.json({ error: 'Unauthorized' }, { status: 401 });
   }
 
   const { name } = await request.json();
-  if (!name || typeof name !== 'string') {
-    return NextResponse.json({ error: 'Missing file name' }, { status: 400 });
+  if (!name || typeof name !== 'string' || !SAFE_FILENAME.test(name)) {
+    return NextResponse.json({ error: 'Invalid file name' }, { status: 400 });
   }
 
   const supabase = createServiceClient();

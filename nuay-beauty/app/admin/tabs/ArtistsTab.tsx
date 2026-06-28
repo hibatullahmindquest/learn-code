@@ -13,10 +13,9 @@ type Props = {
   services: Service[];
   save: (key: string, value: unknown) => Promise<void>;
   status: 'idle' | 'saving' | 'saved' | 'error';
-  password: string;
 };
 
-export function ArtistsTab({ artists, setArtists, services, save, status, password }: Props) {
+export function ArtistsTab({ artists, setArtists, services, save, status }: Props) {
   const [editingId, setEditingId] = useState<string | null>(null);
   const [validationError, setValidationError] = useState<string | null>(null);
 
@@ -76,7 +75,7 @@ export function ArtistsTab({ artists, setArtists, services, save, status, passwo
             </div>
             <div className="md:col-span-2">
               <label className={labelClass}>URL Gambar</label>
-              <MediaPicker value={artist.image} onChange={(url) => update({ image: url })} password={password} label={artist.name || 'Artist Image'} />
+              <MediaPicker value={artist.image} onChange={(url) => update({ image: url })} label={artist.name || 'Artist Image'} />
             </div>
             <div>
               <label className={labelClass}>Tahap Artist</label>
@@ -137,7 +136,6 @@ export function ArtistsTab({ artists, setArtists, services, save, status, passwo
                           g[gi] = newUrl;
                           update({ gallery: g });
                         }}
-                        password={password}
                         label={`${artist.name} Gallery ${gi + 1}`}
                       />
                     </div>

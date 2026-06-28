@@ -10,11 +10,10 @@ type MediaFile = { name: string; url: string };
 type Props = {
   value: string;
   onChange: (url: string) => void;
-  password: string;
   label?: string;
 };
 
-export function MediaPicker({ value, onChange, password, label }: Props) {
+export function MediaPicker({ value, onChange, label }: Props) {
   const [open, setOpen] = useState(false);
   const [files, setFiles] = useState<MediaFile[]>([]);
   const [loading, setLoading] = useState(false);
@@ -26,13 +25,13 @@ export function MediaPicker({ value, onChange, password, label }: Props) {
   const loadMedia = useCallback(async () => {
     setLoading(true);
     try {
-      const res = await fetch('/api/admin/media', { headers: { 'x-admin-password': password } });
+      const res = await fetch('/api/admin/media');
       const data = await res.json();
       if (data.files) setFiles(data.files);
     } finally {
       setLoading(false);
     }
-  }, [password]);
+  }, []);
 
   useEffect(() => {
     if (open) loadMedia();
@@ -46,7 +45,6 @@ export function MediaPicker({ value, onChange, password, label }: Props) {
     try {
       const res = await fetch('/api/admin/upload', {
         method: 'POST',
-        headers: { 'x-admin-password': password },
         body: form,
       });
       const data = await res.json();
@@ -67,9 +65,7 @@ export function MediaPicker({ value, onChange, password, label }: Props) {
   async function handleDelete(f: MediaFile) {
     setDeleting(f.name);
     try {
-      const checkRes = await fetch(`/api/admin/media?checkUrl=${encodeURIComponent(f.url)}`, {
-        headers: { 'x-admin-password': password },
-      });
+      const checkRes = await fetch(`/api/admin/media?checkUrl=${encodeURIComponent(f.url)}`);
       const checkData = await checkRes.json();
       const usedIn: string[] = checkData.usedIn ?? [];
 
@@ -84,7 +80,7 @@ export function MediaPicker({ value, onChange, password, label }: Props) {
 
       const res = await fetch('/api/admin/media', {
         method: 'DELETE',
-        headers: { 'Content-Type': 'application/json', 'x-admin-password': password },
+        headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({ name: f.name }),
       });
       const data = await res.json();
