@@ -4,7 +4,16 @@ import { useEffect, useState } from 'react';
 import Image from 'next/image';
 import { useLang } from '@/components/LanguageContext';
 import { useSiteData, getCopy } from '@/components/SiteDataContext';
-import { ArrowRight, ArrowUpRight, Drop } from '@phosphor-icons/react';
+import { ArrowRight, ArrowUpRight, CaretDown, Drop } from '@phosphor-icons/react';
+
+// Mockup only — demonstrates the per-service detail accordion for a single
+// service before this becomes a real, admin-editable field on Service.
+const MOCK_DETAIL = {
+  textEn:
+    "This treatment uses a Korean-style volume technique to build natural-looking fullness without weighing down your natural lashes. Our therapists assess your eye shape first, then map a custom curl and length pattern so the final look complements your face rather than following a one-size template.",
+  textBm:
+    'Rawatan ini menggunakan teknik volume gaya Korea untuk membina kepenuhan semula jadi tanpa membebankan bulu mata asli anda. Terapis kami akan menilai bentuk mata anda dahulu, kemudian merancang corak lengkungan dan panjang yang sesuai dengan bentuk muka anda.',
+};
 
 const categoryLabels: Record<string, { en: string; bm: string }> = {
   lash: { en: 'Lash', bm: 'Lash' },
@@ -22,6 +31,7 @@ export default function ServicesPage() {
   const t = getCopy(copy, lang);
   const BOOKING_URL = contact.bookingUrl;
   const [activeCategory, setActiveCategory] = useState(categoryOrder[0]);
+  const [expandedId, setExpandedId] = useState<string | null>(null);
 
   const grouped = categoryOrder
     .map((cat) => ({
@@ -178,7 +188,12 @@ export default function ServicesPage() {
 
               {/* Service rows */}
               <div className="flex flex-col gap-4">
-                {items.map((svc, i) => (
+                {items.map((svc, i) => {
+                  // Mockup only — wired to the very first service in the menu to
+                  // demo the detail accordion before it's a real Service field.
+                  const hasMockDetail = key === grouped[0]?.key && i === 0;
+                  const isExpanded = hasMockDetail && expandedId === svc.id;
+                  return (
                   <div
                     key={svc.id}
                     className="reveal group"
@@ -186,7 +201,11 @@ export default function ServicesPage() {
                   >
                     <div
                       className="p-5 md:p-6 flex flex-col md:flex-row md:items-center justify-between gap-4 transition-all duration-300 hover:-translate-y-1 hover:shadow-[var(--shadow-lg)]"
-                      style={{ background: 'var(--white)', borderRadius: 'var(--radius-card)', boxShadow: 'var(--shadow-sm)' }}
+                      style={{
+                        background: 'var(--white)',
+                        borderRadius: isExpanded ? 'var(--radius-card) var(--radius-card) 0 0' : 'var(--radius-card)',
+                        boxShadow: 'var(--shadow-sm)',
+                      }}
                     >
                       <div className="flex items-center gap-4 flex-1 min-w-0">
                         {svc.image && (
@@ -234,6 +253,22 @@ export default function ServicesPage() {
                             RM {svc.price}
                           </p>
                         </div>
+                        {hasMockDetail && (
+                          <button
+                            type="button"
+                            onClick={() => setExpandedId(isExpanded ? null : svc.id)}
+                            aria-expanded={isExpanded}
+                            className="flex items-center gap-1.5 text-sm px-4 py-2.5 transition-all duration-200 active:scale-[0.97] whitespace-nowrap"
+                            style={{ border: '1px solid var(--line)', color: 'var(--ink-600)', borderRadius: 'var(--radius-button)' }}
+                          >
+                            {lang === 'en' ? 'Details' : 'Butiran'}
+                            <CaretDown
+                              size={13}
+                              className="transition-transform duration-300"
+                              style={{ transform: isExpanded ? 'rotate(180deg)' : 'none' }}
+                            />
+                          </button>
+                        )}
                         <a
                           href={svc.bookingUrl || BOOKING_URL}
                           target="_blank"
@@ -246,8 +281,47 @@ export default function ServicesPage() {
                         </a>
                       </div>
                     </div>
+
+                    {/* ── Detail accordion (mockup) ── */}
+                    {hasMockDetail && (
+                      <div
+                        className="overflow-hidden transition-all duration-300"
+                        style={{
+                          maxHeight: isExpanded ? '640px' : '0px',
+                          background: 'var(--beige-50)',
+                          borderRadius: '0 0 var(--radius-card) var(--radius-card)',
+                          boxShadow: isExpanded ? 'var(--shadow-sm)' : 'none',
+                        }}
+                      >
+                        <div className="p-5 md:p-6 flex flex-col md:flex-row gap-6" style={{ borderTop: '1px solid var(--line)' }}>
+                          <div className="flex-1 min-w-0">
+                            <p className="text-[10px] tracking-[0.35em] uppercase mb-3" style={{ color: 'var(--gold-600)' }}>
+                              {lang === 'en' ? 'About this treatment' : 'Tentang rawatan ini'}
+                            </p>
+                            <p className="text-sm leading-relaxed" style={{ color: 'var(--ink-600)' }}>
+                              {lang === 'en' ? MOCK_DETAIL.textEn : MOCK_DETAIL.textBm}
+                            </p>
+                          </div>
+                          <div className="flex flex-col sm:flex-row gap-4 md:w-[420px] flex-shrink-0">
+                            <div
+                              className="flex-1 aspect-[4/3] rounded-xl flex items-center justify-center text-xs"
+                              style={{ background: 'var(--beige-100)', border: '1px dashed var(--line)', color: 'var(--ink-400)' }}
+                            >
+                              {lang === 'en' ? 'Image goes here' : 'Imej di sini'}
+                            </div>
+                            <div
+                              className="flex-1 aspect-[4/3] rounded-xl flex items-center justify-center text-xs"
+                              style={{ background: 'var(--ink-950)', color: 'var(--beige-50)' }}
+                            >
+                              ▶ {lang === 'en' ? 'Video goes here' : 'Video di sini'}
+                            </div>
+                          </div>
+                        </div>
+                      </div>
+                    )}
                   </div>
-                ))}
+                  );
+                })}
               </div>
             </div>
           ))}
