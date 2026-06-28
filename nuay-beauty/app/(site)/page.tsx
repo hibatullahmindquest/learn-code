@@ -7,7 +7,7 @@ import { Cormorant_Garamond, Poppins } from 'next/font/google';
 import { ArrowUpRight, Star } from '@phosphor-icons/react';
 import { useLang } from '@/components/LanguageContext';
 import { useSiteData } from '@/components/SiteDataContext';
-import { BOOKING_URL, testimonials, faqs } from '@/lib/data';
+import { BOOKING_URL } from '@/lib/data';
 
 // Page-scoped fonts + tokens, ported from the Nuay Beauty Design System
 // (Cormorant Garamond display / Poppins body) — scoped to this page only so
@@ -160,7 +160,7 @@ function PriceBadge({ value }: { value: number }) {
 
 export default function HomePage() {
   const { lang } = useLang();
-  const { images, services, artists, copy } = useSiteData();
+  const { images, services, artists, copy, testimonials, faqs } = useSiteData();
   const en = lang === 'en';
 
   useEffect(() => {
@@ -183,7 +183,8 @@ export default function HomePage() {
   const [pos, setPos] = useState(50);
 
   const featured = services.filter((s) => s.featured && s.published !== false).slice(0, 3);
-  const loop = [...testimonials, ...testimonials];
+  const publishedTestimonials = testimonials.filter((t) => t.published !== false);
+  const loop = [...publishedTestimonials, ...publishedTestimonials];
 
   return (
     <div
@@ -531,10 +532,10 @@ export default function HomePage() {
                 }}
               >
                 <div style={{ marginBottom: 18 }}>
-                  <Rating score={t.rating} />
+                  <Rating score={t.rating ?? 5} />
                 </div>
                 <p style={{ ...DISPLAY, fontStyle: 'italic', fontSize: 19, color: 'var(--ink-800)', margin: '0 0 24px', lineHeight: 1.4 }}>
-                  &ldquo;{en ? t.text : t.textBm}&rdquo;
+                  &ldquo;{en ? t.quoteEn : t.quoteBm}&rdquo;
                 </p>
                 <div style={{ ...BODY, fontSize: 14, fontWeight: 700, color: 'var(--ink-950)' }}>{t.name}</div>
                 <div style={{ ...BODY, fontSize: 11, letterSpacing: '0.08em', textTransform: 'uppercase', color: 'var(--ink-400)', marginTop: 4 }}>
