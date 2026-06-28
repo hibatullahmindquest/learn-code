@@ -61,3 +61,17 @@ export type Testimonial = {
   quoteBm: string;
   published: boolean;
 };
+
+export type GalleryImage = { url: string; label: string; span: string };
+
+export type ImageData = {
+  hero: string;
+  featuredService: string;
+  studio: string[];
+  gallery: GalleryImage[];
+  aboutPhotos: [string, string, string];
+  beforeAfter: { before: string; after: string };
+  whyNuay: string;
+};
+
+export const IMAGE_DEFAULTS: ImageData = { hero: '', featuredService: '', studio: ['', '', '', '', ''], gallery: [], aboutPhotos: ['', '', ''], beforeAfter: { before: '', after: '' }, whyNuay: '' };

@@ -5,11 +5,12 @@ import { useState, useEffect, useCallback } from 'react';
 import { defaultCopy, defaultNavItems, type CopyData, type NavItemSetting } from '@/components/SiteDataContext';
 import { MediaPicker } from '@/components/MediaPicker';
 import { MediaLibraryTab } from '@/components/MediaLibraryTab';
-import { type Artist, type Service, type FaqItem, type Testimonial, ARTIST_DEFAULTS, SERVICE_DEFAULTS } from '@/lib/types';
+import { type Artist, type Service, type FaqItem, type Testimonial, type ImageData, ARTIST_DEFAULTS, SERVICE_DEFAULTS, IMAGE_DEFAULTS } from '@/lib/types';
 import { FaqTab } from './tabs/FaqTab';
 import { TestimonialsTab } from './tabs/TestimonialsTab';
 import { ServicesTab } from './tabs/ServicesTab';
 import { ArtistsTab } from './tabs/ArtistsTab';
+import { GalleryTab } from './tabs/GalleryTab';
 
 type Tab = 'dashboard' | 'contact' | 'artists' | 'services' | 'gallery' | 'media' | 'faq' | 'testimonials' | 'content' | 'blog' | 'nav';
 type ContentSubTab = 'homepage' | 'about' | 'footer';
@@ -25,20 +26,6 @@ type ContactData = {
   hoursEn: string;
   hoursBm: string;
 };
-
-type GalleryImage = { url: string; label: string; span: string };
-
-type ImageData = {
-  hero: string;
-  featuredService: string;
-  studio: string[];
-  gallery: GalleryImage[];
-  aboutPhotos: [string, string, string];
-  beforeAfter: { before: string; after: string };
-  whyNuay: string;
-};
-
-const IMAGE_DEFAULTS: ImageData = { hero: '', featuredService: '', studio: ['', '', '', '', ''], gallery: [], aboutPhotos: ['', '', ''], beforeAfter: { before: '', after: '' }, whyNuay: '' };
 
 type BlogPost = {
   id: string;
@@ -456,112 +443,7 @@ export default function AdminPage() {
 
           {/* ── GALLERY ───────────────────────────────────────────────────── */}
           {tab === 'gallery' && (
-            <div className="flex flex-col gap-6">
-              <div className={SECTION}>
-                <div className="flex items-center justify-between mb-5">
-                  <h2 className="font-semibold text-gray-800">Gambar Hero (Latar Utama)</h2>
-                  <StatusBadge status={statuses['images'] ?? 'idle'} />
-                </div>
-                <label className={LABEL}>URL Gambar Hero</label>
-                <MediaPicker value={images.hero} onChange={(url) => setImages({ ...images, hero: url })} password={password} label="Hero Image" />
-              </div>
-
-              <div className={SECTION}>
-                <div className="flex items-center justify-between mb-5">
-                  <h2 className="font-semibold text-gray-800">Gambar Why Nuay (Homepage)</h2>
-                  <StatusBadge status={statuses['images'] ?? 'idle'} />
-                </div>
-                <p className="text-xs text-gray-400 mb-3">Gambar di sebelah section &quot;Why Nuay&quot; di homepage.</p>
-                <label className={LABEL}>URL Gambar Why Nuay</label>
-                <MediaPicker value={images.whyNuay ?? ''} onChange={(url) => setImages({ ...images, whyNuay: url })} password={password} label="Why Nuay Image" />
-              </div>
-
-              <div className={SECTION}>
-                <div className="flex items-center justify-between mb-5">
-                  <h2 className="font-semibold text-gray-800">Gambar Before & After (Homepage)</h2>
-                  <StatusBadge status={statuses['images'] ?? 'idle'} />
-                </div>
-                <p className="text-xs text-gray-400 mb-3">Gambar untuk slider perbandingan "Before & After" di homepage.</p>
-                <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-                  <div>
-                    <label className={LABEL}>Gambar Before</label>
-                    <MediaPicker value={images.beforeAfter?.before ?? ''} onChange={(url) => setImages({ ...images, beforeAfter: { ...images.beforeAfter, before: url } })} password={password} label="Before Image" />
-                  </div>
-                  <div>
-                    <label className={LABEL}>Gambar After</label>
-                    <MediaPicker value={images.beforeAfter?.after ?? ''} onChange={(url) => setImages({ ...images, beforeAfter: { ...images.beforeAfter, after: url } })} password={password} label="After Image" />
-                  </div>
-                </div>
-              </div>
-
-              <div className={SECTION}>
-                <div className="flex items-center justify-between mb-5">
-                  <h2 className="font-semibold text-gray-800">Gambar Featured Service (Homepage)</h2>
-                  <StatusBadge status={statuses['images'] ?? 'idle'} />
-                </div>
-                <p className="text-xs text-gray-400 mb-3">Gambar latar untuk kad servis featured besar di homepage.</p>
-                <label className={LABEL}>URL Gambar Featured Service</label>
-                <MediaPicker value={images.featuredService ?? ''} onChange={(url) => setImages({ ...images, featuredService: url })} password={password} label="Featured Service Image" />
-              </div>
-
-              <div className={SECTION}>
-                <h2 className="font-semibold text-gray-800 mb-5">Gambar Studio (5 gambar)</h2>
-                <div className="flex flex-col gap-4">
-                  {images.studio.map((url, i) => (
-                    <div key={i}>
-                      <label className={LABEL}>Gambar Studio {i + 1}</label>
-                      <MediaPicker value={url} onChange={(newUrl) => { const u = [...images.studio]; u[i] = newUrl; setImages({ ...images, studio: u }); }} password={password} label={`Studio ${i + 1}`} />
-                    </div>
-                  ))}
-                </div>
-              </div>
-
-              <div className={SECTION}>
-                <h2 className="font-semibold text-gray-800 mb-5">Gambar Galeri ({images.gallery.length} gambar)</h2>
-                <div className="flex flex-col gap-5">
-                  {images.gallery.map((img, i) => (
-                    <div key={i} className="border border-gray-100 rounded-lg p-4">
-                      <div className="flex items-center justify-between mb-3">
-                        <p className="text-sm font-medium text-gray-600">Gambar {i + 1}: {img.label}</p>
-                        <button className={BTN_DANGER} onClick={() => { if (window.confirm('Padam gambar galeri ini?')) setImages({ ...images, gallery: images.gallery.filter((_, idx) => idx !== i) }); }}>Padam</button>
-                      </div>
-                      <div className="flex flex-col gap-2">
-                        <label className={LABEL}>URL Gambar</label>
-                        <MediaPicker value={img.url} onChange={(url) => { const u = [...images.gallery]; u[i] = { ...img, url }; setImages({ ...images, gallery: u }); }} password={password} label={img.label || `Gallery ${i + 1}`} />
-                        <label className={LABEL + ' mt-2'}>Label</label>
-                        <input className={INPUT} value={img.label} onChange={(e) => { const u = [...images.gallery]; u[i] = { ...img, label: e.target.value }; setImages({ ...images, gallery: u }); }} />
-                      </div>
-                    </div>
-                  ))}
-                </div>
-                <button className={BTN_ADD} onClick={() => setImages({ ...images, gallery: [...images.gallery, { url: '', label: '', span: '1' }] })}>
-                  + Tambah Gambar Galeri
-                </button>
-              </div>
-              <div className={SECTION}>
-                <h2 className="font-semibold text-gray-800 mb-5">Gambar Halaman About (3 foto grid)</h2>
-                <p className="text-xs text-gray-400 mb-4">Foto yang muncul dalam grid 2-kolum di halaman About — kiri (tall), kanan atas, kanan bawah.</p>
-                <div className="flex flex-col gap-4">
-                  {(['Foto Kiri (Tall)', 'Foto Kanan Atas', 'Foto Kanan Bawah'] as const).map((lbl, idx) => (
-                    <div key={idx}>
-                      <label className={LABEL}>{lbl}</label>
-                      <MediaPicker
-                        value={images.aboutPhotos?.[idx] ?? ''}
-                        onChange={(url) => {
-                          const p: [string, string, string] = [...(images.aboutPhotos ?? ['', '', ''])] as [string, string, string];
-                          p[idx] = url;
-                          setImages({ ...images, aboutPhotos: p });
-                        }}
-                        password={password}
-                        label={lbl}
-                      />
-                    </div>
-                  ))}
-                </div>
-              </div>
-
-              <button onClick={() => save('images', images)} className={BTN_SAVE}>Simpan Semua Gambar</button>
-            </div>
+            <GalleryTab images={images} setImages={setImages} save={save} status={statuses['images'] ?? 'idle'} password={password} />
           )}
 
           {/* ── MEDIA LIBRARY ─────────────────────────────────────────────── */}
