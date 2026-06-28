@@ -2,6 +2,7 @@
 
 import { useEffect, useState } from 'react';
 import Image from 'next/image';
+import Link from 'next/link';
 import { Cormorant_Garamond, Poppins } from 'next/font/google';
 import { ArrowUpRight, Star } from '@phosphor-icons/react';
 import { useLang } from '@/components/LanguageContext';
@@ -159,7 +160,7 @@ function PriceBadge({ value }: { value: number }) {
 
 export default function HomePage() {
   const { lang } = useLang();
-  const { images, services, contact } = useSiteData();
+  const { images, services } = useSiteData();
   const en = lang === 'en';
 
   useEffect(() => {
@@ -320,11 +321,9 @@ export default function HomePage() {
         </div>
         <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(280px, 1fr))', gap: 24 }}>
           {featured.map((s) => (
-            <a
+            <Link
               key={s.id}
-              href={s.bookingUrl || contact.bookingUrl}
-              target="_blank"
-              rel="noopener noreferrer"
+              href={`/services#cat-${s.category}`}
               className="nuay-card"
               style={{
                 display: 'block',
@@ -380,7 +379,7 @@ export default function HomePage() {
                   <PriceBadge value={s.price} />
                 </div>
               </div>
-            </a>
+            </Link>
           ))}
         </div>
       </Section>
