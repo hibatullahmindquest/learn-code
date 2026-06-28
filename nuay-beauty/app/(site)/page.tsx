@@ -484,7 +484,7 @@ export default function HomePage() {
       <Section alt>
         <div style={{ display: 'grid', gridTemplateColumns: '0.9fr 1.1fr', gap: 56, alignItems: 'center' }} className="nuay-why-grid">
           <div style={{ borderRadius: 'var(--radius-image)', overflow: 'hidden', boxShadow: 'var(--shadow-lg)', position: 'relative', aspectRatio: '4/5' }}>
-            <Image src="/images/nuay-lounge.webp" alt="The Nuay studio" fill style={{ objectFit: 'cover' }} />
+            <Image src={images.whyNuay || '/images/nuay-lounge.webp'} alt="The Nuay studio" fill style={{ objectFit: 'cover' }} />
           </div>
           <div>
             <SectionHead
