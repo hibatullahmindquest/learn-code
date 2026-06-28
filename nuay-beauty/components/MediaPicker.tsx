@@ -20,6 +20,7 @@ export function MediaPicker({ value, onChange, password, label }: Props) {
   const [loading, setLoading] = useState(false);
   const [uploading, setUploading] = useState(false);
   const [uploadError, setUploadError] = useState('');
+  const [deleting, setDeleting] = useState<string | null>(null);
   const fileRef = useRef<HTMLInputElement>(null);
 
   const loadMedia = useCallback(async () => {
@@ -60,6 +61,41 @@ export function MediaPicker({ value, onChange, password, label }: Props) {
       setUploadError('Upload failed');
     } finally {
       setUploading(false);
+    }
+  }
+
+  async function handleDelete(f: MediaFile) {
+    setDeleting(f.name);
+    try {
+      const checkRes = await fetch(`/api/admin/media?checkUrl=${encodeURIComponent(f.url)}`, {
+        headers: { 'x-admin-password': password },
+      });
+      const checkData = await checkRes.json();
+      const usedIn: string[] = checkData.usedIn ?? [];
+
+      const warning = usedIn.length > 0
+        ? `Amaran: gambar ini sedang digunakan di — ${usedIn.join(', ')}.\n\nJika anda padam, paparan di tempat tersebut mungkin rosak. Padam juga?`
+        : 'Padam gambar ini secara kekal dari storage?';
+
+      if (!window.confirm(warning)) {
+        setDeleting(null);
+        return;
+      }
+
+      const res = await fetch('/api/admin/media', {
+        method: 'DELETE',
+        headers: { 'Content-Type': 'application/json', 'x-admin-password': password },
+        body: JSON.stringify({ name: f.name }),
+      });
+      const data = await res.json();
+      if (data.success) {
+        if (value === f.url) onChange('');
+        await loadMedia();
+      } else {
+        window.alert(data.error ?? 'Gagal padam gambar');
+      }
+    } finally {
+      setDeleting(null);
     }
   }
 
@@ -145,22 +181,37 @@ export function MediaPicker({ value, onChange, password, label }: Props) {
               ) : (
                 <div className="grid grid-cols-3 sm:grid-cols-4 md:grid-cols-5 gap-3">
                   {files.map((f) => (
-                    <button
+                    <div
                       key={f.name}
-                      onClick={() => { onChange(f.url); setOpen(false); }}
                       className="relative group rounded-xl overflow-hidden border-2 transition-all hover:border-rose-600"
                       style={{
                         aspectRatio: '1',
                         borderColor: value === f.url ? '#8B2252' : 'transparent',
                       }}
                     >
-                      <Image src={f.url} alt={f.name} fill className="object-cover" />
-                      {value === f.url && (
-                        <div className="absolute inset-0 flex items-center justify-center" style={{ background: 'rgba(139,34,82,0.4)' }}>
-                          <span className="text-white text-lg">✓</span>
-                        </div>
-                      )}
-                    </button>
+                      <button
+                        type="button"
+                        onClick={() => { onChange(f.url); setOpen(false); }}
+                        className="absolute inset-0"
+                      >
+                        <Image src={f.url} alt={f.name} fill className="object-cover" />
+                        {value === f.url && (
+                          <div className="absolute inset-0 flex items-center justify-center" style={{ background: 'rgba(139,34,82,0.4)' }}>
+                            <span className="text-white text-lg">✓</span>
+                          </div>
+                        )}
+                      </button>
+                      <button
+                        type="button"
+                        onClick={(e) => { e.stopPropagation(); handleDelete(f); }}
+                        disabled={deleting === f.name}
+                        title="Padam gambar"
+                        className="absolute top-1.5 right-1.5 w-6 h-6 rounded-full flex items-center justify-center text-white text-xs opacity-0 group-hover:opacity-100 transition-opacity disabled:opacity-100"
+                        style={{ background: 'rgba(0,0,0,0.6)' }}
+                      >
+                        {deleting === f.name ? '…' : '🗑'}
+                      </button>
+                    </div>
                   ))}
                 </div>
               )}
