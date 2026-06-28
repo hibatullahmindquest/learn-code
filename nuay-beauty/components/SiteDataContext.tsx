@@ -256,9 +256,16 @@ export type ServiceItem = {
   bookingUrl?: string | null;
   featured: boolean;
   published?: boolean;
+  detailTextEn?: string;
+  detailTextBm?: string;
+  detailImages?: string[];
+  videoUrl?: string | null;
 };
 
-const SERVICE_DEFAULTS = { longevityEn: '', longevityBm: '', image: '', bookingUrl: null, featured: false };
+const SERVICE_DEFAULTS = {
+  longevityEn: '', longevityBm: '', image: '', bookingUrl: null, featured: false,
+  detailTextEn: '', detailTextBm: '', detailImages: [] as string[], videoUrl: null,
+};
 function normalizeServices(items: ServiceItem[]): ServiceItem[] {
   return items.map((s) => ({ ...SERVICE_DEFAULTS, ...s }));
 }

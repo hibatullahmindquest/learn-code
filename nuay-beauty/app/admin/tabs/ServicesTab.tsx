@@ -1,10 +1,10 @@
 'use client';
 
 import { useState } from 'react';
-import { type Service, uid } from '@/lib/types';
+import { type Service, SERVICE_DETAIL_IMAGES_MAX, uid } from '@/lib/types';
 import { CollectionList } from '@/components/admin/CollectionList';
 import { CollectionDetail } from '@/components/admin/CollectionDetail';
-import { inputClass, labelClass, sectionClass } from '@/components/admin/AdminUI';
+import { inputClass, labelClass, sectionClass, btnAdd, btnDanger } from '@/components/admin/AdminUI';
 import { MediaPicker } from '@/components/MediaPicker';
 
 type Props = {
@@ -108,6 +108,62 @@ export function ServicesTab({ services, setServices, save, status, password }: P
             <span className="text-sm" style={{ color: 'var(--ink-600)' }}>Papar di Homepage (Featured Services) — 3 pertama yang ditanda akan dipaparkan</span>
           </label>
         </div>
+
+        <div className={sectionClass}>
+          <h3 className="font-semibold text-sm mb-4" style={{ color: 'var(--ink-950)' }}>Detail Servis (Accordion &quot;Details&quot;)</h3>
+          <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+            <div>
+              <label className={labelClass}>Detail Penuh (English)</label>
+              <textarea className={inputClass + ' h-28 resize-none'} value={svc.detailTextEn ?? ''} onChange={(e) => update({ detailTextEn: e.target.value })} placeholder="Penerangan lanjut tentang rawatan ini..." />
+            </div>
+            <div>
+              <label className={labelClass}>Detail Penuh (BM)</label>
+              <textarea className={inputClass + ' h-28 resize-none'} value={svc.detailTextBm ?? ''} onChange={(e) => update({ detailTextBm: e.target.value })} placeholder="Penerangan lanjut tentang rawatan ini..." />
+            </div>
+          </div>
+
+          <label className={labelClass + ' mt-4'}>Video Link (kosongkan jika tiada)</label>
+          <input className={inputClass} value={svc.videoUrl ?? ''} onChange={(e) => update({ videoUrl: e.target.value || null })} placeholder="https://youtube.com/... atau https://tiktok.com/..." />
+          <p className="text-xs mt-1" style={{ color: 'var(--ink-400)' }}>
+            Link YouTube/TikTok akan dimainkan terus dalam page. Link Instagram akan dipaparkan sebagai butang &quot;Tonton di Instagram&quot; (buka tab baru).
+          </p>
+
+          <label className={labelClass + ' mt-4'}>
+            Gambar Galeri ({(svc.detailImages ?? []).length}/{SERVICE_DETAIL_IMAGES_MAX})
+          </label>
+          <div className="flex flex-col gap-2 mt-1">
+            {(svc.detailImages ?? []).map((url, gi) => (
+              <div key={gi} className="flex gap-2 items-center">
+                <div className="flex-1">
+                  <MediaPicker
+                    value={url}
+                    onChange={(newUrl) => {
+                      const g = [...(svc.detailImages ?? [])];
+                      g[gi] = newUrl;
+                      update({ detailImages: g });
+                    }}
+                    password={password}
+                    label={`${svc.nameEn || 'Servis'} Detail ${gi + 1}`}
+                  />
+                </div>
+                <button
+                  className={btnDanger}
+                  onClick={() => {
+                    if (window.confirm('Padam gambar ini?')) {
+                      const g = (svc.detailImages ?? []).filter((_, idx) => idx !== gi);
+                      update({ detailImages: g });
+                    }
+                  }}
+                >✕</button>
+              </div>
+            ))}
+            {(svc.detailImages ?? []).length < SERVICE_DETAIL_IMAGES_MAX && (
+              <button className={btnAdd + ' w-full mt-1'} onClick={() => update({ detailImages: [...(svc.detailImages ?? []), ''] })}>
+                + Tambah Gambar Galeri
+              </button>
+            )}
+          </div>
+        </div>
       </CollectionDetail>
     );
   }
@@ -132,7 +188,7 @@ export function ServicesTab({ services, setServices, save, status, password }: P
         save('services', u);
       }}
       onAdd={() => {
-        const newService: Service = { id: uid(), category: '', nameEn: '', nameBm: '', descEn: '', descBm: '', price: 0, duration: '', longevityEn: '', longevityBm: '', image: '', badge: null, bookingUrl: null, featured: false, published: true };
+        const newService: Service = { id: uid(), category: '', nameEn: '', nameBm: '', descEn: '', descBm: '', price: 0, duration: '', longevityEn: '', longevityBm: '', image: '', badge: null, bookingUrl: null, featured: false, published: true, detailTextEn: '', detailTextBm: '', detailImages: [], videoUrl: null };
         setServices([...services, newService]);
         setEditingId(newService.id);
       }}
