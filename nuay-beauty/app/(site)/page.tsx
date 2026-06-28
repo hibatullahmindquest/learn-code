@@ -7,7 +7,7 @@ import { Cormorant_Garamond, Poppins } from 'next/font/google';
 import { ArrowUpRight, Star } from '@phosphor-icons/react';
 import { useLang } from '@/components/LanguageContext';
 import { useSiteData } from '@/components/SiteDataContext';
-import { BOOKING_URL, artists, testimonials, faqs } from '@/lib/data';
+import { BOOKING_URL, testimonials, faqs } from '@/lib/data';
 
 // Page-scoped fonts + tokens, ported from the Nuay Beauty Design System
 // (Cormorant Garamond display / Poppins body) — scoped to this page only so
@@ -160,7 +160,7 @@ function PriceBadge({ value }: { value: number }) {
 
 export default function HomePage() {
   const { lang } = useLang();
-  const { images, services } = useSiteData();
+  const { images, services, artists } = useSiteData();
   const en = lang === 'en';
 
   useEffect(() => {
@@ -547,10 +547,10 @@ export default function HomePage() {
       <Section alt>
         <SectionHead center eyebrow={en ? 'Meet Your Artists' : 'Kenali Artist Kami'} title={en ? 'Held with care' : 'Dijaga dengan teliti'} />
         <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(260px, 1fr))', gap: 24 }}>
-          {artists.map((a) => (
-            <div key={a.id} style={{ background: 'var(--white, #fff)', borderRadius: 'var(--radius-card)', overflow: 'hidden', boxShadow: 'var(--shadow-md)' }}>
+          {artists.filter((a) => a.published !== false).map((a) => (
+            <Link key={a.id} href={`/artists#${a.id}`} style={{ background: 'var(--white, #fff)', borderRadius: 'var(--radius-card)', overflow: 'hidden', boxShadow: 'var(--shadow-md)', display: 'block' }}>
               <div style={{ position: 'relative', aspectRatio: '4/5' }}>
-                <Image src={a.image} alt={a.name} fill style={{ objectFit: 'cover' }} />
+                <Image src={a.image || '/images/nuay-artist.png'} alt={a.name} fill style={{ objectFit: 'cover' }} />
               </div>
               <div style={{ padding: 24 }}>
                 <h3 style={{ ...DISPLAY, fontSize: 24, fontWeight: 500, color: 'var(--ink-950)', margin: 0 }}>{a.name}</h3>
@@ -559,7 +559,7 @@ export default function HomePage() {
                 </p>
                 <p style={{ ...BODY, fontSize: 14, color: 'var(--ink-600)', margin: 0, lineHeight: 1.6 }}>{en ? a.bioEn : a.bioBm}</p>
               </div>
-            </div>
+            </Link>
           ))}
         </div>
       </Section>

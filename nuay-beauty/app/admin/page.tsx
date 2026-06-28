@@ -31,7 +31,10 @@ type Artist = {
   image: string;
   instagram: string | null;
   gallery: string[];
+  published: boolean;
 };
+
+const ARTIST_DEFAULTS = { published: true };
 
 type Service = {
   id: string;
@@ -213,7 +216,7 @@ export default function AdminPage() {
     const res = await fetch('/api/settings');
     const data = await res.json();
     if (data.contact) setContact(data.contact);
-    if (data.artists) setArtists(data.artists);
+    if (data.artists) setArtists((data.artists as Artist[]).map((a) => ({ ...ARTIST_DEFAULTS, ...a })));
     if (data.services) setServices((data.services as Service[]).map((s) => ({ ...SERVICE_DEFAULTS, ...s })));
     if (data.images) setImages({ hero: '', featuredService: '', studio: ['', '', '', '', ''], gallery: [], aboutPhotos: ['', '', ''], ...data.images });
     if (data.faqs) setFaqs(data.faqs);
@@ -474,8 +477,18 @@ export default function AdminPage() {
               {artists.map((artist, i) => (
                 <div key={artist.id} className={SECTION}>
                   <div className="flex items-center justify-between mb-5">
-                    <h2 className="font-semibold text-gray-800">{artist.name || 'Artist Baru'}</h2>
                     <div className="flex items-center gap-2">
+                      <h2 className="font-semibold text-gray-800">{artist.name || 'Artist Baru'}</h2>
+                      <span className={`text-xs px-2 py-0.5 rounded-full font-medium ${artist.published !== false ? 'bg-green-100 text-green-700' : 'bg-orange-100 text-orange-700'}`}>
+                        {artist.published !== false ? 'Aktif' : 'Disembunyikan'}
+                      </span>
+                    </div>
+                    <div className="flex items-center gap-3">
+                      <label className="relative inline-flex items-center cursor-pointer" title={artist.published !== false ? 'Sembunyikan artist' : 'Tunjuk artist'}>
+                        <input type="checkbox" className="sr-only peer" checked={artist.published !== false}
+                          onChange={(e) => { const u = [...artists]; u[i] = { ...artist, published: e.target.checked }; setArtists(u); }} />
+                        <div className="w-10 h-6 bg-gray-200 rounded-full peer peer-checked:bg-green-600 peer-checked:after:translate-x-4 after:content-[''] after:absolute after:top-0.5 after:left-0.5 after:bg-white after:rounded-full after:h-5 after:w-5 after:transition-all"></div>
+                      </label>
                       <StatusBadge status={statuses['artists'] ?? 'idle'} />
                       <button className={BTN_DANGER} onClick={() => { if (window.confirm('Padam artist ini? Tindakan ini tidak boleh dibatalkan.')) setArtists(artists.filter((_, idx) => idx !== i)); }}>Padam</button>
                     </div>
@@ -532,7 +545,7 @@ export default function AdminPage() {
                   </div>
                 </div>
               ))}
-              <button className={BTN_ADD} onClick={() => setArtists([...artists, { id: uid(), name: '', roleEn: '', roleBm: '', bioEn: '', bioBm: '', services: [], image: '', instagram: null, gallery: [] }])}>
+              <button className={BTN_ADD} onClick={() => setArtists([...artists, { id: uid(), name: '', roleEn: '', roleBm: '', bioEn: '', bioBm: '', services: [], image: '', instagram: null, gallery: [], published: true }])}>
                 + Tambah Artist
               </button>
               <button onClick={() => save('artists', artists)} className={BTN_SAVE}>Simpan Semua Artist</button>
