@@ -4,8 +4,9 @@ import { useState, useEffect, useCallback } from 'react';
 
 import { defaultCopy, defaultNavItems, type CopyData, type NavItemSetting } from '@/components/SiteDataContext';
 import { MediaPicker } from '@/components/MediaPicker';
+import { MediaLibraryTab } from '@/components/MediaLibraryTab';
 
-type Tab = 'dashboard' | 'contact' | 'artists' | 'services' | 'gallery' | 'faq' | 'testimonials' | 'content' | 'blog' | 'nav';
+type Tab = 'dashboard' | 'contact' | 'artists' | 'services' | 'gallery' | 'media' | 'faq' | 'testimonials' | 'content' | 'blog' | 'nav';
 type ContentSubTab = 'homepage' | 'about' | 'footer';
 
 type ContactData = {
@@ -150,6 +151,10 @@ const NAV: { key: Tab; label: string; icon: React.ReactNode }[] = [
     icon: <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth={1.8} className="w-5 h-5"><rect x="3" y="3" width="18" height="18" rx="2"/><circle cx="8.5" cy="8.5" r="1.5"/><path d="m21 15-5-5L5 21"/></svg>,
   },
   {
+    key: 'media', label: 'Media Library',
+    icon: <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth={1.8} className="w-5 h-5"><rect x="3" y="3" width="18" height="18" rx="2"/><circle cx="8.5" cy="8.5" r="1.5"/><path d="m21 15-5-5L5 21"/></svg>,
+  },
+  {
     key: 'faq', label: 'FAQ',
     icon: <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth={1.8} className="w-5 h-5"><circle cx="12" cy="12" r="10"/><path d="M9.09 9a3 3 0 0 1 5.83 1c0 2-3 3-3 3"/><line x1="12" y1="17" x2="12.01" y2="17" strokeLinecap="round"/></svg>,
   },
@@ -177,6 +182,7 @@ const PAGE_TITLES: Record<Tab, string> = {
   artists: 'Artists',
   services: 'Services',
   gallery: 'Gallery',
+  media: 'Media Library',
   faq: 'FAQ',
   testimonials: 'Testimonials',
   content: 'Content / Copy',
@@ -794,6 +800,9 @@ export default function AdminPage() {
               <button onClick={() => save('images', images)} className={BTN_SAVE}>Simpan Semua Gambar</button>
             </div>
           )}
+
+          {/* ── MEDIA LIBRARY ─────────────────────────────────────────────── */}
+          {tab === 'media' && <MediaLibraryTab password={password} />}
 
           {/* ── FAQ ───────────────────────────────────────────────────────── */}
           {tab === 'faq' && (
