@@ -1,6 +1,6 @@
 'use client';
 
-import { useEffect, useState } from 'react';
+import { useState } from 'react';
 import Image from 'next/image';
 import Link from 'next/link';
 import { Cormorant_Garamond, Poppins } from 'next/font/google';
@@ -45,14 +45,19 @@ const TOKENS = {
   '--beige-100': '#F5F0EA',
   '--beige-50': '#F9F6F3',
   '--line': '#E5DDD3',
+  '--white': '#FFFFFF',
+  '--radius-sm': '4px',
   '--radius-button': '3px',
-  '--radius-card': '8px',
+  '--radius-card': '16px',
   '--radius-surface': '16px',
   '--radius-image': '20px',
+  '--radius-hero': '24px',
+  '--shadow-sm': '0 4px 12px rgba(46, 28, 22, 0.06)',
   '--shadow-md': '0 8px 24px rgba(46, 28, 22, 0.07)',
   '--shadow-lg': '0 18px 48px rgba(46, 28, 22, 0.10)',
   '--shadow-wine': '0 18px 44px rgba(94, 31, 31, 0.22)',
   '--ease-out': 'cubic-bezier(0.16, 1, 0.3, 1)',
+  '--dur-fast': '160ms',
 } as React.CSSProperties;
 
 const DISPLAY = { fontFamily: 'var(--font-nuay-display), serif' };
@@ -172,28 +177,12 @@ export default function HomePage() {
   const en = lang === 'en';
   const t = getCopy(copy, lang);
 
-  useEffect(() => {
-    const observer = new IntersectionObserver(
-      (entries) => {
-        entries.forEach((entry) => {
-          if (entry.isIntersecting) {
-            entry.target.classList.add('is-visible');
-            observer.unobserve(entry.target);
-          }
-        });
-      },
-      { threshold: 0.08, rootMargin: '0px 0px -50px 0px' }
-    );
-    document.querySelectorAll('.nuay-reveal').forEach((el) => observer.observe(el));
-    return () => observer.disconnect();
-  }, []);
-
   const [openFaq, setOpenFaq] = useState<number | null>(null);
   const [pos, setPos] = useState(50);
 
   const featured = services.filter((s) => s.featured && s.published !== false).slice(0, 3);
   const publishedTestimonials = testimonials.filter((t) => t.published !== false);
-  const loop = [...publishedTestimonials, ...publishedTestimonials];
+  const loop = [...publishedTestimonials, ...publishedTestimonials, ...publishedTestimonials];
   const publishedArtists = artists.filter((a) => a.published !== false);
   const averageRating = publishedTestimonials.length > 0
     ? (publishedTestimonials.reduce((sum, item) => sum + (item.rating ?? 5), 0) / publishedTestimonials.length).toFixed(1)
@@ -306,14 +295,14 @@ export default function HomePage() {
 
       {/* ── Stats ──────────────────────────────────────────────────────── */}
       <section style={{ background: 'var(--wine-700)', padding: '56px 24px' }}>
-        <div style={{ maxWidth: 1280, margin: '0 auto', display: 'grid', gridTemplateColumns: 'repeat(4, 1fr)', gap: 24 }}>
+        <div style={{ maxWidth: 1280, margin: '0 auto', display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(140px, 1fr))', gap: 24 }}>
           {[
             { value: '2k+', labelEn: 'Happy Clients', labelBm: 'Pelanggan Gembira' },
             { value: '100%', labelEn: 'Wudhu-Friendly', labelBm: 'Mesra Wudhu' },
             { value: String(publishedArtists.length), labelEn: 'Specialist Artists', labelBm: 'Artist Pakar' },
             { value: averageRating, labelEn: 'Average Rating', labelBm: 'Penilaian Purata' },
           ].map((s, i) => (
-            <div key={i} style={{ textAlign: 'center', borderLeft: i ? '1px solid rgba(200,169,126,0.28)' : 'none' }}>
+            <div key={i} style={{ textAlign: 'center' }}>
               <div style={{ ...DISPLAY, fontSize: 'clamp(1.75rem, 1vw + 1.4rem, 2.75rem)', fontWeight: 600, color: 'var(--gold-300)', lineHeight: 1 }}>
                 {s.value}
               </div>
@@ -343,10 +332,10 @@ export default function HomePage() {
               className="nuay-card"
               style={{
                 display: 'block',
-                background: 'var(--white, #fff)',
+                background: 'var(--white)',
                 borderRadius: 'var(--radius-surface)',
                 overflow: 'hidden',
-                boxShadow: 'var(--shadow-sm, var(--shadow-md))',
+                boxShadow: 'var(--shadow-sm)',
                 transition: 'transform 280ms var(--ease-out), box-shadow 280ms var(--ease-out)',
               }}
             >
@@ -386,7 +375,7 @@ export default function HomePage() {
                       color: 'var(--ink-600)',
                       background: 'var(--beige-100)',
                       border: '1px solid var(--line)',
-                      borderRadius: 'var(--radius-sm, 4px)',
+                      borderRadius: 'var(--radius-sm)',
                       padding: '5px 11px',
                     }}
                   >
@@ -442,7 +431,7 @@ export default function HomePage() {
                 color: 'var(--beige-50)',
                 background: 'rgba(26,20,16,0.5)',
                 padding: '5px 10px',
-                borderRadius: 3,
+                borderRadius: 'var(--radius-button)',
               }}
             >
               {en ? 'BEFORE' : 'SEBELUM'}
@@ -502,7 +491,7 @@ export default function HomePage() {
       <Section alt>
         <div style={{ display: 'grid', gridTemplateColumns: '0.9fr 1.1fr', gap: 56, alignItems: 'center' }} className="nuay-why-grid">
           <div style={{ borderRadius: 'var(--radius-image)', overflow: 'hidden', position: 'relative', aspectRatio: '4/5' }}>
-            <Image src={images.whyNuay || '/images/nuay-lounge.webp'} alt="The Nuay studio" fill style={{ objectFit: 'cover' }} />
+            <Image src={images.whyNuay || '/images/nuay-lounge.webp'} alt={en ? 'The Nuay studio' : 'Studio Nuay'} fill style={{ objectFit: 'cover' }} />
           </div>
           <div>
             <SectionHead
@@ -535,6 +524,7 @@ export default function HomePage() {
         <SectionHead center eyebrow={en ? 'In Their Words' : 'Kata Mereka'} title={t.testimonials.title} />
         <div style={{ overflow: 'hidden' }}>
           <div
+            className="nuay-marquee"
             style={{ display: 'flex', gap: 24, animation: 'marquee 32s linear infinite', width: 'max-content' }}
           >
             {loop.map((item, i) => (
@@ -572,7 +562,7 @@ export default function HomePage() {
         <SectionHead center eyebrow={en ? 'Meet Your Artists' : 'Kenali Artist Kami'} title={t.artists.title} sub={t.artists.sub} />
         <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(260px, 1fr))', gap: 24 }}>
           {publishedArtists.map((a) => (
-            <Link key={a.id} href={`/artists#${a.id}`} style={{ background: 'var(--white, #fff)', borderRadius: 'var(--radius-card)', overflow: 'hidden', boxShadow: 'var(--shadow-md)', display: 'block' }}>
+            <Link key={a.id} href={`/artists#${a.id}`} style={{ background: 'var(--white)', borderRadius: 'var(--radius-card)', overflow: 'hidden', boxShadow: 'var(--shadow-md)', display: 'block' }}>
               <div style={{ position: 'relative', aspectRatio: '4/5' }}>
                 <Image
                   src={a.image || '/images/nuay-artist.png'}
@@ -645,7 +635,7 @@ export default function HomePage() {
             maxWidth: 1280,
             margin: '0 auto',
             background: 'var(--wine-700)',
-            borderRadius: 24,
+            borderRadius: 'var(--radius-hero)',
             padding: '80px 24px',
             textAlign: 'center',
             boxShadow: 'var(--shadow-wine)',
@@ -698,8 +688,8 @@ export default function HomePage() {
           transform: scale(1.05);
         }
         .nuay-btn {
-          transition: background var(--dur-fast, 160ms) var(--ease-out), color var(--dur-fast, 160ms) var(--ease-out),
-            border-color var(--dur-fast, 160ms) var(--ease-out);
+          transition: background var(--dur-fast) var(--ease-out), color var(--dur-fast) var(--ease-out),
+            border-color var(--dur-fast) var(--ease-out);
         }
         .nuay-btn-primary:hover {
           background: var(--wine-800) !important;
