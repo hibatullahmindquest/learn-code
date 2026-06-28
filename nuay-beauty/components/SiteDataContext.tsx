@@ -261,6 +261,25 @@ function normalizeServices(items: ServiceItem[]): ServiceItem[] {
   return items.map((s) => ({ ...SERVICE_DEFAULTS, ...s }));
 }
 
+export type ArtistItem = {
+  id: string;
+  name: string;
+  roleEn: string;
+  roleBm: string;
+  bioEn: string;
+  bioBm: string;
+  services: string[];
+  image: string;
+  instagram: string | null;
+  gallery: string[];
+  published?: boolean;
+};
+
+const ARTIST_DEFAULTS = { published: true };
+function normalizeArtists(items: ArtistItem[]): ArtistItem[] {
+  return items.map((a) => ({ ...ARTIST_DEFAULTS, ...a }));
+}
+
 export type NavItemSetting = {
   key: string;
   visible: boolean;
@@ -279,7 +298,7 @@ export const defaultNavItems: NavItemSetting[] = [
 export type SiteData = {
   contact: ContactSettings;
   services: ServiceItem[];
-  artists: typeof defaultArtists;
+  artists: ArtistItem[];
   testimonials: Testimonial[];
   faqs: FaqItem[];
   blogPosts: BlogPost[];
@@ -328,11 +347,12 @@ const defaultImages: ImageSettings = {
 };
 
 const normalizedDefaultServices = normalizeServices(defaultServices as ServiceItem[]);
+const normalizedDefaultArtists = normalizeArtists(defaultArtists as ArtistItem[]);
 
 const initialData: SiteData = {
   contact: defaultContact,
   services: normalizedDefaultServices,
-  artists: defaultArtists,
+  artists: normalizedDefaultArtists,
   testimonials: [],
   faqs: [],
   blogPosts: [],
@@ -346,7 +366,7 @@ function mapSettings(settings: Record<string, unknown>): SiteData {
   return {
     contact: (settings.contact as ContactSettings) ?? defaultContact,
     services: normalizeServices((settings.services as ServiceItem[]) ?? normalizedDefaultServices),
-    artists: (settings.artists as typeof defaultArtists) ?? defaultArtists,
+    artists: normalizeArtists((settings.artists as ArtistItem[]) ?? normalizedDefaultArtists),
     testimonials: (settings.testimonials as Testimonial[]) ?? [],
     faqs: (settings.faqs as FaqItem[]) ?? [],
     blogPosts: (settings.blog_posts as BlogPost[]) ?? [],

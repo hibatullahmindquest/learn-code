@@ -8,9 +8,10 @@ import { ArrowRight, InstagramLogo, X, CaretLeft, CaretRight } from '@phosphor-i
 
 export default function ArtistsPage() {
   const { lang } = useLang();
-  const { contact, artists, copy } = useSiteData();
+  const { contact, artists: allArtists, copy } = useSiteData();
   const t = getCopy(copy, lang);
   const BOOKING_URL = contact.bookingUrl;
+  const artists = allArtists.filter((a) => a.published !== false);
 
   // Lightbox: { artistIndex, imageIndex }
   const [lightbox, setLightbox] = useState<{ ai: number; ii: number } | null>(null);
