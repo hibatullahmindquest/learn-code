@@ -32,6 +32,7 @@ export type ImageSettings = {
   studio: string[];
   gallery: Array<{ url: string; label: string; span: string }>;
   aboutPhotos: [string, string, string];
+  beforeAfter: { before: string; after: string };
 };
 
 // ── Copy (all editable text strings) ─────────────────────────────────────────
@@ -339,6 +340,7 @@ const defaultImages: ImageSettings = {
   hero: 'https://fsyqbpaafdorxrjqkemb.supabase.co/storage/v1/object/public/media/uploads/1782574018884-5sa1j.png',
   featuredService: '/images/nuay-hero.avif',
   aboutPhotos: ['/images/nuay-artist.png', '/images/nuay-studio-3.avif', '/images/nuay-studio-4.avif'],
+  beforeAfter: { before: '/images/nuay-reception.webp', after: '/images/nuay-lounge.webp' },
   studio: [
     '/images/nuay-studio-1.avif',
     '/images/nuay-studio-2.avif',

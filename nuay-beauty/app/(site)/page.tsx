@@ -404,11 +404,11 @@ export default function HomePage() {
             userSelect: 'none',
           }}
         >
-          <Image src="/images/nuay-lounge.webp" alt="After" fill style={{ objectFit: 'cover' }} />
+          <Image src={images.beforeAfter?.after || '/images/nuay-lounge.webp'} alt="After" fill style={{ objectFit: 'cover' }} />
           <div style={{ position: 'absolute', inset: 0, width: `${pos}%`, overflow: 'hidden' }}>
             <div style={{ position: 'relative', width: `${100 / (pos / 100)}%`, height: '100%' }}>
               <Image
-                src="/images/nuay-reception.webp"
+                src={images.beforeAfter?.before || '/images/nuay-reception.webp'}
                 alt="Before"
                 fill
                 style={{ objectFit: 'cover', filter: 'saturate(0.7) brightness(0.92)' }}
