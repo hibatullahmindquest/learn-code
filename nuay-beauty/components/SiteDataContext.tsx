@@ -78,6 +78,14 @@ export type CopyData = {
     ctaHeadingEn: string; ctaHeadingBm: string;
     ctaSubEn: string; ctaSubBm: string;
   };
+  joinUs: {
+    vacancyHeadingEn: string; vacancyHeadingBm: string;
+    vacancyTextEn: string; vacancyTextBm: string;
+    vacancyWhatsapp: string;
+    learningHeadingEn: string; learningHeadingBm: string;
+    learningTextEn: string; learningTextBm: string;
+    learningWhatsapp: string;
+  };
 };
 
 // ── Defaults (match all existing hardcoded values) ────────────────────────────
@@ -141,6 +149,16 @@ export const defaultCopy: CopyData = {
     ctaSubEn: 'Ready to feel beautiful?',
     ctaSubBm: 'Bersedia untuk rasa cantik?',
   },
+  joinUs: {
+    vacancyHeadingEn: 'Join Our Team', vacancyHeadingBm: 'Sertai Kumpulan Kami',
+    vacancyTextEn: 'We’re always looking for passionate talent. Interested in a career with Nuay Beauty? Reach out to us on WhatsApp.',
+    vacancyTextBm: 'Kami sentiasa mencari bakat yang bersemangat. Berminat untuk berkerjaya dengan Nuay Beauty? Hubungi kami di WhatsApp.',
+    vacancyWhatsapp: WHATSAPP_NUMBER,
+    learningHeadingEn: 'Learn With Us', learningHeadingBm: 'Belajar Dengan Kami',
+    learningTextEn: 'Want to learn Korean lash lift, brow, or any of our treatments? Contact us on WhatsApp to find out more.',
+    learningTextBm: 'Nak belajar Korean lash lift, brow, atau mana-mana rawatan kami? Hubungi kami di WhatsApp untuk maklumat lanjut.',
+    learningWhatsapp: WHATSAPP_NUMBER,
+  },
 };
 
 // ── getCopy — drop-in replacement for content[lang] ──────────────────────────
@@ -194,6 +212,14 @@ export function getCopy(copy: CopyData, lang: 'en' | 'bm') {
       tagline: L(copy.footer.taglineEn, copy.footer.taglineBm),
       ctaHeading: L(copy.footer.ctaHeadingEn, copy.footer.ctaHeadingBm),
       ctaSub: L(copy.footer.ctaSubEn, copy.footer.ctaSubBm),
+    },
+    joinUs: {
+      vacancyHeading: L(copy.joinUs.vacancyHeadingEn, copy.joinUs.vacancyHeadingBm),
+      vacancyText: L(copy.joinUs.vacancyTextEn, copy.joinUs.vacancyTextBm),
+      vacancyWhatsapp: copy.joinUs.vacancyWhatsapp,
+      learningHeading: L(copy.joinUs.learningHeadingEn, copy.joinUs.learningHeadingBm),
+      learningText: L(copy.joinUs.learningTextEn, copy.joinUs.learningTextBm),
+      learningWhatsapp: copy.joinUs.learningWhatsapp,
     },
     nav: {
       home: lang === 'en' ? 'Home' : 'Utama',
@@ -408,6 +434,7 @@ function mapSettings(settings: Record<string, unknown>): SiteData {
         about: { ...defaultCopy.about, ...s.about },
         usp: { ...defaultCopy.usp, ...s.usp },
         footer: { ...defaultCopy.footer, ...s.footer },
+        joinUs: { ...defaultCopy.joinUs, ...s.joinUs },
       };
     })(),
     loading: false,

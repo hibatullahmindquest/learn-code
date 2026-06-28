@@ -14,7 +14,7 @@ import { ArtistsTab } from './tabs/ArtistsTab';
 import { GalleryTab } from './tabs/GalleryTab';
 
 type Tab = 'dashboard' | 'contact' | 'artists' | 'services' | 'gallery' | 'media' | 'faq' | 'testimonials' | 'content' | 'blog' | 'nav' | 'settings';
-type ContentSubTab = 'homepage' | 'about' | 'footer';
+type ContentSubTab = 'homepage' | 'about' | 'footer' | 'joinUs';
 
 type ContactData = {
   whatsapp: string;
@@ -468,10 +468,10 @@ export default function AdminPage() {
             <div className="flex flex-col gap-6">
               {/* Sub-tabs */}
               <div className="flex gap-1 bg-white rounded-xl border border-gray-100 p-1 w-fit shadow-sm">
-                {(['homepage', 'about', 'footer'] as ContentSubTab[]).map((st) => (
+                {(['homepage', 'about', 'joinUs', 'footer'] as ContentSubTab[]).map((st) => (
                   <button key={st} onClick={() => setContentSubTab(st)}
                     className={`px-4 py-2 rounded-lg text-sm font-medium transition-all capitalize ${contentSubTab === st ? 'bg-rose-700 text-white' : 'text-gray-500 hover:text-gray-700'}`}>
-                    {st === 'homepage' ? 'Homepage' : st === 'about' ? 'About Page' : 'Footer'}
+                    {st === 'homepage' ? 'Homepage' : st === 'about' ? 'About Page' : st === 'joinUs' ? 'Join Us / Learn' : 'Footer'}
                   </button>
                 ))}
               </div>
@@ -593,6 +593,36 @@ export default function AdminPage() {
                     </div>
                   </div>
                   <button onClick={() => save('copy', copy)} className={BTN_SAVE}>Simpan Footer Copy</button>
+                </div>
+              )}
+
+              {/* ── Join Us / Learn With Us copy ── */}
+              {contentSubTab === 'joinUs' && (
+                <div className="flex flex-col gap-6">
+                  <div className={SECTION}>
+                    <div className="flex items-center justify-between mb-5">
+                      <h2 className="font-semibold text-gray-800">Vacancy CTA (Join Our Team)</h2>
+                      <StatusBadge status={statuses['copy'] ?? 'idle'} />
+                    </div>
+                    <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                      <div><label className={LABEL}>Heading (EN)</label><input className={INPUT} value={copy.joinUs.vacancyHeadingEn} onChange={(e) => setCopy({ ...copy, joinUs: { ...copy.joinUs, vacancyHeadingEn: e.target.value } })} /></div>
+                      <div><label className={LABEL}>Heading (BM)</label><input className={INPUT} value={copy.joinUs.vacancyHeadingBm} onChange={(e) => setCopy({ ...copy, joinUs: { ...copy.joinUs, vacancyHeadingBm: e.target.value } })} /></div>
+                      <div><label className={LABEL}>Text (EN)</label><textarea className={INPUT + ' h-24 resize-none'} value={copy.joinUs.vacancyTextEn} onChange={(e) => setCopy({ ...copy, joinUs: { ...copy.joinUs, vacancyTextEn: e.target.value } })} /></div>
+                      <div><label className={LABEL}>Text (BM)</label><textarea className={INPUT + ' h-24 resize-none'} value={copy.joinUs.vacancyTextBm} onChange={(e) => setCopy({ ...copy, joinUs: { ...copy.joinUs, vacancyTextBm: e.target.value } })} /></div>
+                      <div><label className={LABEL}>WhatsApp Number</label><input className={INPUT} value={copy.joinUs.vacancyWhatsapp} onChange={(e) => setCopy({ ...copy, joinUs: { ...copy.joinUs, vacancyWhatsapp: e.target.value } })} placeholder="Format: 601XXXXXXXX (tanpa +)" /></div>
+                    </div>
+                  </div>
+                  <div className={SECTION}>
+                    <h2 className="font-semibold text-gray-800 mb-5">Learning CTA (Learn With Us)</h2>
+                    <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                      <div><label className={LABEL}>Heading (EN)</label><input className={INPUT} value={copy.joinUs.learningHeadingEn} onChange={(e) => setCopy({ ...copy, joinUs: { ...copy.joinUs, learningHeadingEn: e.target.value } })} /></div>
+                      <div><label className={LABEL}>Heading (BM)</label><input className={INPUT} value={copy.joinUs.learningHeadingBm} onChange={(e) => setCopy({ ...copy, joinUs: { ...copy.joinUs, learningHeadingBm: e.target.value } })} /></div>
+                      <div><label className={LABEL}>Text (EN)</label><textarea className={INPUT + ' h-24 resize-none'} value={copy.joinUs.learningTextEn} onChange={(e) => setCopy({ ...copy, joinUs: { ...copy.joinUs, learningTextEn: e.target.value } })} /></div>
+                      <div><label className={LABEL}>Text (BM)</label><textarea className={INPUT + ' h-24 resize-none'} value={copy.joinUs.learningTextBm} onChange={(e) => setCopy({ ...copy, joinUs: { ...copy.joinUs, learningTextBm: e.target.value } })} /></div>
+                      <div><label className={LABEL}>WhatsApp Number</label><input className={INPUT} value={copy.joinUs.learningWhatsapp} onChange={(e) => setCopy({ ...copy, joinUs: { ...copy.joinUs, learningWhatsapp: e.target.value } })} placeholder="Format: 601XXXXXXXX (tanpa +)" /></div>
+                    </div>
+                  </div>
+                  <button onClick={() => save('copy', copy)} className={BTN_SAVE}>Simpan Join Us Copy</button>
                 </div>
               )}
             </div>
