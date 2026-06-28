@@ -3,84 +3,11 @@
 import { useState } from 'react';
 import Image from 'next/image';
 import Link from 'next/link';
-import { Cormorant_Garamond, Poppins } from 'next/font/google';
-import { ArrowUpRight, Star } from '@phosphor-icons/react';
+import { ArrowUpRight } from '@phosphor-icons/react';
 import { useLang } from '@/components/LanguageContext';
 import { useSiteData, getCopy } from '@/components/SiteDataContext';
 import { BOOKING_URL } from '@/lib/data';
-
-// Page-scoped fonts + tokens, ported from the Nuay Beauty Design System
-// (Cormorant Garamond display / Poppins body) — scoped to this page only so
-// the rest of the site keeps its existing fonts/palette.
-const display = Cormorant_Garamond({
-  subsets: ['latin'],
-  weight: ['400', '500', '600', '700'],
-  style: ['normal', 'italic'],
-  variable: '--font-nuay-display',
-  display: 'swap',
-});
-
-const body = Poppins({
-  subsets: ['latin'],
-  weight: ['300', '400', '500', '600', '700'],
-  variable: '--font-nuay-body',
-  display: 'swap',
-});
-
-const TOKENS = {
-  '--wine-950': '#2E0F0F',
-  '--wine-900': '#3A1414',
-  '--wine-800': '#4E1818',
-  '--wine-700': '#5E1F1F',
-  '--wine-600': '#6A2E2E',
-  '--gold-600': '#B0884F',
-  '--gold-500': '#C8A97E',
-  '--gold-300': '#DCC6A4',
-  '--gold-100': '#EFE4D2',
-  '--ink-950': '#1A1410',
-  '--ink-800': '#2B2320',
-  '--ink-600': '#5A4F47',
-  '--ink-400': '#8A7E74',
-  '--sand-500': '#E5DDD5',
-  '--beige-100': '#F5F0EA',
-  '--beige-50': '#F9F6F3',
-  '--line': '#E5DDD3',
-  '--white': '#FFFFFF',
-  '--radius-sm': '4px',
-  '--radius-button': '3px',
-  '--radius-card': '16px',
-  '--radius-surface': '16px',
-  '--radius-image': '20px',
-  '--radius-hero': '24px',
-  '--shadow-sm': '0 4px 12px rgba(46, 28, 22, 0.06)',
-  '--shadow-md': '0 8px 24px rgba(46, 28, 22, 0.07)',
-  '--shadow-lg': '0 18px 48px rgba(46, 28, 22, 0.10)',
-  '--shadow-wine': '0 18px 44px rgba(94, 31, 31, 0.22)',
-  '--ease-out': 'cubic-bezier(0.16, 1, 0.3, 1)',
-  '--dur-fast': '160ms',
-} as React.CSSProperties;
-
-const DISPLAY = { fontFamily: 'var(--font-nuay-display), serif' };
-const BODY = { fontFamily: 'var(--font-nuay-body), sans-serif' };
-
-function Eyebrow({ children, tone = 'wine' }: { children: React.ReactNode; tone?: 'wine' | 'gold' | 'onWine' }) {
-  const colors = { wine: 'var(--wine-700)', gold: 'var(--gold-600)', onWine: 'var(--gold-300)' };
-  return (
-    <span
-      style={{
-        ...BODY,
-        display: 'block',
-        fontSize: 12,
-        fontWeight: 500,
-        letterSpacing: '0.18em',
-        textTransform: 'uppercase',
-        color: colors[tone],
-      }}
-    >
-      {children}
-    </span>
-  );
-}
+import { DISPLAY, BODY, Eyebrow, SectionHead, Section, Rating, PriceBadge } from '@/components/DesignSystem';
 
 const CATEGORY_LABELS: Record<string, { en: string; bm: string }> = {
   lash: { en: 'Lash', bm: 'Lash' },
@@ -89,87 +16,6 @@ const CATEGORY_LABELS: Record<string, { en: string; bm: string }> = {
   facial: { en: 'Facial', bm: 'Rawatan Wajah' },
   hair: { en: 'Hair Removal', bm: 'Buang Bulu' },
 };
-
-function SectionHead({
-  eyebrow,
-  title,
-  sub,
-  center,
-}: {
-  eyebrow: string;
-  title: React.ReactNode;
-  sub?: string;
-  center?: boolean;
-}) {
-  return (
-    <div
-      style={{
-        textAlign: center ? 'center' : 'left',
-        maxWidth: center ? 660 : 'none',
-        margin: center ? '0 auto 56px' : '0 0 48px',
-      }}
-    >
-      <Eyebrow tone="gold">{eyebrow}</Eyebrow>
-      <h2
-        style={{
-          ...DISPLAY,
-          fontSize: 'clamp(2rem, 1.4vw + 1.6rem, 3.5rem)',
-          fontWeight: 600,
-          lineHeight: 1.08,
-          color: 'var(--ink-950)',
-          margin: '14px 0 0',
-        }}
-      >
-        {title}
-      </h2>
-      {sub && (
-        <p style={{ ...BODY, fontSize: 18, lineHeight: 1.65, color: 'var(--ink-600)', margin: '16px 0 0' }}>{sub}</p>
-      )}
-    </div>
-  );
-}
-
-function Section({
-  children,
-  alt,
-  style = {},
-}: {
-  children: React.ReactNode;
-  alt?: boolean;
-  style?: React.CSSProperties;
-}) {
-  return (
-    <section style={{ background: alt ? 'var(--beige-50)' : 'transparent', padding: '96px 24px', ...style }}>
-      <div style={{ maxWidth: 1280, margin: '0 auto' }}>{children}</div>
-    </section>
-  );
-}
-
-function Rating({ score }: { score: number }) {
-  return (
-    <span style={{ display: 'inline-flex', alignItems: 'center', gap: 7 }}>
-      <Star size={14} weight="fill" color="var(--wine-700)" />
-      <span style={{ ...BODY, fontSize: 14, fontWeight: 700, color: 'var(--ink-950)' }}>{score.toFixed(1)}</span>
-    </span>
-  );
-}
-
-function PriceBadge({ value }: { value: number }) {
-  return (
-    <span
-      style={{
-        ...BODY,
-        fontWeight: 700,
-        fontSize: 18,
-        letterSpacing: '0.02em',
-        color: 'var(--wine-700)',
-        fontVariantNumeric: 'tabular-nums',
-      }}
-    >
-      RM{value.toFixed(2)}
-    </span>
-  );
-}
 
 export default function HomePage() {
   const { lang } = useLang();
@@ -189,10 +35,7 @@ export default function HomePage() {
     : '4.9';
 
   return (
-    <div
-      className={`${display.variable} ${body.variable}`}
-      style={{ ...TOKENS, ...BODY, background: 'var(--sand-500)' }}
-    >
+    <div style={{ ...BODY, background: 'var(--sand-500)' }}>
       {/* ── Hero ───────────────────────────────────────────────────────── */}
       <section style={{ position: 'relative', minHeight: 620, overflow: 'hidden' }}>
         <Image

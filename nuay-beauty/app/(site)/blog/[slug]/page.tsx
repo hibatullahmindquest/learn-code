@@ -21,11 +21,11 @@ export default function BlogPostPage() {
 
   if (!post) {
     return (
-      <div style={{ background: 'var(--cream)' }} className="min-h-screen flex flex-col items-center justify-center gap-4">
-        <p className="text-4xl" style={{ fontFamily: 'var(--font-cormorant), serif', color: 'var(--charcoal)', fontWeight: 300 }}>
+      <div style={{ background: 'var(--beige-50)' }} className="min-h-screen flex flex-col items-center justify-center gap-4">
+        <p className="text-4xl" style={{ fontFamily: 'var(--font-nuay-display), serif', color: 'var(--ink-950)', fontWeight: 300 }}>
           {lang === 'en' ? 'Post not found.' : 'Post tidak dijumpai.'}
         </p>
-        <Link href="/blog" className="text-sm underline" style={{ color: 'var(--burgundy)' }}>
+        <Link href="/blog" className="text-sm underline" style={{ color: 'var(--wine-700)' }}>
           {lang === 'en' ? '← Back to Blog' : '← Kembali ke Blog'}
         </Link>
       </div>
@@ -37,30 +37,29 @@ export default function BlogPostPage() {
   const paragraphs = body.split(/\n\n+/).filter(Boolean);
 
   return (
-    <div style={{ background: 'var(--cream)' }}>
+    <div style={{ background: 'var(--beige-50)' }}>
 
       {/* ─────────────── HERO ─────────────── */}
       <section
-        className="relative pt-36 md:pt-44 pb-16 px-6 lg:px-10 overflow-hidden"
-        style={{ background: 'var(--charcoal)' }}
+        className="relative pt-36 md:pt-44 pb-16 px-6 lg:px-10"
+        style={{ background: 'var(--beige-100)', borderBottom: '1px solid var(--line)' }}
       >
         <div className="max-w-3xl mx-auto relative z-10">
           {post.category && (
-            <p className="text-xs tracking-[0.38em] uppercase mb-5" style={{ color: 'var(--gold)' }}>
+            <p className="text-xs tracking-[0.38em] uppercase mb-5" style={{ color: 'var(--gold-600)' }}>
               {post.category}
             </p>
           )}
           <h1
             className="text-4xl md:text-5xl lg:text-6xl tracking-tight leading-tight mb-5"
-            style={{ fontFamily: 'var(--font-cormorant), serif', fontWeight: 300, color: 'var(--cream)' }}
+            style={{ fontFamily: 'var(--font-nuay-display), serif', fontWeight: 600, color: 'var(--ink-950)' }}
           >
             {title}
           </h1>
-          <p className="text-sm" style={{ color: 'rgba(245,239,230,0.45)' }}>
+          <p className="text-sm" style={{ color: 'var(--ink-400)' }}>
             {new Date(post.createdAt).toLocaleDateString(lang === 'en' ? 'en-MY' : 'ms-MY', { year: 'numeric', month: 'long', day: 'numeric' })}
           </p>
         </div>
-        <div className="absolute bottom-0 left-0 right-0 h-16" style={{ background: 'linear-gradient(to top, var(--cream), transparent)' }} />
       </section>
 
       {/* ─────────────── FEATURED IMAGE ─────────────── */}
@@ -76,17 +75,17 @@ export default function BlogPostPage() {
       <article className="max-w-3xl mx-auto px-6 lg:px-10 pb-32">
         <div className="flex flex-col gap-5 mb-16">
           {paragraphs.map((para, i) => (
-            <p key={i} className="text-base leading-relaxed" style={{ color: 'var(--muted)' }}>
+            <p key={i} className="text-base leading-relaxed" style={{ color: 'var(--ink-400)' }}>
               {para}
             </p>
           ))}
         </div>
 
-        <div className="flex items-center gap-4 pt-8" style={{ borderTop: '1px solid var(--beige)' }}>
+        <div className="flex items-center gap-4 pt-8" style={{ borderTop: '1px solid var(--line)' }}>
           <Link
             href="/blog"
             className="inline-flex items-center gap-2 text-sm"
-            style={{ color: 'var(--burgundy)' }}
+            style={{ color: 'var(--wine-700)' }}
           >
             <ArrowLeft size={14} />
             {lang === 'en' ? 'Back to Blog' : 'Kembali ke Blog'}

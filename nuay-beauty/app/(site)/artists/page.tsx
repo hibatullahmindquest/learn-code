@@ -57,45 +57,33 @@ export default function ArtistsPage() {
   }, [lightbox, prevImage, nextImage]);
 
   return (
-    <div style={{ background: 'var(--cream)' }}>
+    <div style={{ background: 'var(--beige-50)' }}>
 
       {/* ─────────────── HEADER ─────────────── */}
       <section
-        className="relative pt-36 md:pt-44 pb-20 md:pb-24 px-6 lg:px-10 overflow-hidden"
-        style={{ background: 'var(--charcoal)' }}
+        className="relative pt-36 md:pt-44 pb-20 md:pb-24 px-6 lg:px-10"
+        style={{ background: 'var(--beige-100)', borderBottom: '1px solid var(--line)' }}
       >
-        <div
-          className="absolute top-0 right-0 h-full w-[45vw] md:w-[35vw] pointer-events-none hidden md:block"
-          style={{
-            WebkitMaskImage: 'linear-gradient(to left, rgba(0,0,0,0.4) 0%, transparent 100%)',
-            maskImage: 'linear-gradient(to left, rgba(0,0,0,0.4) 0%, transparent 100%)',
-          }}
-        >
-          <Image src="/images/nuay-artist.png" alt="" fill className="object-cover object-top" style={{ mixBlendMode: 'luminosity', opacity: 0.18 }} />
-        </div>
-
         <div className="max-w-7xl mx-auto relative z-10">
           <div className="reveal" style={{ transform: 'translateY(32px)' } as React.CSSProperties}>
-            <p className="text-xs tracking-[0.42em] uppercase mb-5" style={{ color: 'var(--gold)' }}>
+            <p className="text-xs tracking-[0.42em] uppercase mb-5" style={{ color: 'var(--gold-600)' }}>
               {lang === 'en' ? 'The Team' : 'Pasukan Kami'}
             </p>
             <h1
               className="tracking-tight leading-none mb-6"
-              style={{ fontSize: 'var(--fs-page-title)', fontFamily: 'var(--font-cormorant), serif', fontWeight: 300, color: 'var(--cream)' }}
+              style={{ fontSize: 'var(--fs-page-title)', fontFamily: 'var(--font-nuay-display), serif', fontWeight: 600, color: 'var(--ink-950)' }}
             >
               {lang === 'en' ? (
-                <>Meet Our <span style={{ fontStyle: 'italic', fontWeight: 400 }}>Artists</span></>
+                <>Meet Our <span style={{ fontStyle: 'italic', color: 'var(--wine-700)' }}>Artists</span></>
               ) : (
-                <>Kenali <span style={{ fontStyle: 'italic', fontWeight: 400 }}>Artist</span> Kami</>
+                <>Kenali <span style={{ fontStyle: 'italic', color: 'var(--wine-700)' }}>Artist</span> Kami</>
               )}
             </h1>
-            <p className="text-base max-w-md leading-relaxed" style={{ color: 'rgba(245,239,230,0.5)', fontWeight: 300 }}>
+            <p className="text-base max-w-md leading-relaxed" style={{ color: 'var(--ink-400)', fontWeight: 300 }}>
               {t.artists.sub}
             </p>
           </div>
         </div>
-
-        <div className="absolute bottom-0 left-0 right-0 h-16" style={{ background: 'linear-gradient(to top, var(--cream), transparent)' }} />
       </section>
 
       {/* ─────────────── ARTISTS ─────────────── */}
@@ -128,7 +116,7 @@ export default function ArtistsPage() {
                   {/* Number badge */}
                   <div
                     className="absolute top-5 left-5 w-10 h-10 rounded-full flex items-center justify-center text-xs font-mono"
-                    style={{ background: 'rgba(245,239,230,0.92)', color: 'var(--burgundy)', fontWeight: 600 }}
+                    style={{ background: 'rgba(249,246,243,0.92)', color: 'var(--wine-700)', fontWeight: 600 }}
                   >
                     0{i + 1}
                   </div>
@@ -140,18 +128,18 @@ export default function ArtistsPage() {
                     className="reveal"
                     style={{ transform: 'translateY(32px)', '--delay': '0.1s' } as React.CSSProperties}
                   >
-                    <p className="text-xs tracking-[0.38em] uppercase mb-4" style={{ color: 'var(--gold)' }}>
+                    <p className="text-xs tracking-[0.38em] uppercase mb-4" style={{ color: 'var(--gold-600)' }}>
                       {artist.tier === 'junior'
                         ? (lang === 'en' ? 'Junior Artist' : 'Artis Junior')
                         : (lang === 'en' ? 'Senior Artist' : 'Artis Senior')}
                     </p>
                     <h2
                       className="tracking-tight leading-none mb-6"
-                      style={{ fontSize: 'var(--fs-page-title)', fontFamily: 'var(--font-cormorant), serif', fontWeight: 300, color: 'var(--charcoal)' }}
+                      style={{ fontSize: 'var(--fs-page-title)', fontFamily: 'var(--font-nuay-display), serif', fontWeight: 600, color: 'var(--ink-950)' }}
                     >
                       {artist.name}
                     </h2>
-                    <p className="text-base leading-relaxed mb-8 max-w-md" style={{ color: 'var(--muted)' }}>
+                    <p className="text-base leading-relaxed mb-8 max-w-md" style={{ color: 'var(--ink-400)' }}>
                       {lang === 'en' ? artist.bioEn : artist.bioBm}
                     </p>
                   </div>
@@ -161,7 +149,7 @@ export default function ArtistsPage() {
                     className="reveal mb-8"
                     style={{ transform: 'translateY(24px)', '--delay': '0.18s' } as React.CSSProperties}
                   >
-                    <p className="text-[10px] tracking-[0.3em] uppercase mb-3" style={{ color: 'var(--burgundy)' }}>
+                    <p className="text-[10px] tracking-[0.3em] uppercase mb-3" style={{ color: 'var(--wine-700)' }}>
                       {lang === 'en' ? 'Specialises in' : 'Pakar dalam'}
                     </p>
                     <div className="flex flex-wrap gap-2">
@@ -172,7 +160,7 @@ export default function ArtistsPage() {
                           <span
                             key={svcId}
                             className="text-xs px-3.5 py-1.5 rounded-full"
-                            style={{ background: 'var(--surface)', border: '1px solid var(--beige)', color: 'var(--charcoal-mid)' }}
+                            style={{ background: 'var(--beige-100)', border: '1px solid var(--line)', color: 'var(--ink-800)' }}
                           >
                             {lang === 'en' ? svc.nameEn : svc.nameBm}
                           </span>
@@ -187,7 +175,7 @@ export default function ArtistsPage() {
                       className="reveal mb-8"
                       style={{ transform: 'translateY(24px)', '--delay': '0.24s' } as React.CSSProperties}
                     >
-                      <p className="text-[10px] tracking-[0.3em] uppercase mb-3" style={{ color: 'var(--burgundy)' }}>
+                      <p className="text-[10px] tracking-[0.3em] uppercase mb-3" style={{ color: 'var(--wine-700)' }}>
                         {lang === 'en' ? 'Past Work' : 'Hasil Kerja'}
                       </p>
                       <div className="grid grid-cols-4 gap-2">
@@ -210,7 +198,7 @@ export default function ArtistsPage() {
                                 className="absolute inset-0 flex items-center justify-center"
                                 style={{ background: 'rgba(28,28,28,0.6)' }}
                               >
-                                <span className="text-sm font-mono" style={{ color: 'var(--cream)' }}>
+                                <span className="text-sm font-mono" style={{ color: 'var(--beige-50)' }}>
                                   +{(artist.gallery ?? []).length - 4}
                                 </span>
                               </div>
@@ -230,8 +218,8 @@ export default function ArtistsPage() {
                       href={BOOKING_URL}
                       target="_blank"
                       rel="noopener noreferrer"
-                      className="inline-flex items-center gap-2 px-6 py-3 rounded-full text-sm tracking-wide transition-all duration-300 active:scale-[0.97]"
-                      style={{ background: 'var(--burgundy)', color: 'var(--cream)' }}
+                      className="inline-flex items-center gap-2 px-6 py-3 text-sm tracking-wide transition-all duration-300 active:scale-[0.97]"
+                      style={{ background: 'var(--wine-700)', color: 'var(--beige-50)', borderRadius: 'var(--radius-button)' }}
                     >
                       {lang === 'en' ? `Book with ${artist.name}` : `Tempah dengan ${artist.name}`}
                       <ArrowRight size={13} />
@@ -242,9 +230,9 @@ export default function ArtistsPage() {
                         target="_blank"
                         rel="noopener noreferrer"
                         className="w-10 h-10 rounded-full flex items-center justify-center transition-colors duration-200"
-                        style={{ border: '1px solid var(--beige)', color: 'var(--muted)' }}
-                        onMouseEnter={(e) => { e.currentTarget.style.background = 'var(--charcoal)'; e.currentTarget.style.color = 'var(--cream)'; e.currentTarget.style.borderColor = 'var(--charcoal)'; }}
-                        onMouseLeave={(e) => { e.currentTarget.style.background = 'transparent'; e.currentTarget.style.color = 'var(--muted)'; e.currentTarget.style.borderColor = 'var(--beige)'; }}
+                        style={{ border: '1px solid var(--line)', color: 'var(--ink-400)' }}
+                        onMouseEnter={(e) => { e.currentTarget.style.background = 'var(--ink-950)'; e.currentTarget.style.color = 'var(--beige-50)'; e.currentTarget.style.borderColor = 'var(--ink-950)'; }}
+                        onMouseLeave={(e) => { e.currentTarget.style.background = 'transparent'; e.currentTarget.style.color = 'var(--ink-400)'; e.currentTarget.style.borderColor = 'var(--line)'; }}
                       >
                         <InstagramLogo size={16} />
                       </a>
@@ -256,9 +244,9 @@ export default function ArtistsPage() {
               {/* Divider between artists */}
               {i < artists.length - 1 && (
                 <div className="mt-28 md:mt-36 flex items-center gap-6">
-                  <div className="flex-1 h-px" style={{ background: 'var(--beige)' }} />
-                  <span className="w-1.5 h-1.5 rounded-full" style={{ background: 'var(--gold)' }} />
-                  <div className="flex-1 h-px" style={{ background: 'var(--beige)' }} />
+                  <div className="flex-1 h-px" style={{ background: 'var(--line)' }} />
+                  <span className="w-1.5 h-1.5 rounded-full" style={{ background: 'var(--gold-600)' }} />
+                  <div className="flex-1 h-px" style={{ background: 'var(--line)' }} />
                 </div>
               )}
             </div>
@@ -275,7 +263,7 @@ export default function ArtistsPage() {
         >
           <button
             className="absolute top-6 right-6 w-10 h-10 rounded-full flex items-center justify-center transition-opacity duration-200 hover:opacity-70"
-            style={{ background: 'rgba(245,239,230,0.1)', color: 'var(--cream)' }}
+            style={{ background: 'rgba(249,246,243,0.1)', color: 'var(--beige-50)' }}
             onClick={() => setLightbox(null)}
           >
             <X size={18} />
@@ -283,7 +271,7 @@ export default function ArtistsPage() {
 
           <button
             className="absolute left-4 md:left-8 w-10 h-10 rounded-full flex items-center justify-center transition-opacity duration-200 hover:opacity-70"
-            style={{ background: 'rgba(245,239,230,0.1)', color: 'var(--cream)' }}
+            style={{ background: 'rgba(249,246,243,0.1)', color: 'var(--beige-50)' }}
             onClick={(e) => { e.stopPropagation(); prevImage(); }}
           >
             <CaretLeft size={18} />
@@ -304,17 +292,17 @@ export default function ArtistsPage() {
 
           <button
             className="absolute right-4 md:right-8 w-10 h-10 rounded-full flex items-center justify-center transition-opacity duration-200 hover:opacity-70"
-            style={{ background: 'rgba(245,239,230,0.1)', color: 'var(--cream)' }}
+            style={{ background: 'rgba(249,246,243,0.1)', color: 'var(--beige-50)' }}
             onClick={(e) => { e.stopPropagation(); nextImage(); }}
           >
             <CaretRight size={18} />
           </button>
 
           <div className="absolute bottom-6 left-1/2 -translate-x-1/2 text-center">
-            <p className="text-sm mb-1" style={{ color: 'var(--cream)', fontFamily: 'var(--font-cormorant), serif', fontStyle: 'italic' }}>
+            <p className="text-sm mb-1" style={{ color: 'var(--beige-50)', fontFamily: 'var(--font-nuay-display), serif', fontStyle: 'italic' }}>
               {artists[lightbox.ai].name}
             </p>
-            <p className="text-xs tracking-widest" style={{ color: 'rgba(245,239,230,0.4)' }}>
+            <p className="text-xs tracking-widest" style={{ color: 'rgba(249,246,243,0.4)' }}>
               {lightbox.ii + 1} / {artists[lightbox.ai].gallery.length}
             </p>
           </div>

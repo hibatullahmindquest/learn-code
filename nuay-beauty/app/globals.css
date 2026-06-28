@@ -22,6 +22,38 @@
   --charcoal-mid: #3A3A3A;
   --muted: #8A7E76;
   --surface: #FDFAF6;
+
+  /* ── Nuay Beauty Design System (site-wide) ──────────────────────────────── */
+  --wine-950: #2E0F0F;
+  --wine-900: #3A1414;
+  --wine-800: #4E1818;
+  --wine-700: #5E1F1F;
+  --wine-600: #6A2E2E;
+  --gold-600: #B0884F;
+  --gold-500: #C8A97E;
+  --gold-300: #DCC6A4;
+  --gold-100: #EFE4D2;
+  --ink-950: #1A1410;
+  --ink-800: #2B2320;
+  --ink-600: #5A4F47;
+  --ink-400: #8A7E74;
+  --sand-500: #E5DDD5;
+  --beige-100: #F5F0EA;
+  --beige-50: #F9F6F3;
+  --line: #E5DDD3;
+  --white: #FFFFFF;
+  --radius-sm: 4px;
+  --radius-button: 3px;
+  --radius-card: 16px;
+  --radius-surface: 16px;
+  --radius-image: 20px;
+  --radius-hero: 24px;
+  --shadow-sm: 0 4px 12px rgba(46, 28, 22, 0.06);
+  --shadow-md: 0 8px 24px rgba(46, 28, 22, 0.07);
+  --shadow-lg: 0 18px 48px rgba(46, 28, 22, 0.10);
+  --shadow-wine: 0 18px 44px rgba(94, 31, 31, 0.22);
+  --ease-out: cubic-bezier(0.16, 1, 0.3, 1);
+  --dur-fast: 160ms;
 }
 
 * {
