@@ -160,7 +160,7 @@ function PriceBadge({ value }: { value: number }) {
 
 export default function HomePage() {
   const { lang } = useLang();
-  const { images, services, artists } = useSiteData();
+  const { images, services, artists, copy } = useSiteData();
   const en = lang === 'en';
 
   useEffect(() => {
@@ -487,15 +487,18 @@ export default function HomePage() {
             <Image src="/images/nuay-lounge.webp" alt="The Nuay studio" fill style={{ objectFit: 'cover' }} />
           </div>
           <div>
-            <SectionHead eyebrow={en ? 'Why Nuay' : 'Kenapa Nuay'} title={en ? 'A standard you can feel' : 'Standard yang anda boleh rasa'} />
+            <SectionHead
+              eyebrow={en ? 'Why Nuay' : 'Kenapa Nuay'}
+              title={<>{en ? copy.usp.headingLine1En : copy.usp.headingLine1Bm} <em style={{ fontStyle: 'italic', fontWeight: 500 }}>{en ? copy.usp.headingLine2En : copy.usp.headingLine2Bm}</em></>}
+              sub={en ? copy.usp.subtitleEn : copy.usp.subtitleBm}
+            />
             <div style={{ display: 'grid', gap: 26 }}>
               {[
-                { t: en ? 'Wudhu-Friendly, Always' : 'Mesra Wudhu, Sentiasa', d: en ? 'Every product used is water-permeable — beauty without compromising your worship.' : 'Setiap produk boleh ditembusi air — cantik tanpa mengorbankan ibadah anda.' },
-                { t: en ? 'Specialist Artists Only' : 'Hanya Artist Pakar', d: en ? 'Every guest is paired with a vetted specialist for precise, gentle results.' : 'Setiap pelanggan dipadankan dengan pakar berkemahiran untuk hasil yang teliti dan lembut.' },
-                { t: en ? 'Calm, Private Studio' : 'Studio Tenang & Peribadi', d: en ? 'A cozy, unhurried space designed for full relaxation.' : 'Ruang selesa dan tenang direka untuk relaksasi sepenuhnya.' },
-                { t: en ? 'Clean by Design' : 'Bersih Mengikut Reka Bentuk', d: en ? 'A clean, professional environment for every visit.' : 'Persekitaran bersih dan profesional pada setiap lawatan.' },
+                { t: en ? copy.usp.pillar1TitleEn : copy.usp.pillar1TitleBm, d: en ? copy.usp.pillar1DescEn : copy.usp.pillar1DescBm },
+                { t: en ? copy.usp.pillar2TitleEn : copy.usp.pillar2TitleBm, d: en ? copy.usp.pillar2DescEn : copy.usp.pillar2DescBm },
+                { t: en ? copy.usp.pillar3TitleEn : copy.usp.pillar3TitleBm, d: en ? copy.usp.pillar3DescEn : copy.usp.pillar3DescBm },
               ].map((p, i) => (
-                <div key={i} style={{ display: 'flex', gap: 18, paddingBottom: 26, borderBottom: i < 3 ? '1px solid var(--line)' : 'none' }}>
+                <div key={i} style={{ display: 'flex', gap: 18, paddingBottom: 26, borderBottom: i < 2 ? '1px solid var(--line)' : 'none' }}>
                   <div style={{ ...BODY, fontSize: 14, color: 'var(--gold-600)', flexShrink: 0, paddingTop: 4 }}>0{i + 1}</div>
                   <div>
                     <h3 style={{ ...DISPLAY, fontSize: 22, fontWeight: 500, color: 'var(--ink-950)', margin: 0 }}>{p.t}</h3>
