@@ -4,7 +4,7 @@ import { useEffect, useState, useCallback, useRef } from 'react';
 import Image from 'next/image';
 import { useLang } from '@/components/LanguageContext';
 import { useSiteData, getCopy } from '@/components/SiteDataContext';
-import { ArrowRight, ArrowUpRight, CaretDown, CaretLeft, CaretRight, Drop, InstagramLogo, Play, X } from '@phosphor-icons/react';
+import { ArrowRight, ArrowUpRight, CaretDown, CaretLeft, CaretRight, Drop, InstagramLogo, MagnifyingGlassPlus, Play, X } from '@phosphor-icons/react';
 
 type VideoEmbed =
   | { type: 'youtube'; embedUrl: string; isVertical: boolean }
@@ -49,6 +49,8 @@ const categoryLabels: Record<string, { en: string; bm: string }> = {
 
 const categoryOrder = ['lash', 'brow', 'lip', 'facial', 'hair'];
 
+const SERVICE_GALLERY_HINT_KEY = 'nuay-service-gallery-hint-seen';
+
 export default function ServicesPage() {
   const { lang } = useLang();
   const { contact, services, copy } = useSiteData();
@@ -58,7 +60,23 @@ export default function ServicesPage() {
   const [expandedId, setExpandedId] = useState<string | null>(null);
   const [videoLightboxFor, setVideoLightboxFor] = useState<string | null>(null);
   const [lightbox, setLightbox] = useState<{ serviceId: string; index: number } | null>(null);
+  const [galleryHintSeen, setGalleryHintSeen] = useState(true);
   const touchStartX = useRef<number | null>(null);
+
+  useEffect(() => {
+    // eslint-disable-next-line react-hooks/set-state-in-effect -- syncing from localStorage, a browser-only external system
+    setGalleryHintSeen(localStorage.getItem(SERVICE_GALLERY_HINT_KEY) === '1');
+  }, []);
+
+  const firstGalleryServiceId = services.find((s) => (s.detailImages?.length ?? 0) > 0)?.id;
+
+  const openServiceGallery = (serviceId: string) => {
+    setLightbox({ serviceId, index: 0 });
+    if (!galleryHintSeen) {
+      localStorage.setItem(SERVICE_GALLERY_HINT_KEY, '1');
+      setGalleryHintSeen(true);
+    }
+  };
 
   const lightboxImages = lightbox ? services.find((s) => s.id === lightbox.serviceId)?.detailImages ?? [] : [];
 
@@ -374,8 +392,8 @@ export default function ServicesPage() {
                               {detailImages.length > 0 && (
                                 <button
                                   type="button"
-                                  onClick={() => setLightbox({ serviceId: svc.id, index: 0 })}
-                                  className="relative flex-1 aspect-[4/3] rounded-xl overflow-hidden cursor-pointer"
+                                  onClick={() => openServiceGallery(svc.id)}
+                                  className="relative flex-1 aspect-[4/3] rounded-xl overflow-hidden cursor-pointer group/gallery"
                                   style={{ background: 'var(--beige-100)' }}
                                 >
                                   <Image src={detailImages[0]} alt={lang === 'en' ? svc.nameEn : svc.nameBm} fill className="object-cover" />
@@ -385,6 +403,14 @@ export default function ServicesPage() {
                                       style={{ background: 'rgba(26,20,16,0.65)', color: 'var(--beige-50)' }}
                                     >
                                       1 / {detailImages.length}
+                                    </span>
+                                  )}
+                                  {svc.id === firstGalleryServiceId && !galleryHintSeen && (
+                                    <span
+                                      className="absolute top-2 right-2 w-7 h-7 rounded-full flex items-center justify-center animate-pulse pointer-events-none group-hover/gallery:opacity-0 transition-opacity duration-200"
+                                      style={{ background: 'var(--gold-500)', boxShadow: 'var(--shadow-sm)' }}
+                                    >
+                                      <MagnifyingGlassPlus size={13} weight="bold" style={{ color: 'var(--ink-950)' }} />
                                     </span>
                                   )}
                                 </button>
