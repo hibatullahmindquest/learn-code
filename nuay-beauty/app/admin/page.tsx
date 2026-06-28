@@ -1,6 +1,7 @@
 'use client';
 
 import { useState, useEffect, useCallback } from 'react';
+import Image from 'next/image';
 
 import { defaultCopy, defaultNavItems, type CopyData, type NavItemSetting } from '@/components/SiteDataContext';
 import { MediaPicker } from '@/components/MediaPicker';
@@ -250,8 +251,8 @@ export default function AdminPage() {
       <div className="min-h-screen flex items-center justify-center" style={{ background: '#faf7f4', fontFamily: 'system-ui, -apple-system, sans-serif' }}>
         <div className="w-full max-w-sm bg-white rounded-2xl shadow-sm border border-gray-100 p-8">
           <div className="text-center mb-8">
-            <p className="text-2xl font-light tracking-widest text-rose-800" style={{ fontFamily: 'var(--font-cormorant), serif' }}>NUAY</p>
-            <p className="text-xs tracking-[0.3em] text-gray-400 mt-0.5">ADMIN PANEL</p>
+            <Image src="/logo/logo-dark.png" alt="Nuay Beauty" width={140} height={81} className="h-10 w-auto mx-auto" />
+            <p className="text-xs tracking-[0.3em] text-gray-400 mt-2">ADMIN PANEL</p>
           </div>
           <form onSubmit={login} className="flex flex-col gap-4">
             <div>

@@ -2,6 +2,7 @@
 
 import { useState, useEffect } from 'react';
 import Link from 'next/link';
+import Image from 'next/image';
 import { usePathname } from 'next/navigation';
 import { List, X } from '@phosphor-icons/react';
 import { useLang } from './LanguageContext';
@@ -52,19 +53,15 @@ export default function Navbar() {
       >
         <div className="max-w-7xl mx-auto px-6 lg:px-10 h-16 grid grid-cols-3 items-center">
           {/* Logo */}
-          <Link href="/" className="flex flex-col leading-none group">
-            <span
-              className="text-xl tracking-[0.25em] font-semibold transition-colors duration-300"
-              style={{ color: burgundy ? 'var(--beige-50)' : (dark ? 'var(--wine-700)' : 'var(--beige-50)') }}
-            >
-              NUAY
-            </span>
-            <span
-              className="text-[9px] tracking-[0.4em] font-light transition-colors duration-300"
-              style={{ color: burgundy ? 'var(--gold-300)' : (dark ? 'var(--ink-400)' : 'rgba(249,246,243,0.6)') }}
-            >
-              BEAUTY
-            </span>
+          <Link href="/" className="flex items-center">
+            <Image
+              src={!burgundy && dark ? '/logo/logo-dark.png' : '/logo/logo-light.png'}
+              alt="Nuay Beauty"
+              width={140}
+              height={81}
+              className="h-9 w-auto transition-opacity duration-300"
+              priority
+            />
           </Link>
 
           {/* Desktop Nav */}
