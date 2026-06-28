@@ -7,8 +7,8 @@ import { useSiteData, getCopy } from '@/components/SiteDataContext';
 import { ArrowRight, ArrowUpRight, CaretDown, CaretLeft, CaretRight, Drop, InstagramLogo, Play, X } from '@phosphor-icons/react';
 
 type VideoEmbed =
-  | { type: 'youtube'; embedUrl: string }
-  | { type: 'tiktok'; embedUrl: string }
+  | { type: 'youtube'; embedUrl: string; isVertical: boolean }
+  | { type: 'tiktok'; embedUrl: string; isVertical: boolean }
   | { type: 'instagram'; originalUrl: string }
   | null;
 
@@ -18,16 +18,17 @@ function getVideoEmbed(url: string | null | undefined): VideoEmbed {
     const u = new URL(url);
     const host = u.hostname.replace('www.', '');
     if (host === 'youtube.com' || host === 'm.youtube.com') {
-      const id = u.pathname.startsWith('/shorts/') ? u.pathname.split('/')[2] : u.searchParams.get('v');
-      if (id) return { type: 'youtube', embedUrl: `https://www.youtube.com/embed/${id}` };
+      const isShorts = u.pathname.startsWith('/shorts/');
+      const id = isShorts ? u.pathname.split('/')[2] : u.searchParams.get('v');
+      if (id) return { type: 'youtube', embedUrl: `https://www.youtube.com/embed/${id}`, isVertical: isShorts };
     }
     if (host === 'youtu.be') {
       const id = u.pathname.slice(1);
-      if (id) return { type: 'youtube', embedUrl: `https://www.youtube.com/embed/${id}` };
+      if (id) return { type: 'youtube', embedUrl: `https://www.youtube.com/embed/${id}`, isVertical: false };
     }
     if (host === 'tiktok.com') {
       const match = u.pathname.match(/\/video\/(\d+)/);
-      if (match) return { type: 'tiktok', embedUrl: `https://www.tiktok.com/embed/v2/${match[1]}` };
+      if (match) return { type: 'tiktok', embedUrl: `https://www.tiktok.com/embed/v2/${match[1]}`, isVertical: true };
     }
     if (host === 'instagram.com') {
       return { type: 'instagram', originalUrl: url };
@@ -545,7 +546,11 @@ export default function ServicesPage() {
               <X size={18} />
             </button>
             <div
-              className="relative w-[90vw] md:w-[70vw] aspect-video rounded-xl overflow-hidden"
+              className={
+                embed.isVertical
+                  ? 'relative h-[70vh] sm:h-[75vh] md:h-[80vh] max-w-[92vw] aspect-[9/16] rounded-xl overflow-hidden'
+                  : 'relative w-[90vw] md:w-[70vw] aspect-video rounded-xl overflow-hidden'
+              }
               onClick={(e) => e.stopPropagation()}
             >
               <iframe
