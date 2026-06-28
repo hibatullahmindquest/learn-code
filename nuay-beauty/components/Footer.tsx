@@ -1,6 +1,7 @@
 'use client';
 
 import Link from 'next/link';
+import Image from 'next/image';
 import { InstagramLogo, FacebookLogo, MapPin, Clock } from '@phosphor-icons/react';
 import { useLang } from './LanguageContext';
 import { useSiteData, getCopy } from '@/components/SiteDataContext';
@@ -22,15 +23,7 @@ export default function Footer() {
         {/* Brand */}
         <div>
           <div className="mb-4">
-            <p
-              className="text-xl tracking-[0.3em] font-semibold"
-              style={{ color: 'var(--gold-600)' }}
-            >
-              NUAY
-            </p>
-            <p className="text-[9px] tracking-[0.4em]" style={{ color: 'var(--ink-400)' }}>
-              BEAUTY
-            </p>
+            <Image src="/logo/logo-light.png" alt="Nuay Beauty" width={140} height={81} className="h-10 w-auto" />
           </div>
           <p className="text-sm leading-relaxed" style={{ color: 'rgba(249,246,243,0.6)' }}>
             {t.footer.tagline}
