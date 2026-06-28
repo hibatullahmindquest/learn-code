@@ -200,7 +200,7 @@ export function MediaPicker({ value, onChange, password, label }: Props) {
                       >
                         <Image src={f.url} alt={f.name} fill className="object-cover" />
                         {value === f.url && (
-                          <div className="absolute inset-0 flex items-center justify-center" style={{ background: 'rgba(139,34,82,0.4)' }}>
+                          <div className="absolute inset-0 flex items-center justify-center" style={{ background: 'rgba(94,31,31,0.4)' }}>
                             <Check size={20} weight="bold" className="text-white" />
                           </div>
                         )}
