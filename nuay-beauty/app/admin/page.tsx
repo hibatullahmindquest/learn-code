@@ -65,7 +65,10 @@ type ImageData = {
   studio: string[];
   gallery: GalleryImage[];
   aboutPhotos: [string, string, string];
+  beforeAfter: { before: string; after: string };
 };
+
+const IMAGE_DEFAULTS: ImageData = { hero: '', featuredService: '', studio: ['', '', '', '', ''], gallery: [], aboutPhotos: ['', '', ''], beforeAfter: { before: '', after: '' } };
 
 type FaqItem = {
   id: string;
@@ -193,7 +196,7 @@ export default function AdminPage() {
   });
   const [artists, setArtists] = useState<Artist[]>([]);
   const [services, setServices] = useState<Service[]>([]);
-  const [images, setImages] = useState<ImageData>({ hero: '', featuredService: '', studio: ['', '', '', '', ''], gallery: [], aboutPhotos: ['', '', ''] });
+  const [images, setImages] = useState<ImageData>(IMAGE_DEFAULTS);
   const [faqs, setFaqs] = useState<FaqItem[]>([]);
   const [testimonials, setTestimonials] = useState<Testimonial[]>([]);
   const [copy, setCopy] = useState<CopyData>(defaultCopy);
@@ -232,7 +235,7 @@ export default function AdminPage() {
         return artist;
       }));
     }
-    if (data.images) setImages({ hero: '', featuredService: '', studio: ['', '', '', '', ''], gallery: [], aboutPhotos: ['', '', ''], ...data.images });
+    if (data.images) setImages({ ...IMAGE_DEFAULTS, ...data.images });
     if (data.faqs) setFaqs(data.faqs);
     if (data.testimonials) setTestimonials(data.testimonials);
     if (data.copy) setCopy({ ...defaultCopy, ...data.copy });
@@ -691,6 +694,24 @@ export default function AdminPage() {
                 </div>
                 <label className={LABEL}>URL Gambar Hero</label>
                 <MediaPicker value={images.hero} onChange={(url) => setImages({ ...images, hero: url })} password={password} label="Hero Image" />
+              </div>
+
+              <div className={SECTION}>
+                <div className="flex items-center justify-between mb-5">
+                  <h2 className="font-semibold text-gray-800">Gambar Before & After (Homepage)</h2>
+                  <StatusBadge status={statuses['images'] ?? 'idle'} />
+                </div>
+                <p className="text-xs text-gray-400 mb-3">Gambar untuk slider perbandingan "Before & After" di homepage.</p>
+                <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                  <div>
+                    <label className={LABEL}>Gambar Before</label>
+                    <MediaPicker value={images.beforeAfter?.before ?? ''} onChange={(url) => setImages({ ...images, beforeAfter: { ...images.beforeAfter, before: url } })} password={password} label="Before Image" />
+                  </div>
+                  <div>
+                    <label className={LABEL}>Gambar After</label>
+                    <MediaPicker value={images.beforeAfter?.after ?? ''} onChange={(url) => setImages({ ...images, beforeAfter: { ...images.beforeAfter, after: url } })} password={password} label="After Image" />
+                  </div>
+                </div>
               </div>
 
               <div className={SECTION}>
