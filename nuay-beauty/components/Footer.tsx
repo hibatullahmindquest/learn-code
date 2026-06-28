@@ -1,53 +1,39 @@
 'use client';
 
 import Link from 'next/link';
+import { Poppins } from 'next/font/google';
 import { InstagramLogo, FacebookLogo, MapPin, Clock } from '@phosphor-icons/react';
 import { useLang } from './LanguageContext';
 import { useSiteData, getCopy } from '@/components/SiteDataContext';
+
+const poppins = Poppins({
+  subsets: ['latin'],
+  weight: ['400', '500', '600', '700'],
+  variable: '--font-footer',
+  display: 'swap',
+});
 
 export default function Footer() {
   const { lang } = useLang();
   const { contact, copy } = useSiteData();
   const t = getCopy(copy, lang);
-  const { bookingUrl: BOOKING_URL, instagramUrl: INSTAGRAM_URL, facebookUrl: FACEBOOK_URL } = contact;
+  const { instagramUrl: INSTAGRAM_URL, facebookUrl: FACEBOOK_URL } = contact;
   const address = lang === 'en' ? contact.addressEn : contact.addressBm;
   const hours = lang === 'en' ? contact.hoursEn : contact.hoursBm;
 
   return (
-    <footer style={{ background: 'var(--charcoal)', color: 'var(--cream)' }}>
-      {/* CTA band */}
-      <div
-        className="py-16 px-6 text-center"
-        style={{ background: 'var(--burgundy)' }}
-      >
-        <p className="text-xs tracking-[0.3em] uppercase mb-3" style={{ color: 'rgba(245,239,230,0.6)' }}>
-          {t.footer.ctaSub}
-        </p>
-        <h2
-          className="text-4xl md:text-5xl mb-6 tracking-tight"
-          style={{ fontFamily: 'var(--font-cormorant), serif', fontWeight: 300 }}
-        >
-          {t.footer.ctaHeading}
-        </h2>
-        <a
-          href={BOOKING_URL}
-          target="_blank"
-          rel="noopener noreferrer"
-          className="inline-block px-8 py-3 rounded-full text-sm tracking-widest transition-all duration-200 active:scale-95"
-          style={{ background: 'var(--cream)', color: 'var(--burgundy)', fontWeight: 500 }}
-        >
-          {t.nav.bookNow}
-        </a>
-      </div>
-
+    <footer
+      className={poppins.variable}
+      style={{ background: 'var(--charcoal)', color: 'var(--cream)', fontFamily: 'var(--font-footer), sans-serif' }}
+    >
       {/* Main footer */}
       <div className="max-w-7xl mx-auto px-6 lg:px-10 py-14 grid grid-cols-1 md:grid-cols-3 gap-12">
         {/* Brand */}
         <div>
           <div className="mb-4">
             <p
-              className="text-xl tracking-[0.3em]"
-              style={{ fontFamily: 'var(--font-cormorant), serif', color: 'var(--gold)' }}
+              className="text-xl tracking-[0.3em] font-semibold"
+              style={{ color: 'var(--gold)' }}
             >
               NUAY
             </p>

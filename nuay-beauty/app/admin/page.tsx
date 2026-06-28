@@ -4,8 +4,9 @@ import { useState, useEffect, useCallback } from 'react';
 
 import { defaultCopy, defaultNavItems, type CopyData, type NavItemSetting } from '@/components/SiteDataContext';
 import { MediaPicker } from '@/components/MediaPicker';
+import { MediaLibraryTab } from '@/components/MediaLibraryTab';
 
-type Tab = 'dashboard' | 'contact' | 'artists' | 'services' | 'gallery' | 'faq' | 'testimonials' | 'content' | 'blog' | 'nav';
+type Tab = 'dashboard' | 'contact' | 'artists' | 'services' | 'gallery' | 'media' | 'faq' | 'testimonials' | 'content' | 'blog' | 'nav';
 type ContentSubTab = 'homepage' | 'about' | 'footer';
 
 type ContactData = {
@@ -20,18 +21,22 @@ type ContactData = {
   hoursBm: string;
 };
 
+type ArtistTier = 'senior' | 'junior';
+
 type Artist = {
   id: string;
   name: string;
-  roleEn: string;
-  roleBm: string;
+  tier: ArtistTier;
   bioEn: string;
   bioBm: string;
   services: string[];
   image: string;
   instagram: string | null;
   gallery: string[];
+  published: boolean;
 };
+
+const ARTIST_DEFAULTS = { published: true, tier: 'senior' as ArtistTier };
 
 type Service = {
   id: string;
@@ -42,9 +47,16 @@ type Service = {
   descBm: string;
   price: number;
   duration: string;
+  longevityEn: string;
+  longevityBm: string;
+  image: string;
   badge: string | null;
+  bookingUrl: string | null;
+  featured: boolean;
   published: boolean;
 };
+
+const SERVICE_DEFAULTS = { longevityEn: '', longevityBm: '', image: '', bookingUrl: null, featured: false };
 
 type GalleryImage = { url: string; label: string; span: string };
 
@@ -54,7 +66,11 @@ type ImageData = {
   studio: string[];
   gallery: GalleryImage[];
   aboutPhotos: [string, string, string];
+  beforeAfter: { before: string; after: string };
+  whyNuay: string;
 };
+
+const IMAGE_DEFAULTS: ImageData = { hero: '', featuredService: '', studio: ['', '', '', '', ''], gallery: [], aboutPhotos: ['', '', ''], beforeAfter: { before: '', after: '' }, whyNuay: '' };
 
 type FaqItem = {
   id: string;
@@ -135,6 +151,10 @@ const NAV: { key: Tab; label: string; icon: React.ReactNode }[] = [
     icon: <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth={1.8} className="w-5 h-5"><rect x="3" y="3" width="18" height="18" rx="2"/><circle cx="8.5" cy="8.5" r="1.5"/><path d="m21 15-5-5L5 21"/></svg>,
   },
   {
+    key: 'media', label: 'Media Library',
+    icon: <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth={1.8} className="w-5 h-5"><rect x="3" y="3" width="18" height="18" rx="2"/><circle cx="8.5" cy="8.5" r="1.5"/><path d="m21 15-5-5L5 21"/></svg>,
+  },
+  {
     key: 'faq', label: 'FAQ',
     icon: <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth={1.8} className="w-5 h-5"><circle cx="12" cy="12" r="10"/><path d="M9.09 9a3 3 0 0 1 5.83 1c0 2-3 3-3 3"/><line x1="12" y1="17" x2="12.01" y2="17" strokeLinecap="round"/></svg>,
   },
@@ -162,6 +182,7 @@ const PAGE_TITLES: Record<Tab, string> = {
   artists: 'Artists',
   services: 'Services',
   gallery: 'Gallery',
+  media: 'Media Library',
   faq: 'FAQ',
   testimonials: 'Testimonials',
   content: 'Content / Copy',
@@ -182,7 +203,7 @@ export default function AdminPage() {
   });
   const [artists, setArtists] = useState<Artist[]>([]);
   const [services, setServices] = useState<Service[]>([]);
-  const [images, setImages] = useState<ImageData>({ hero: '', featuredService: '', studio: ['', '', '', '', ''], gallery: [], aboutPhotos: ['', '', ''] });
+  const [images, setImages] = useState<ImageData>(IMAGE_DEFAULTS);
   const [faqs, setFaqs] = useState<FaqItem[]>([]);
   const [testimonials, setTestimonials] = useState<Testimonial[]>([]);
   const [copy, setCopy] = useState<CopyData>(defaultCopy);
@@ -206,9 +227,22 @@ export default function AdminPage() {
     const res = await fetch('/api/settings');
     const data = await res.json();
     if (data.contact) setContact(data.contact);
-    if (data.artists) setArtists(data.artists);
-    if (data.services) setServices(data.services);
-    if (data.images) setImages({ hero: '', featuredService: '', studio: ['', '', '', '', ''], gallery: [], aboutPhotos: ['', '', ''], ...data.images });
+    const resolvedServices = data.services ? (data.services as Service[]).map((s) => ({ ...SERVICE_DEFAULTS, ...s })) : services;
+    if (data.services) setServices(resolvedServices);
+    if (data.artists) {
+      setArtists((data.artists as Artist[]).map((a) => {
+        const artist = { ...ARTIST_DEFAULTS, ...a };
+        artist.services = (a.services ?? [])
+          .map((entry) => {
+            if (resolvedServices.some((s) => s.id === entry)) return entry;
+            const byName = resolvedServices.find((s) => s.nameEn === entry);
+            return byName ? byName.id : null;
+          })
+          .filter((id): id is string => id !== null);
+        return artist;
+      }));
+    }
+    if (data.images) setImages({ ...IMAGE_DEFAULTS, ...data.images });
     if (data.faqs) setFaqs(data.faqs);
     if (data.testimonials) setTestimonials(data.testimonials);
     if (data.copy) setCopy({ ...defaultCopy, ...data.copy });
@@ -467,8 +501,18 @@ export default function AdminPage() {
               {artists.map((artist, i) => (
                 <div key={artist.id} className={SECTION}>
                   <div className="flex items-center justify-between mb-5">
-                    <h2 className="font-semibold text-gray-800">{artist.name || 'Artist Baru'}</h2>
                     <div className="flex items-center gap-2">
+                      <h2 className="font-semibold text-gray-800">{artist.name || 'Artist Baru'}</h2>
+                      <span className={`text-xs px-2 py-0.5 rounded-full font-medium ${artist.published !== false ? 'bg-green-100 text-green-700' : 'bg-orange-100 text-orange-700'}`}>
+                        {artist.published !== false ? 'Aktif' : 'Disembunyikan'}
+                      </span>
+                    </div>
+                    <div className="flex items-center gap-3">
+                      <label className="relative inline-flex items-center cursor-pointer" title={artist.published !== false ? 'Sembunyikan artist' : 'Tunjuk artist'}>
+                        <input type="checkbox" className="sr-only peer" checked={artist.published !== false}
+                          onChange={(e) => { const u = [...artists]; u[i] = { ...artist, published: e.target.checked }; setArtists(u); }} />
+                        <div className="w-10 h-6 bg-gray-200 rounded-full peer peer-checked:bg-green-600 peer-checked:after:translate-x-4 after:content-[''] after:absolute after:top-0.5 after:left-0.5 after:bg-white after:rounded-full after:h-5 after:w-5 after:transition-all"></div>
+                      </label>
                       <StatusBadge status={statuses['artists'] ?? 'idle'} />
                       <button className={BTN_DANGER} onClick={() => { if (window.confirm('Padam artist ini? Tindakan ini tidak boleh dibatalkan.')) setArtists(artists.filter((_, idx) => idx !== i)); }}>Padam</button>
                     </div>
@@ -487,12 +531,11 @@ export default function AdminPage() {
                       <MediaPicker value={artist.image} onChange={(url) => { const u = [...artists]; u[i] = { ...artist, image: url }; setArtists(u); }} password={password} label={artist.name || 'Artist Image'} />
                     </div>
                     <div>
-                      <label className={LABEL}>Role (English)</label>
-                      <input className={INPUT} value={artist.roleEn} onChange={(e) => { const u = [...artists]; u[i] = { ...artist, roleEn: e.target.value }; setArtists(u); }} />
-                    </div>
-                    <div>
-                      <label className={LABEL}>Role (BM)</label>
-                      <input className={INPUT} value={artist.roleBm} onChange={(e) => { const u = [...artists]; u[i] = { ...artist, roleBm: e.target.value }; setArtists(u); }} />
+                      <label className={LABEL}>Tahap Artist</label>
+                      <select className={INPUT} value={artist.tier} onChange={(e) => { const u = [...artists]; u[i] = { ...artist, tier: e.target.value as ArtistTier }; setArtists(u); }}>
+                        <option value="senior">Senior Artist</option>
+                        <option value="junior">Junior Artist</option>
+                      </select>
                     </div>
                     <div>
                       <label className={LABEL}>Bio (English)</label>
@@ -501,6 +544,33 @@ export default function AdminPage() {
                     <div>
                       <label className={LABEL}>Bio (BM)</label>
                       <textarea className={INPUT + ' h-20 resize-none'} value={artist.bioBm} onChange={(e) => { const u = [...artists]; u[i] = { ...artist, bioBm: e.target.value }; setArtists(u); }} />
+                    </div>
+                    <div className="md:col-span-2">
+                      <label className={LABEL}>Servis Yang Dicover</label>
+                      <div className="flex flex-wrap gap-2 mt-1">
+                        {services.map((svc) => {
+                          const checked = artist.services.includes(svc.id);
+                          return (
+                            <label key={svc.id} className={`text-sm px-3 py-1.5 rounded-full border cursor-pointer transition-colors ${checked ? 'bg-rose-700 text-white border-rose-700' : 'bg-white text-gray-600 border-gray-300'}`}>
+                              <input
+                                type="checkbox"
+                                className="sr-only"
+                                checked={checked}
+                                onChange={(e) => {
+                                  const u = [...artists];
+                                  const svcIds = e.target.checked
+                                    ? [...artist.services, svc.id]
+                                    : artist.services.filter((id) => id !== svc.id);
+                                  u[i] = { ...artist, services: svcIds };
+                                  setArtists(u);
+                                }}
+                              />
+                              {svc.nameEn || 'Servis Tanpa Nama'}
+                            </label>
+                          );
+                        })}
+                        {services.length === 0 && <p className="text-sm text-gray-400">Tiada servis lagi — tambah servis dahulu di tab Services.</p>}
+                      </div>
                     </div>
                     <div className="md:col-span-2">
                       <label className={LABEL}>Gambar Galeri (Portfolio Lightbox)</label>
@@ -525,7 +595,7 @@ export default function AdminPage() {
                   </div>
                 </div>
               ))}
-              <button className={BTN_ADD} onClick={() => setArtists([...artists, { id: uid(), name: '', roleEn: '', roleBm: '', bioEn: '', bioBm: '', services: [], image: '', instagram: null, gallery: [] }])}>
+              <button className={BTN_ADD} onClick={() => setArtists([...artists, { id: uid(), name: '', tier: 'senior', bioEn: '', bioBm: '', services: [], image: '', instagram: null, gallery: [], published: true }])}>
                 + Tambah Artist
               </button>
               <button onClick={() => save('artists', artists)} className={BTN_SAVE}>Simpan Semua Artist</button>
@@ -544,6 +614,9 @@ export default function AdminPage() {
                       <span className={`text-xs px-2 py-0.5 rounded-full font-medium ${svc.published !== false ? 'bg-green-100 text-green-700' : 'bg-orange-100 text-orange-700'}`}>
                         {svc.published !== false ? 'Aktif' : 'Disembunyikan'}
                       </span>
+                      {svc.featured && (
+                        <span className="text-xs px-2 py-0.5 rounded-full font-medium bg-amber-100 text-amber-700">Featured (Homepage)</span>
+                      )}
                     </div>
                     <div className="flex items-center gap-3">
                       <label className="relative inline-flex items-center cursor-pointer" title={svc.published !== false ? 'Sembunyikan servis' : 'Tunjuk servis'}>
@@ -554,6 +627,10 @@ export default function AdminPage() {
                       <StatusBadge status={statuses['services'] ?? 'idle'} />
                       <button className={BTN_DANGER} onClick={() => { if (window.confirm('Padam servis ini? Tindakan ini tidak boleh dibatalkan.')) setServices(services.filter((_, idx) => idx !== i)); }}>Padam</button>
                     </div>
+                  </div>
+                  <div className="mb-4">
+                    <label className={LABEL}>Gambar Servis</label>
+                    <MediaPicker value={svc.image} onChange={(url) => { const u = [...services]; u[i] = { ...svc, image: url }; setServices(u); }} password={password} label={svc.nameEn || 'Servis Baru'} />
                   </div>
                   <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                     <div>
@@ -566,7 +643,7 @@ export default function AdminPage() {
                     </div>
                     <div>
                       <label className={LABEL}>Harga (RM)</label>
-                      <input type="number" className={INPUT} value={svc.price} onChange={(e) => { const u = [...services]; u[i] = { ...svc, price: Number(e.target.value) }; setServices(u); }} />
+                      <input type="number" min={0} className={INPUT} value={svc.price} onChange={(e) => { const u = [...services]; u[i] = { ...svc, price: Number(e.target.value) || 0 }; setServices(u); }} />
                     </div>
                     <div>
                       <label className={LABEL}>Tempoh Masa</label>
@@ -581,6 +658,14 @@ export default function AdminPage() {
                       <textarea className={INPUT + ' h-16 resize-none'} value={svc.descBm} onChange={(e) => { const u = [...services]; u[i] = { ...svc, descBm: e.target.value }; setServices(u); }} />
                     </div>
                     <div>
+                      <label className={LABEL}>Ketahanan (English)</label>
+                      <input className={INPUT} value={svc.longevityEn} onChange={(e) => { const u = [...services]; u[i] = { ...svc, longevityEn: e.target.value }; setServices(u); }} placeholder="Lasts 6-8 weeks" />
+                    </div>
+                    <div>
+                      <label className={LABEL}>Ketahanan (BM)</label>
+                      <input className={INPUT} value={svc.longevityBm} onChange={(e) => { const u = [...services]; u[i] = { ...svc, longevityBm: e.target.value }; setServices(u); }} placeholder="Tahan 6-8 minggu" />
+                    </div>
+                    <div>
                       <label className={LABEL}>Kategori</label>
                       <input className={INPUT} value={svc.category} onChange={(e) => { const u = [...services]; u[i] = { ...svc, category: e.target.value }; setServices(u); }} placeholder="eyebrows / lashes / lips / body" />
                     </div>
@@ -588,10 +673,18 @@ export default function AdminPage() {
                       <label className={LABEL}>Badge (kosongkan jika tiada)</label>
                       <input className={INPUT} value={svc.badge ?? ''} onChange={(e) => { const u = [...services]; u[i] = { ...svc, badge: e.target.value || null }; setServices(u); }} placeholder="Most Popular / New / Bestseller" />
                     </div>
+                    <div>
+                      <label className={LABEL}>Booking Link (kosongkan untuk guna link default)</label>
+                      <input className={INPUT} value={svc.bookingUrl ?? ''} onChange={(e) => { const u = [...services]; u[i] = { ...svc, bookingUrl: e.target.value || null }; setServices(u); }} placeholder="https://..." />
+                    </div>
                   </div>
+                  <label className="mt-4 flex items-center gap-2 cursor-pointer w-fit">
+                    <input type="checkbox" checked={svc.featured} onChange={(e) => { const u = [...services]; u[i] = { ...svc, featured: e.target.checked }; setServices(u); }} />
+                    <span className="text-sm text-gray-700">Papar di Homepage (Featured Services) — 3 pertama yang ditanda akan dipaparkan</span>
+                  </label>
                 </div>
               ))}
-              <button className={BTN_ADD} onClick={() => setServices([...services, { id: uid(), category: '', nameEn: '', nameBm: '', descEn: '', descBm: '', price: 0, duration: '', badge: null, published: true }])}>
+              <button className={BTN_ADD} onClick={() => setServices([...services, { id: uid(), category: '', nameEn: '', nameBm: '', descEn: '', descBm: '', price: 0, duration: '', longevityEn: '', longevityBm: '', image: '', badge: null, bookingUrl: null, featured: false, published: true }])}>
                 + Tambah Servis
               </button>
               <button onClick={() => save('services', services)} className={BTN_SAVE}>Simpan Semua Servis</button>
@@ -608,6 +701,34 @@ export default function AdminPage() {
                 </div>
                 <label className={LABEL}>URL Gambar Hero</label>
                 <MediaPicker value={images.hero} onChange={(url) => setImages({ ...images, hero: url })} password={password} label="Hero Image" />
+              </div>
+
+              <div className={SECTION}>
+                <div className="flex items-center justify-between mb-5">
+                  <h2 className="font-semibold text-gray-800">Gambar Why Nuay (Homepage)</h2>
+                  <StatusBadge status={statuses['images'] ?? 'idle'} />
+                </div>
+                <p className="text-xs text-gray-400 mb-3">Gambar di sebelah section &quot;Why Nuay&quot; di homepage.</p>
+                <label className={LABEL}>URL Gambar Why Nuay</label>
+                <MediaPicker value={images.whyNuay ?? ''} onChange={(url) => setImages({ ...images, whyNuay: url })} password={password} label="Why Nuay Image" />
+              </div>
+
+              <div className={SECTION}>
+                <div className="flex items-center justify-between mb-5">
+                  <h2 className="font-semibold text-gray-800">Gambar Before & After (Homepage)</h2>
+                  <StatusBadge status={statuses['images'] ?? 'idle'} />
+                </div>
+                <p className="text-xs text-gray-400 mb-3">Gambar untuk slider perbandingan "Before & After" di homepage.</p>
+                <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                  <div>
+                    <label className={LABEL}>Gambar Before</label>
+                    <MediaPicker value={images.beforeAfter?.before ?? ''} onChange={(url) => setImages({ ...images, beforeAfter: { ...images.beforeAfter, before: url } })} password={password} label="Before Image" />
+                  </div>
+                  <div>
+                    <label className={LABEL}>Gambar After</label>
+                    <MediaPicker value={images.beforeAfter?.after ?? ''} onChange={(url) => setImages({ ...images, beforeAfter: { ...images.beforeAfter, after: url } })} password={password} label="After Image" />
+                  </div>
+                </div>
               </div>
 
               <div className={SECTION}>
@@ -679,6 +800,9 @@ export default function AdminPage() {
               <button onClick={() => save('images', images)} className={BTN_SAVE}>Simpan Semua Gambar</button>
             </div>
           )}
+
+          {/* ── MEDIA LIBRARY ─────────────────────────────────────────────── */}
+          {tab === 'media' && <MediaLibraryTab password={password} />}
 
           {/* ── FAQ ───────────────────────────────────────────────────────── */}
           {tab === 'faq' && (

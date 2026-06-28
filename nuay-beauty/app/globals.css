@@ -61,6 +61,16 @@ body {
   to   { transform: translateX(-33.333%); }
 }
 
+.nuay-marquee:hover {
+  animation-play-state: paused;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .nuay-marquee {
+    animation: none !important;
+  }
+}
+
 /* ── Navbar entrance ── */
 .navbar-enter {
   transition: transform 0.8s cubic-bezier(0.16, 1, 0.3, 1);

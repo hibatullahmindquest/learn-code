@@ -32,6 +32,8 @@ export type ImageSettings = {
   studio: string[];
   gallery: Array<{ url: string; label: string; span: string }>;
   aboutPhotos: [string, string, string];
+  beforeAfter: { before: string; after: string };
+  whyNuay: string;
 };
 
 // ── Copy (all editable text strings) ─────────────────────────────────────────
@@ -247,9 +249,53 @@ export type ServiceItem = {
   descBm: string;
   price: number;
   duration: string;
+  longevityEn: string;
+  longevityBm: string;
+  image: string;
   badge: string | null;
+  bookingUrl?: string | null;
+  featured: boolean;
   published?: boolean;
 };
+
+const SERVICE_DEFAULTS = { longevityEn: '', longevityBm: '', image: '', bookingUrl: null, featured: false };
+function normalizeServices(items: ServiceItem[]): ServiceItem[] {
+  return items.map((s) => ({ ...SERVICE_DEFAULTS, ...s }));
+}
+
+export type ArtistTier = 'senior' | 'junior';
+
+export type ArtistItem = {
+  id: string;
+  name: string;
+  tier?: ArtistTier;
+  bioEn: string;
+  bioBm: string;
+  services: string[];
+  image: string;
+  instagram: string | null;
+  gallery: string[];
+  published?: boolean;
+};
+
+const ARTIST_DEFAULTS = { published: true, tier: 'senior' as ArtistTier };
+
+// Legacy artist.services entries stored plain service names instead of ids — match
+// each entry against a service id first, falling back to a name lookup, so
+// existing data keeps working once it's saved back through the admin panel.
+function normalizeArtists(items: ArtistItem[], services: ServiceItem[]): ArtistItem[] {
+  return items.map((a) => {
+    const normalized = { ...ARTIST_DEFAULTS, ...a };
+    normalized.services = (a.services ?? [])
+      .map((entry) => {
+        if (services.some((s) => s.id === entry)) return entry;
+        const byName = services.find((s) => s.nameEn === entry);
+        return byName ? byName.id : null;
+      })
+      .filter((id): id is string => id !== null);
+    return normalized;
+  });
+}
 
 export type NavItemSetting = {
   key: string;
@@ -269,7 +315,7 @@ export const defaultNavItems: NavItemSetting[] = [
 export type SiteData = {
   contact: ContactSettings;
   services: ServiceItem[];
-  artists: typeof defaultArtists;
+  artists: ArtistItem[];
   testimonials: Testimonial[];
   faqs: FaqItem[];
   blogPosts: BlogPost[];
@@ -292,9 +338,11 @@ const defaultContact: ContactSettings = {
 };
 
 const defaultImages: ImageSettings = {
-  hero: '/images/nuay-hero.avif',
+  hero: 'https://fsyqbpaafdorxrjqkemb.supabase.co/storage/v1/object/public/media/uploads/1782574018884-5sa1j.png',
   featuredService: '/images/nuay-hero.avif',
   aboutPhotos: ['/images/nuay-artist.png', '/images/nuay-studio-3.avif', '/images/nuay-studio-4.avif'],
+  beforeAfter: { before: '/images/nuay-reception.webp', after: '/images/nuay-lounge.webp' },
+  whyNuay: '/images/nuay-lounge.webp',
   studio: [
     '/images/nuay-studio-1.avif',
     '/images/nuay-studio-2.avif',
@@ -317,10 +365,13 @@ const defaultImages: ImageSettings = {
   ],
 };
 
+const normalizedDefaultServices = normalizeServices(defaultServices as ServiceItem[]);
+const normalizedDefaultArtists = normalizeArtists(defaultArtists as ArtistItem[], normalizedDefaultServices);
+
 const initialData: SiteData = {
   contact: defaultContact,
-  services: defaultServices,
-  artists: defaultArtists,
+  services: normalizedDefaultServices,
+  artists: normalizedDefaultArtists,
   testimonials: [],
   faqs: [],
   blogPosts: [],
@@ -331,10 +382,11 @@ const initialData: SiteData = {
 };
 
 function mapSettings(settings: Record<string, unknown>): SiteData {
+  const resolvedServices = normalizeServices((settings.services as ServiceItem[]) ?? normalizedDefaultServices);
   return {
     contact: (settings.contact as ContactSettings) ?? defaultContact,
-    services: (settings.services as ServiceItem[]) ?? defaultServices,
-    artists: (settings.artists as typeof defaultArtists) ?? defaultArtists,
+    services: resolvedServices,
+    artists: normalizeArtists((settings.artists as ArtistItem[]) ?? normalizedDefaultArtists, resolvedServices),
     testimonials: (settings.testimonials as Testimonial[]) ?? [],
     faqs: (settings.faqs as FaqItem[]) ?? [],
     blogPosts: (settings.blog_posts as BlogPost[]) ?? [],

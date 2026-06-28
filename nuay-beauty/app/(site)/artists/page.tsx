@@ -8,9 +8,10 @@ import { ArrowRight, InstagramLogo, X, CaretLeft, CaretRight } from '@phosphor-i
 
 export default function ArtistsPage() {
   const { lang } = useLang();
-  const { contact, artists, copy } = useSiteData();
+  const { contact, artists: allArtists, services, copy } = useSiteData();
   const t = getCopy(copy, lang);
   const BOOKING_URL = contact.bookingUrl;
+  const artists = allArtists.filter((a) => a.published !== false);
 
   // Lightbox: { artistIndex, imageIndex }
   const [lightbox, setLightbox] = useState<{ ai: number; ii: number } | null>(null);
@@ -140,7 +141,9 @@ export default function ArtistsPage() {
                     style={{ transform: 'translateY(32px)', '--delay': '0.1s' } as React.CSSProperties}
                   >
                     <p className="text-xs tracking-[0.38em] uppercase mb-4" style={{ color: 'var(--gold)' }}>
-                      {lang === 'en' ? artist.roleEn : artist.roleBm}
+                      {artist.tier === 'junior'
+                        ? (lang === 'en' ? 'Junior Artist' : 'Artis Junior')
+                        : (lang === 'en' ? 'Senior Artist' : 'Artis Senior')}
                     </p>
                     <h2
                       className="tracking-tight leading-none mb-6"
@@ -162,15 +165,19 @@ export default function ArtistsPage() {
                       {lang === 'en' ? 'Specialises in' : 'Pakar dalam'}
                     </p>
                     <div className="flex flex-wrap gap-2">
-                      {artist.services.map((svc) => (
-                        <span
-                          key={svc}
-                          className="text-xs px-3.5 py-1.5 rounded-full"
-                          style={{ background: 'var(--surface)', border: '1px solid var(--beige)', color: 'var(--charcoal-mid)' }}
-                        >
-                          {svc}
-                        </span>
-                      ))}
+                      {artist.services.map((svcId) => {
+                        const svc = services.find((s) => s.id === svcId);
+                        if (!svc) return null;
+                        return (
+                          <span
+                            key={svcId}
+                            className="text-xs px-3.5 py-1.5 rounded-full"
+                            style={{ background: 'var(--surface)', border: '1px solid var(--beige)', color: 'var(--charcoal-mid)' }}
+                          >
+                            {lang === 'en' ? svc.nameEn : svc.nameBm}
+                          </span>
+                        );
+                      })}
                     </div>
                   </div>
 
