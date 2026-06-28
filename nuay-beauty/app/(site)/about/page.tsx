@@ -2,13 +2,13 @@
 
 import { useEffect } from 'react';
 import Image from 'next/image';
-import { MapPin, Clock, Phone, ArrowRight, NavigationArrow } from '@phosphor-icons/react';
+import { MapPin, Clock, Phone, ArrowRight, NavigationArrow, Briefcase, GraduationCap, WhatsappLogo } from '@phosphor-icons/react';
 import { useLang } from '@/components/LanguageContext';
 import { useSiteData, getCopy } from '@/components/SiteDataContext';
 
 export default function AboutPage() {
   const { lang } = useLang();
-  const { contact, copy, faqs, images } = useSiteData();
+  const { contact, copy, images } = useSiteData();
   const t = getCopy(copy, lang);
   const BOOKING_URL = contact.bookingUrl;
   const GOOGLE_MAPS_EMBED = contact.googleMapsEmbed;
@@ -115,59 +115,89 @@ export default function AboutPage() {
         </div>
       </section>
 
-      {/* ─────────────── FAQ ─────────────── */}
+      {/* ─────────────── JOIN US / LEARN WITH US ─────────────── */}
       <section
-        id="faq"
         className="py-28 md:py-36 px-6 lg:px-10"
         style={{ background: 'var(--beige-100)' }}
       >
-        <div className="max-w-3xl mx-auto">
+        <div className="max-w-5xl mx-auto">
           <div
             className="reveal text-center mb-14"
             style={{ transform: 'translateY(24px)' } as React.CSSProperties}
           >
             <p className="text-xs tracking-[0.38em] uppercase mb-3" style={{ color: 'var(--gold-600)' }}>
-              FAQ
+              {lang === 'en' ? 'Opportunities' : 'Peluang'}
             </p>
             <h2
               className="tracking-tight leading-none"
               style={{ fontSize: 'var(--fs-section-title)', fontFamily: 'var(--font-nuay-display), serif', fontWeight: 600, color: 'var(--ink-950)' }}
             >
-              {t.faq.title}
+              {lang === 'en' ? 'Grow With Nuay' : 'Berkembang Dengan Nuay'}
             </h2>
           </div>
 
-          <div className="flex flex-col gap-3">
-            {faqs.map((faq, i) => (
-              <details
-                key={i}
-                className="reveal group rounded-2xl"
-                style={{
-                  background: 'var(--beige-100)',
-                  border: '1px solid var(--line)',
-                  transform: 'translateY(24px)',
-                  '--delay': `${i * 0.05}s`,
-                } as React.CSSProperties}
+          <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+            <div
+              className="reveal rounded-2xl p-8 flex flex-col items-start"
+              style={{ background: 'var(--beige-50)', border: '1px solid var(--line)', transform: 'translateY(24px)' } as React.CSSProperties}
+            >
+              <div
+                className="w-12 h-12 rounded-full flex items-center justify-center mb-5"
+                style={{ background: 'var(--beige-100)', border: '1px solid var(--line)' }}
               >
-                <summary
-                  className="flex items-center justify-between cursor-pointer px-7 py-5 list-none"
-                  style={{ fontFamily: 'var(--font-nuay-display), serif', fontWeight: 500, color: 'var(--ink-950)' }}
-                >
-                  <span className="text-lg">{lang === 'en' ? faq.questionEn : faq.questionBm}</span>
-                  <span
-                    className="ml-4 flex-shrink-0 w-7 h-7 rounded-full flex items-center justify-center text-xs transition-transform duration-300 group-open:rotate-45"
-                    style={{ background: 'var(--wine-700)', color: 'var(--beige-50)' }}
-                  >
-                    +
-                  </span>
-                </summary>
-                <div className="px-7 pb-6 pt-0">
-                  <p className="text-sm leading-relaxed max-w-[65ch]" style={{ color: 'var(--ink-400)' }}>
-                    {lang === 'en' ? faq.answerEn : faq.answerBm}
-                  </p>
-                </div>
-              </details>
-            ))}
+                <Briefcase size={20} style={{ color: 'var(--wine-700)' }} />
+              </div>
+              <h3
+                className="text-xl mb-3"
+                style={{ fontFamily: 'var(--font-nuay-display), serif', fontWeight: 500, color: 'var(--ink-950)' }}
+              >
+                {t.joinUs.vacancyHeading}
+              </h3>
+              <p className="text-sm leading-relaxed mb-6" style={{ color: 'var(--ink-400)' }}>
+                {t.joinUs.vacancyText}
+              </p>
+              <a
+                href={`https://wa.me/${t.joinUs.vacancyWhatsapp}`}
+                target="_blank"
+                rel="noopener noreferrer"
+                className="inline-flex items-center justify-center gap-2 mt-auto px-6 py-3 text-sm tracking-wide transition-all duration-300 active:scale-[0.97]"
+                style={{ background: 'var(--wine-700)', color: 'var(--beige-50)', borderRadius: 'var(--radius-button)' }}
+              >
+                <WhatsappLogo size={16} weight="fill" />
+                {lang === 'en' ? 'Chat on WhatsApp' : 'Hubungi WhatsApp'}
+              </a>
+            </div>
+
+            <div
+              className="reveal rounded-2xl p-8 flex flex-col items-start"
+              style={{ background: 'var(--beige-50)', border: '1px solid var(--line)', transform: 'translateY(24px)', '--delay': '0.08s' } as React.CSSProperties}
+            >
+              <div
+                className="w-12 h-12 rounded-full flex items-center justify-center mb-5"
+                style={{ background: 'var(--beige-100)', border: '1px solid var(--line)' }}
+              >
+                <GraduationCap size={20} style={{ color: 'var(--wine-700)' }} />
+              </div>
+              <h3
+                className="text-xl mb-3"
+                style={{ fontFamily: 'var(--font-nuay-display), serif', fontWeight: 500, color: 'var(--ink-950)' }}
+              >
+                {t.joinUs.learningHeading}
+              </h3>
+              <p className="text-sm leading-relaxed mb-6" style={{ color: 'var(--ink-400)' }}>
+                {t.joinUs.learningText}
+              </p>
+              <a
+                href={`https://wa.me/${t.joinUs.learningWhatsapp}`}
+                target="_blank"
+                rel="noopener noreferrer"
+                className="inline-flex items-center justify-center gap-2 mt-auto px-6 py-3 text-sm tracking-wide transition-all duration-300 active:scale-[0.97]"
+                style={{ background: 'var(--wine-700)', color: 'var(--beige-50)', borderRadius: 'var(--radius-button)' }}
+              >
+                <WhatsappLogo size={16} weight="fill" />
+                {lang === 'en' ? 'Chat on WhatsApp' : 'Hubungi WhatsApp'}
+              </a>
+            </div>
           </div>
         </div>
       </section>
