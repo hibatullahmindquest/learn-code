@@ -52,26 +52,9 @@ export default function GalleryPage() {
 
       {/* ─────────────── HEADER ─────────────── */}
       <section
-        className="relative pt-36 md:pt-44 pb-20 md:pb-24 px-6 lg:px-10 overflow-hidden"
-        style={{ background: 'var(--ink-950)' }}
+        className="relative pt-36 md:pt-44 pb-20 md:pb-24 px-6 lg:px-10"
+        style={{ background: 'var(--beige-100)', borderBottom: '1px solid var(--line)' }}
       >
-        {/* Decorative accent */}
-        <div
-          className="absolute top-0 right-0 h-full w-[45vw] md:w-[35vw] pointer-events-none hidden md:block"
-          style={{
-            WebkitMaskImage: 'linear-gradient(to left, rgba(0,0,0,0.4) 0%, transparent 100%)',
-            maskImage: 'linear-gradient(to left, rgba(0,0,0,0.4) 0%, transparent 100%)',
-          }}
-        >
-          <Image
-            src="/images/nuay-studio-2.avif"
-            alt=""
-            fill
-            className="object-cover"
-            style={{ mixBlendMode: 'luminosity', opacity: 0.18 }}
-          />
-        </div>
-
         <div className="max-w-7xl mx-auto relative z-10">
           <div
             className="reveal"
@@ -82,15 +65,15 @@ export default function GalleryPage() {
             </p>
             <h1
               className="tracking-tight leading-none mb-6"
-              style={{ fontSize: 'var(--fs-page-title)', fontFamily: 'var(--font-nuay-display), serif', fontWeight: 600, color: 'var(--beige-50)' }}
+              style={{ fontSize: 'var(--fs-page-title)', fontFamily: 'var(--font-nuay-display), serif', fontWeight: 600, color: 'var(--ink-950)' }}
             >
               {lang === 'en' ? (
-                <>Our <span style={{ fontStyle: 'italic', color: 'var(--gold-300)' }}>Work</span></>
+                <>Our <span style={{ fontStyle: 'italic', color: 'var(--wine-700)' }}>Work</span></>
               ) : (
-                <>Hasil <span style={{ fontStyle: 'italic', color: 'var(--gold-300)' }}>Kami</span></>
+                <>Hasil <span style={{ fontStyle: 'italic', color: 'var(--wine-700)' }}>Kami</span></>
               )}
             </h1>
-            <p className="text-base max-w-md leading-relaxed" style={{ color: 'rgba(249,246,243,0.5)', fontWeight: 300 }}>
+            <p className="text-base max-w-md leading-relaxed" style={{ color: 'var(--ink-400)', fontWeight: 300 }}>
               {t.gallery.sub}
             </p>
           </div>
@@ -100,14 +83,11 @@ export default function GalleryPage() {
             className="reveal mt-8"
             style={{ transform: 'translateY(16px)', '--delay': '0.15s' } as React.CSSProperties}
           >
-            <span className="text-xs tracking-[0.3em] uppercase font-mono" style={{ color: 'rgba(249,246,243,0.4)' }}>
+            <span className="text-xs tracking-[0.3em] uppercase font-mono" style={{ color: 'var(--ink-400)' }}>
               {String(galleryImages.length).padStart(2, '0')} {lang === 'en' ? 'photos' : 'foto'}
             </span>
           </div>
         </div>
-
-        {/* Bottom fade */}
-        <div className="absolute bottom-0 left-0 right-0 h-16" style={{ background: 'linear-gradient(to top, var(--beige-50), transparent)' }} />
       </section>
 
       {/* ─────────────── GALLERY GRID ─────────────── */}

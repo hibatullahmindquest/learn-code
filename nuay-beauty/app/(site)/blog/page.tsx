@@ -33,8 +33,8 @@ export default function BlogPage() {
 
       {/* ─────────────── HEADER ─────────────── */}
       <section
-        className="relative pt-36 md:pt-44 pb-20 md:pb-24 px-6 lg:px-10 overflow-hidden"
-        style={{ background: 'var(--ink-950)' }}
+        className="relative pt-36 md:pt-44 pb-20 md:pb-24 px-6 lg:px-10"
+        style={{ background: 'var(--beige-100)', borderBottom: '1px solid var(--line)' }}
       >
         <div className="max-w-7xl mx-auto relative z-10">
           <div className="reveal" style={{ transform: 'translateY(32px)' } as React.CSSProperties}>
@@ -43,17 +43,16 @@ export default function BlogPage() {
             </p>
             <h1
               className="text-5xl md:text-6xl lg:text-7xl tracking-tight leading-none mb-6"
-              style={{ fontFamily: 'var(--font-nuay-display), serif', fontWeight: 600, color: 'var(--beige-50)' }}
+              style={{ fontFamily: 'var(--font-nuay-display), serif', fontWeight: 600, color: 'var(--ink-950)' }}
             >
               {lang === 'en' ? (
-                <>Our <span style={{ fontStyle: 'italic', color: 'var(--gold-300)' }}>Blog</span></>
+                <>Our <span style={{ fontStyle: 'italic', color: 'var(--wine-700)' }}>Blog</span></>
               ) : (
-                <>Blog <span style={{ fontStyle: 'italic', color: 'var(--gold-300)' }}>Kami</span></>
+                <>Blog <span style={{ fontStyle: 'italic', color: 'var(--wine-700)' }}>Kami</span></>
               )}
             </h1>
           </div>
         </div>
-        <div className="absolute bottom-0 left-0 right-0 h-16" style={{ background: 'linear-gradient(to top, var(--beige-50), transparent)' }} />
       </section>
 
       {/* ─────────────── POSTS ─────────────── */}

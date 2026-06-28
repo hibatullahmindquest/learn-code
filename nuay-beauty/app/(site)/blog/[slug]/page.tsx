@@ -41,8 +41,8 @@ export default function BlogPostPage() {
 
       {/* ─────────────── HERO ─────────────── */}
       <section
-        className="relative pt-36 md:pt-44 pb-16 px-6 lg:px-10 overflow-hidden"
-        style={{ background: 'var(--ink-950)' }}
+        className="relative pt-36 md:pt-44 pb-16 px-6 lg:px-10"
+        style={{ background: 'var(--beige-100)', borderBottom: '1px solid var(--line)' }}
       >
         <div className="max-w-3xl mx-auto relative z-10">
           {post.category && (
@@ -52,15 +52,14 @@ export default function BlogPostPage() {
           )}
           <h1
             className="text-4xl md:text-5xl lg:text-6xl tracking-tight leading-tight mb-5"
-            style={{ fontFamily: 'var(--font-nuay-display), serif', fontWeight: 600, color: 'var(--beige-50)' }}
+            style={{ fontFamily: 'var(--font-nuay-display), serif', fontWeight: 600, color: 'var(--ink-950)' }}
           >
             {title}
           </h1>
-          <p className="text-sm" style={{ color: 'rgba(249,246,243,0.45)' }}>
+          <p className="text-sm" style={{ color: 'var(--ink-400)' }}>
             {new Date(post.createdAt).toLocaleDateString(lang === 'en' ? 'en-MY' : 'ms-MY', { year: 'numeric', month: 'long', day: 'numeric' })}
           </p>
         </div>
-        <div className="absolute bottom-0 left-0 right-0 h-16" style={{ background: 'linear-gradient(to top, var(--beige-50), transparent)' }} />
       </section>
 
       {/* ─────────────── FEATURED IMAGE ─────────────── */}

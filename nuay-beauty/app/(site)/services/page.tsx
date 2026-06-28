@@ -77,26 +77,9 @@ export default function ServicesPage() {
 
       {/* ─────────────── HEADER ─────────────── */}
       <section
-        className="relative pt-36 md:pt-44 pb-20 md:pb-24 px-6 lg:px-10 overflow-hidden"
-        style={{ background: 'var(--ink-950)' }}
+        className="relative pt-36 md:pt-44 pb-20 md:pb-24 px-6 lg:px-10"
+        style={{ background: 'var(--beige-100)', borderBottom: '1px solid var(--line)' }}
       >
-        {/* Decorative accent image */}
-        <div
-          className="absolute top-0 right-0 h-full w-[45vw] md:w-[35vw] pointer-events-none hidden md:block"
-          style={{
-            WebkitMaskImage: 'linear-gradient(to left, rgba(0,0,0,0.4) 0%, transparent 100%)',
-            maskImage: 'linear-gradient(to left, rgba(0,0,0,0.4) 0%, transparent 100%)',
-          }}
-        >
-          <Image
-            src="/images/nuay-studio-3.avif"
-            alt=""
-            fill
-            className="object-cover"
-            style={{ mixBlendMode: 'luminosity', opacity: 0.18 }}
-          />
-        </div>
-
         <div className="max-w-7xl mx-auto relative z-10">
           <div
             className="reveal"
@@ -107,15 +90,15 @@ export default function ServicesPage() {
             </p>
             <h1
               className="tracking-tight leading-none mb-6"
-              style={{ fontSize: 'var(--fs-page-title)', fontFamily: 'var(--font-nuay-display), serif', fontWeight: 600, color: 'var(--beige-50)' }}
+              style={{ fontSize: 'var(--fs-page-title)', fontFamily: 'var(--font-nuay-display), serif', fontWeight: 600, color: 'var(--ink-950)' }}
             >
               {lang === 'en' ? (
-                <>Our <span style={{ fontStyle: 'italic', color: 'var(--gold-300)' }}>Services</span></>
+                <>Our <span style={{ fontStyle: 'italic', color: 'var(--wine-700)' }}>Services</span></>
               ) : (
-                <>Servis <span style={{ fontStyle: 'italic', color: 'var(--gold-300)' }}>Kami</span></>
+                <>Servis <span style={{ fontStyle: 'italic', color: 'var(--wine-700)' }}>Kami</span></>
               )}
             </h1>
-            <p className="text-base max-w-md leading-relaxed" style={{ color: 'rgba(249,246,243,0.5)', fontWeight: 300 }}>
+            <p className="text-base max-w-md leading-relaxed" style={{ color: 'var(--ink-400)', fontWeight: 300 }}>
               {t.services.sub}
             </p>
           </div>
@@ -128,22 +111,18 @@ export default function ServicesPage() {
             <div
               className="inline-flex items-center gap-3 px-4 py-2.5 rounded-full"
               style={{
-                background: 'rgba(249,246,243,0.06)',
-                border: '1px solid rgba(201,169,110,0.28)',
-                backdropFilter: 'blur(12px)',
-                boxShadow: 'inset 0 1px 0 rgba(255,255,255,0.07)',
+                background: 'var(--white)',
+                border: '1px solid var(--line)',
+                boxShadow: 'var(--shadow-sm)',
               }}
             >
               <Drop size={13} weight="fill" style={{ color: 'var(--gold-600)' }} />
-              <span className="text-xs tracking-[0.3em] uppercase" style={{ color: 'rgba(249,246,243,0.7)' }}>
+              <span className="text-xs tracking-[0.3em] uppercase" style={{ color: 'var(--ink-600)' }}>
                 {lang === 'en' ? 'All products are wudhu-friendly' : 'Semua produk mesra wudhu'}
               </span>
             </div>
           </div>
         </div>
-
-        {/* Bottom fade */}
-        <div className="absolute bottom-0 left-0 right-0 h-16" style={{ background: 'linear-gradient(to top, var(--beige-50), transparent)' }} />
       </section>
 
       {/* ─────────────── STICKY CATEGORY NAV ─────────────── */}

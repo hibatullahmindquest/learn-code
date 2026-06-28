@@ -35,19 +35,9 @@ export default function AboutPage() {
 
       {/* ─────────────── HEADER ─────────────── */}
       <section
-        className="relative pt-36 md:pt-44 pb-20 md:pb-24 px-6 lg:px-10 overflow-hidden"
-        style={{ background: 'var(--ink-950)' }}
+        className="relative pt-36 md:pt-44 pb-20 md:pb-24 px-6 lg:px-10"
+        style={{ background: 'var(--beige-100)', borderBottom: '1px solid var(--line)' }}
       >
-        <div
-          className="absolute top-0 right-0 h-full w-[45vw] md:w-[35vw] pointer-events-none hidden md:block"
-          style={{
-            WebkitMaskImage: 'linear-gradient(to left, rgba(0,0,0,0.4) 0%, transparent 100%)',
-            maskImage: 'linear-gradient(to left, rgba(0,0,0,0.4) 0%, transparent 100%)',
-          }}
-        >
-          <Image src="/images/nuay-studio-4.avif" alt="" fill className="object-cover" style={{ mixBlendMode: 'luminosity', opacity: 0.18 }} />
-        </div>
-
         <div className="max-w-7xl mx-auto relative z-10">
           <div className="reveal" style={{ transform: 'translateY(32px)' } as React.CSSProperties}>
             <p className="text-xs tracking-[0.42em] uppercase mb-5" style={{ color: 'var(--gold-600)' }}>
@@ -55,21 +45,19 @@ export default function AboutPage() {
             </p>
             <h1
               className="tracking-tight leading-none mb-6"
-              style={{ fontSize: 'var(--fs-page-title)', fontFamily: 'var(--font-nuay-display), serif', fontWeight: 600, color: 'var(--beige-50)' }}
+              style={{ fontSize: 'var(--fs-page-title)', fontFamily: 'var(--font-nuay-display), serif', fontWeight: 600, color: 'var(--ink-950)' }}
             >
               {lang === 'en' ? (
-                <>Our <span style={{ fontStyle: 'italic', color: 'var(--gold-300)' }}>Story</span></>
+                <>Our <span style={{ fontStyle: 'italic', color: 'var(--wine-700)' }}>Story</span></>
               ) : (
-                <>Kisah <span style={{ fontStyle: 'italic', color: 'var(--gold-300)' }}>Kami</span></>
+                <>Kisah <span style={{ fontStyle: 'italic', color: 'var(--wine-700)' }}>Kami</span></>
               )}
             </h1>
-            <p className="text-base leading-relaxed max-w-md" style={{ color: 'rgba(249,246,243,0.5)', fontWeight: 300 }}>
+            <p className="text-base leading-relaxed max-w-md" style={{ color: 'var(--ink-400)', fontWeight: 300 }}>
               {t.about.sub}
             </p>
           </div>
         </div>
-
-        <div className="absolute bottom-0 left-0 right-0 h-16" style={{ background: 'linear-gradient(to top, var(--beige-50), transparent)' }} />
       </section>
 
       {/* ─────────────── BRAND VALUES ─────────────── */}
