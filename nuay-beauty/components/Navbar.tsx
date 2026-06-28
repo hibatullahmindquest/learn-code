@@ -17,6 +17,10 @@ export default function Navbar() {
   const { contact, navItems } = useSiteData();
   const BOOKING_URL = contact.bookingUrl;
 
+  // Only the homepage has a dark hero behind the navbar; every inner page
+  // now has a light beige header, so the navbar should read dark there too.
+  const dark = scrolled || pathname !== '/';
+
   useEffect(() => {
     const onScroll = () => setScrolled(window.scrollY > 40);
     window.addEventListener('scroll', onScroll, { passive: true });
@@ -46,13 +50,13 @@ export default function Navbar() {
           <Link href="/" className="flex flex-col leading-none group">
             <span
               className="text-xl tracking-[0.25em] font-semibold transition-colors duration-300"
-              style={{ color: scrolled ? 'var(--wine-700)' : 'var(--beige-50)' }}
+              style={{ color: dark ? 'var(--wine-700)' : 'var(--beige-50)' }}
             >
               NUAY
             </span>
             <span
               className="text-[9px] tracking-[0.4em] font-light transition-colors duration-300"
-              style={{ color: scrolled ? 'var(--ink-400)' : 'rgba(249,246,243,0.6)' }}
+              style={{ color: dark ? 'var(--ink-400)' : 'rgba(249,246,243,0.6)' }}
             >
               BEAUTY
             </span>
@@ -66,7 +70,7 @@ export default function Navbar() {
                 href={l.href}
                 className="text-sm tracking-wide transition-colors duration-200"
                 style={{
-                  color: scrolled
+                  color: dark
                     ? (pathname === l.href ? 'var(--wine-700)' : 'var(--ink-800)')
                     : (pathname === l.href ? 'var(--beige-50)' : 'rgba(249,246,243,0.75)'),
                   fontWeight: 600,
@@ -84,8 +88,8 @@ export default function Navbar() {
               onClick={() => setLang(lang === 'en' ? 'bm' : 'en')}
               className="text-xs tracking-widest px-2 py-1 rounded transition-colors duration-200"
               style={{
-                color: scrolled ? 'var(--ink-400)' : 'rgba(249,246,243,0.7)',
-                border: scrolled ? '1px solid var(--line)' : '1px solid rgba(249,246,243,0.3)',
+                color: dark ? 'var(--ink-400)' : 'rgba(249,246,243,0.7)',
+                border: dark ? '1px solid var(--line)' : '1px solid rgba(249,246,243,0.3)',
               }}
             >
               {lang === 'en' ? 'BM' : 'EN'}
@@ -113,15 +117,15 @@ export default function Navbar() {
               onClick={() => setLang(lang === 'en' ? 'bm' : 'en')}
               className="text-xs tracking-widest px-2 py-1 rounded transition-colors duration-300"
               style={{
-                color: scrolled ? 'var(--ink-400)' : 'rgba(249,246,243,0.7)',
-                border: scrolled ? '1px solid var(--line)' : '1px solid rgba(249,246,243,0.3)',
+                color: dark ? 'var(--ink-400)' : 'rgba(249,246,243,0.7)',
+                border: dark ? '1px solid var(--line)' : '1px solid rgba(249,246,243,0.3)',
               }}
             >
               {lang === 'en' ? 'BM' : 'EN'}
             </button>
             <button
               onClick={() => setOpen(!open)}
-              style={{ color: scrolled ? 'var(--ink-950)' : 'var(--beige-50)' }}
+              style={{ color: dark ? 'var(--ink-950)' : 'var(--beige-50)' }}
               aria-label="Toggle menu"
             >
               {open ? <X size={22} /> : <List size={22} />}
