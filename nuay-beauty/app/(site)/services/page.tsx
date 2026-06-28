@@ -73,12 +73,12 @@ export default function ServicesPage() {
   };
 
   return (
-    <div style={{ background: 'var(--cream)' }}>
+    <div style={{ background: 'var(--beige-50)' }}>
 
       {/* ─────────────── HEADER ─────────────── */}
       <section
         className="relative pt-36 md:pt-44 pb-20 md:pb-24 px-6 lg:px-10 overflow-hidden"
-        style={{ background: 'var(--charcoal)' }}
+        style={{ background: 'var(--ink-950)' }}
       >
         {/* Decorative accent image */}
         <div
@@ -102,12 +102,12 @@ export default function ServicesPage() {
             className="reveal"
             style={{ transform: 'translateY(32px)' } as React.CSSProperties}
           >
-            <p className="text-xs tracking-[0.42em] uppercase mb-5" style={{ color: 'var(--gold)' }}>
+            <p className="text-xs tracking-[0.42em] uppercase mb-5" style={{ color: 'var(--gold-600)' }}>
               {lang === 'en' ? 'Full Menu' : 'Menu Penuh'}
             </p>
             <h1
               className="tracking-tight leading-none mb-6"
-              style={{ fontSize: 'var(--fs-page-title)', fontFamily: 'var(--font-cormorant), serif', fontWeight: 300, color: 'var(--cream)' }}
+              style={{ fontSize: 'var(--fs-page-title)', fontFamily: 'var(--font-nuay-display), serif', fontWeight: 300, color: 'var(--beige-50)' }}
             >
               {lang === 'en' ? (
                 <>Our <span style={{ fontStyle: 'italic', fontWeight: 400 }}>Services</span></>
@@ -115,7 +115,7 @@ export default function ServicesPage() {
                 <>Servis <span style={{ fontStyle: 'italic', fontWeight: 400 }}>Kami</span></>
               )}
             </h1>
-            <p className="text-base max-w-md leading-relaxed" style={{ color: 'rgba(245,239,230,0.5)', fontWeight: 300 }}>
+            <p className="text-base max-w-md leading-relaxed" style={{ color: 'rgba(249,246,243,0.5)', fontWeight: 300 }}>
               {t.services.sub}
             </p>
           </div>
@@ -128,14 +128,14 @@ export default function ServicesPage() {
             <div
               className="inline-flex items-center gap-3 px-4 py-2.5 rounded-full"
               style={{
-                background: 'rgba(245,239,230,0.06)',
+                background: 'rgba(249,246,243,0.06)',
                 border: '1px solid rgba(201,169,110,0.28)',
                 backdropFilter: 'blur(12px)',
                 boxShadow: 'inset 0 1px 0 rgba(255,255,255,0.07)',
               }}
             >
-              <Drop size={13} weight="fill" style={{ color: 'var(--gold)' }} />
-              <span className="text-xs tracking-[0.3em] uppercase" style={{ color: 'rgba(245,239,230,0.7)' }}>
+              <Drop size={13} weight="fill" style={{ color: 'var(--gold-600)' }} />
+              <span className="text-xs tracking-[0.3em] uppercase" style={{ color: 'rgba(249,246,243,0.7)' }}>
                 {lang === 'en' ? 'All products are wudhu-friendly' : 'Semua produk mesra wudhu'}
               </span>
             </div>
@@ -143,13 +143,13 @@ export default function ServicesPage() {
         </div>
 
         {/* Bottom fade */}
-        <div className="absolute bottom-0 left-0 right-0 h-16" style={{ background: 'linear-gradient(to top, var(--cream), transparent)' }} />
+        <div className="absolute bottom-0 left-0 right-0 h-16" style={{ background: 'linear-gradient(to top, var(--beige-50), transparent)' }} />
       </section>
 
       {/* ─────────────── STICKY CATEGORY NAV ─────────────── */}
       <div
         className="sticky top-16 z-30 py-3 px-6 lg:px-10 border-b"
-        style={{ background: 'var(--cream)', borderColor: 'var(--beige)' }}
+        style={{ background: 'var(--beige-50)', borderColor: 'var(--line)' }}
       >
         <div className="max-w-7xl mx-auto flex gap-2 overflow-x-auto no-scrollbar">
           {grouped.map(({ key, label }) => (
@@ -158,9 +158,9 @@ export default function ServicesPage() {
               onClick={() => scrollToCategory(key)}
               className="px-4 py-2 rounded-full text-xs tracking-widest uppercase whitespace-nowrap transition-all duration-300"
               style={{
-                background: activeCategory === key ? 'var(--charcoal)' : 'transparent',
-                color: activeCategory === key ? 'var(--cream)' : 'var(--muted)',
-                border: activeCategory === key ? 'none' : '1px solid var(--beige)',
+                background: activeCategory === key ? 'var(--ink-950)' : 'transparent',
+                color: activeCategory === key ? 'var(--beige-50)' : 'var(--ink-400)',
+                border: activeCategory === key ? 'none' : '1px solid var(--line)',
               }}
             >
               {label}
@@ -181,18 +181,18 @@ export default function ServicesPage() {
                 style={{ transform: 'translateY(24px)' } as React.CSSProperties}
               >
                 <div>
-                  <p className="text-[10px] tracking-[0.4em] uppercase mb-2" style={{ color: 'var(--gold)' }}>
+                  <p className="text-[10px] tracking-[0.4em] uppercase mb-2" style={{ color: 'var(--gold-600)' }}>
                     {lang === 'en' ? 'Category' : 'Kategori'}
                   </p>
                   <h2
                     className="tracking-tight leading-none"
-                    style={{ fontSize: 'var(--fs-section-title)', fontFamily: 'var(--font-cormorant), serif', fontWeight: 300, color: 'var(--charcoal)' }}
+                    style={{ fontSize: 'var(--fs-section-title)', fontFamily: 'var(--font-nuay-display), serif', fontWeight: 300, color: 'var(--ink-950)' }}
                   >
                     {label}
                   </h2>
                 </div>
-                <div className="flex-1 h-px mb-2" style={{ background: 'var(--beige)' }} />
-                <span className="text-xs font-mono mb-2" style={{ color: 'var(--muted)' }}>
+                <div className="flex-1 h-px mb-2" style={{ background: 'var(--line)' }} />
+                <span className="text-xs font-mono mb-2" style={{ color: 'var(--ink-400)' }}>
                   {String(items.length).padStart(2, '0')} {lang === 'en' ? 'services' : 'servis'}
                 </span>
               </div>
@@ -207,8 +207,8 @@ export default function ServicesPage() {
                   >
                     <div
                       className="py-6 md:py-7 flex flex-col md:flex-row md:items-center justify-between gap-4 px-5 -mx-5 rounded-2xl transition-colors duration-300"
-                      style={{ borderBottom: '1px solid var(--beige)' }}
-                      onMouseEnter={(e) => (e.currentTarget.style.background = 'var(--surface)')}
+                      style={{ borderBottom: '1px solid var(--line)' }}
+                      onMouseEnter={(e) => (e.currentTarget.style.background = 'var(--beige-100)')}
                       onMouseLeave={(e) => (e.currentTarget.style.background = 'transparent')}
                     >
                       <div className="flex items-center gap-4 flex-1 min-w-0">
@@ -221,24 +221,24 @@ export default function ServicesPage() {
                           <div className="flex items-center gap-3 mb-1.5">
                             <h3
                               className="text-xl md:text-[1.35rem]"
-                              style={{ fontFamily: 'var(--font-cormorant), serif', fontWeight: 400, color: 'var(--charcoal)' }}
+                              style={{ fontFamily: 'var(--font-nuay-display), serif', fontWeight: 400, color: 'var(--ink-950)' }}
                             >
                               {lang === 'en' ? svc.nameEn : svc.nameBm}
                             </h3>
                             {svc.badge && (
                               <span
                                 className="text-[9px] tracking-widest uppercase px-2.5 py-0.5 rounded-full"
-                                style={{ background: 'var(--burgundy)', color: 'var(--cream)' }}
+                                style={{ background: 'var(--wine-700)', color: 'var(--beige-50)' }}
                               >
                                 {svc.badge}
                               </span>
                             )}
                           </div>
-                          <p className="text-sm leading-relaxed max-w-lg" style={{ color: 'var(--muted)' }}>
+                          <p className="text-sm leading-relaxed max-w-lg" style={{ color: 'var(--ink-400)' }}>
                             {lang === 'en' ? svc.descEn : svc.descBm}
                           </p>
                           {(lang === 'en' ? svc.longevityEn : svc.longevityBm) && (
-                            <p className="text-xs mt-1" style={{ color: 'var(--gold)' }}>
+                            <p className="text-xs mt-1" style={{ color: 'var(--gold-600)' }}>
                               {lang === 'en' ? svc.longevityEn : svc.longevityBm}
                             </p>
                           )}
@@ -247,12 +247,12 @@ export default function ServicesPage() {
 
                       <div className="flex items-center gap-6 md:gap-8 flex-shrink-0">
                         <div className="flex items-center gap-4">
-                          <span className="text-xs tracking-wide px-3 py-1 rounded-full" style={{ border: '1px solid var(--beige)', color: 'var(--muted)' }}>
+                          <span className="text-xs tracking-wide px-3 py-1 rounded-full" style={{ border: '1px solid var(--line)', color: 'var(--ink-400)' }}>
                             {svc.duration}
                           </span>
                           <p
                             className="text-2xl"
-                            style={{ fontFamily: 'var(--font-cormorant), serif', fontWeight: 500, color: 'var(--burgundy)' }}
+                            style={{ fontFamily: 'var(--font-nuay-display), serif', fontWeight: 500, color: 'var(--wine-700)' }}
                           >
                             RM {svc.price}
                           </p>
@@ -261,8 +261,8 @@ export default function ServicesPage() {
                           href={svc.bookingUrl || BOOKING_URL}
                           target="_blank"
                           rel="noopener noreferrer"
-                          className="flex items-center gap-1.5 text-sm px-5 py-2.5 rounded-full transition-all duration-200 active:scale-[0.97] whitespace-nowrap"
-                          style={{ background: 'var(--charcoal)', color: 'var(--cream)' }}
+                          className="flex items-center gap-1.5 text-sm px-5 py-2.5 transition-all duration-200 active:scale-[0.97] whitespace-nowrap"
+                          style={{ background: 'var(--ink-950)', color: 'var(--beige-50)', borderRadius: 'var(--radius-button)' }}
                         >
                           {lang === 'en' ? 'Book' : 'Tempah'}
                           <ArrowUpRight size={13} className="transition-transform duration-200 group-hover:translate-x-0.5 group-hover:-translate-y-0.5" />
@@ -278,20 +278,21 @@ export default function ServicesPage() {
 
         {/* ─────────────── BOTTOM CTA ─────────────── */}
         <div
-          className="reveal mt-24 md:mt-32 rounded-3xl p-10 md:p-14 text-center relative overflow-hidden"
-          style={{ background: 'var(--charcoal)', transform: 'translateY(32px)' } as React.CSSProperties}
+          className="reveal mt-24 md:mt-32 p-10 md:p-14 text-center relative overflow-hidden"
+          style={{
+            background: 'var(--wine-700)',
+            borderRadius: 'var(--radius-hero)',
+            boxShadow: 'var(--shadow-wine)',
+            transform: 'translateY(32px)',
+          } as React.CSSProperties}
         >
-          <div
-            className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[50vw] h-[50vw] rounded-full pointer-events-none"
-            style={{ background: 'rgba(125,46,53,0.15)', filter: 'blur(80px)' }}
-          />
           <div className="relative z-10">
-            <p className="text-xs tracking-[0.38em] uppercase mb-4" style={{ color: 'var(--gold)' }}>
+            <p className="text-xs tracking-[0.38em] uppercase mb-4" style={{ color: 'var(--gold-600)' }}>
               {lang === 'en' ? 'Not sure which to choose?' : 'Tak pasti nak pilih yang mana?'}
             </p>
             <h2
               className="mb-4 leading-tight"
-              style={{ fontSize: 'var(--fs-cta-title)', fontFamily: 'var(--font-cormorant), serif', fontWeight: 300, color: 'var(--cream)' }}
+              style={{ fontSize: 'var(--fs-cta-title)', fontFamily: 'var(--font-nuay-display), serif', fontWeight: 300, color: 'var(--beige-50)' }}
             >
               {lang === 'en' ? (
                 <>Let us <span style={{ fontStyle: 'italic', fontWeight: 400 }}>guide</span> you.</>
@@ -299,7 +300,7 @@ export default function ServicesPage() {
                 <>Biar kami <span style={{ fontStyle: 'italic', fontWeight: 400 }}>bantu</span> anda.</>
               )}
             </h2>
-            <p className="text-sm mb-8 max-w-md mx-auto" style={{ color: 'rgba(245,239,230,0.45)', fontWeight: 300 }}>
+            <p className="text-sm mb-8 max-w-md mx-auto" style={{ color: 'rgba(249,246,243,0.45)', fontWeight: 300 }}>
               {lang === 'en'
                 ? 'Book a free consultation and we\'ll recommend the perfect treatment for you.'
                 : 'Tempah konsultasi percuma dan kami akan cadangkan rawatan terbaik untuk anda.'}
@@ -308,8 +309,8 @@ export default function ServicesPage() {
               href={BOOKING_URL}
               target="_blank"
               rel="noopener noreferrer"
-              className="inline-flex items-center gap-2 px-8 py-4 rounded-full text-sm tracking-wide transition-all duration-300 active:scale-[0.97]"
-              style={{ background: 'var(--cream)', color: 'var(--charcoal)' }}
+              className="inline-flex items-center gap-2 px-8 py-4 text-sm tracking-wide transition-all duration-300 active:scale-[0.97]"
+              style={{ background: 'var(--gold-500)', color: 'var(--ink-950)', borderRadius: 'var(--radius-button)' }}
             >
               {lang === 'en' ? 'Book a Consultation' : 'Tempah Konsultasi'}
               <ArrowRight size={14} />

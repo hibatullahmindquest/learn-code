@@ -31,12 +31,12 @@ export default function AboutPage() {
   }, []);
 
   return (
-    <div style={{ background: 'var(--cream)' }}>
+    <div style={{ background: 'var(--beige-50)' }}>
 
       {/* ─────────────── HEADER ─────────────── */}
       <section
         className="relative pt-36 md:pt-44 pb-20 md:pb-24 px-6 lg:px-10 overflow-hidden"
-        style={{ background: 'var(--charcoal)' }}
+        style={{ background: 'var(--ink-950)' }}
       >
         <div
           className="absolute top-0 right-0 h-full w-[45vw] md:w-[35vw] pointer-events-none hidden md:block"
@@ -50,12 +50,12 @@ export default function AboutPage() {
 
         <div className="max-w-7xl mx-auto relative z-10">
           <div className="reveal" style={{ transform: 'translateY(32px)' } as React.CSSProperties}>
-            <p className="text-xs tracking-[0.42em] uppercase mb-5" style={{ color: 'var(--gold)' }}>
+            <p className="text-xs tracking-[0.42em] uppercase mb-5" style={{ color: 'var(--gold-600)' }}>
               {lang === 'en' ? 'Who We Are' : 'Siapa Kami'}
             </p>
             <h1
               className="tracking-tight leading-none mb-6"
-              style={{ fontSize: 'var(--fs-page-title)', fontFamily: 'var(--font-cormorant), serif', fontWeight: 300, color: 'var(--cream)' }}
+              style={{ fontSize: 'var(--fs-page-title)', fontFamily: 'var(--font-nuay-display), serif', fontWeight: 300, color: 'var(--beige-50)' }}
             >
               {lang === 'en' ? (
                 <>Our <span style={{ fontStyle: 'italic', fontWeight: 400 }}>Story</span></>
@@ -63,13 +63,13 @@ export default function AboutPage() {
                 <>Kisah <span style={{ fontStyle: 'italic', fontWeight: 400 }}>Kami</span></>
               )}
             </h1>
-            <p className="text-base leading-relaxed max-w-md" style={{ color: 'rgba(245,239,230,0.5)', fontWeight: 300 }}>
+            <p className="text-base leading-relaxed max-w-md" style={{ color: 'rgba(249,246,243,0.5)', fontWeight: 300 }}>
               {t.about.sub}
             </p>
           </div>
         </div>
 
-        <div className="absolute bottom-0 left-0 right-0 h-16" style={{ background: 'linear-gradient(to top, var(--cream), transparent)' }} />
+        <div className="absolute bottom-0 left-0 right-0 h-16" style={{ background: 'linear-gradient(to top, var(--beige-50), transparent)' }} />
       </section>
 
       {/* ─────────────── BRAND VALUES ─────────────── */}
@@ -80,12 +80,12 @@ export default function AboutPage() {
               className="reveal"
               style={{ transform: 'translateY(28px)' } as React.CSSProperties}
             >
-              <p className="text-xs tracking-[0.38em] uppercase mb-4" style={{ color: 'var(--gold)' }}>
+              <p className="text-xs tracking-[0.38em] uppercase mb-4" style={{ color: 'var(--gold-600)' }}>
                 {lang === 'en' ? 'Our Belief' : 'Kepercayaan Kami'}
               </p>
               <h2
                 className="tracking-tight leading-tight mb-7"
-                style={{ fontSize: 'var(--fs-section-title)', fontFamily: 'var(--font-cormorant), serif', fontWeight: 300, color: 'var(--charcoal)' }}
+                style={{ fontSize: 'var(--fs-section-title)', fontFamily: 'var(--font-nuay-display), serif', fontWeight: 300, color: 'var(--ink-950)' }}
               >
                 {t.about.beliefHeading}
               </h2>
@@ -94,10 +94,10 @@ export default function AboutPage() {
               className="reveal"
               style={{ transform: 'translateY(24px)', '--delay': '0.08s' } as React.CSSProperties}
             >
-              <p className="text-base leading-relaxed mb-5" style={{ color: 'var(--muted)' }}>
+              <p className="text-base leading-relaxed mb-5" style={{ color: 'var(--ink-400)' }}>
                 {t.about.beliefPara1}
               </p>
-              <p className="text-base leading-relaxed" style={{ color: 'var(--muted)' }}>
+              <p className="text-base leading-relaxed" style={{ color: 'var(--ink-400)' }}>
                 {t.about.beliefPara2}
               </p>
             </div>
@@ -131,19 +131,19 @@ export default function AboutPage() {
       <section
         id="faq"
         className="py-28 md:py-36 px-6 lg:px-10"
-        style={{ background: 'var(--cream-dark)' }}
+        style={{ background: 'var(--beige-100)' }}
       >
         <div className="max-w-3xl mx-auto">
           <div
             className="reveal text-center mb-14"
             style={{ transform: 'translateY(24px)' } as React.CSSProperties}
           >
-            <p className="text-xs tracking-[0.38em] uppercase mb-3" style={{ color: 'var(--gold)' }}>
+            <p className="text-xs tracking-[0.38em] uppercase mb-3" style={{ color: 'var(--gold-600)' }}>
               FAQ
             </p>
             <h2
               className="tracking-tight leading-none"
-              style={{ fontSize: 'var(--fs-section-title)', fontFamily: 'var(--font-cormorant), serif', fontWeight: 300, color: 'var(--charcoal)' }}
+              style={{ fontSize: 'var(--fs-section-title)', fontFamily: 'var(--font-nuay-display), serif', fontWeight: 300, color: 'var(--ink-950)' }}
             >
               {t.faq.title}
             </h2>
@@ -155,26 +155,26 @@ export default function AboutPage() {
                 key={i}
                 className="reveal group rounded-2xl"
                 style={{
-                  background: 'var(--surface)',
-                  border: '1px solid var(--beige)',
+                  background: 'var(--beige-100)',
+                  border: '1px solid var(--line)',
                   transform: 'translateY(24px)',
                   '--delay': `${i * 0.05}s`,
                 } as React.CSSProperties}
               >
                 <summary
                   className="flex items-center justify-between cursor-pointer px-7 py-5 list-none"
-                  style={{ fontFamily: 'var(--font-cormorant), serif', fontWeight: 500, color: 'var(--charcoal)' }}
+                  style={{ fontFamily: 'var(--font-nuay-display), serif', fontWeight: 500, color: 'var(--ink-950)' }}
                 >
                   <span className="text-lg">{lang === 'en' ? faq.questionEn : faq.questionBm}</span>
                   <span
                     className="ml-4 flex-shrink-0 w-7 h-7 rounded-full flex items-center justify-center text-xs transition-transform duration-300 group-open:rotate-45"
-                    style={{ background: 'var(--burgundy)', color: 'var(--cream)' }}
+                    style={{ background: 'var(--wine-700)', color: 'var(--beige-50)' }}
                   >
                     +
                   </span>
                 </summary>
                 <div className="px-7 pb-6 pt-0">
-                  <p className="text-sm leading-relaxed max-w-[65ch]" style={{ color: 'var(--muted)' }}>
+                  <p className="text-sm leading-relaxed max-w-[65ch]" style={{ color: 'var(--ink-400)' }}>
                     {lang === 'en' ? faq.answerEn : faq.answerBm}
                   </p>
                 </div>
@@ -192,12 +192,12 @@ export default function AboutPage() {
               className="reveal"
               style={{ transform: 'translateY(28px)' } as React.CSSProperties}
             >
-              <p className="text-xs tracking-[0.38em] uppercase mb-4" style={{ color: 'var(--gold)' }}>
+              <p className="text-xs tracking-[0.38em] uppercase mb-4" style={{ color: 'var(--gold-600)' }}>
                 {lang === 'en' ? 'Find Us' : 'Jumpa Kami'}
               </p>
               <h2
                 className="tracking-tight leading-none mb-10"
-                style={{ fontSize: 'var(--fs-section-title)', fontFamily: 'var(--font-cormorant), serif', fontWeight: 300, color: 'var(--charcoal)' }}
+                style={{ fontSize: 'var(--fs-section-title)', fontFamily: 'var(--font-nuay-display), serif', fontWeight: 300, color: 'var(--ink-950)' }}
               >
                 {lang === 'en' ? (
                   <>Visit the <span style={{ fontStyle: 'italic', fontWeight: 400 }}>Studio</span></>
@@ -214,15 +214,15 @@ export default function AboutPage() {
               <div className="flex gap-4 items-start">
                 <div
                   className="w-9 h-9 rounded-full flex items-center justify-center flex-shrink-0 mt-0.5"
-                  style={{ background: 'var(--surface)', border: '1px solid var(--beige)' }}
+                  style={{ background: 'var(--beige-100)', border: '1px solid var(--line)' }}
                 >
-                  <MapPin size={15} style={{ color: 'var(--burgundy)' }} />
+                  <MapPin size={15} style={{ color: 'var(--wine-700)' }} />
                 </div>
                 <div>
-                  <p className="text-sm font-medium mb-1" style={{ color: 'var(--charcoal)' }}>
+                  <p className="text-sm font-medium mb-1" style={{ color: 'var(--ink-950)' }}>
                     {lang === 'en' ? 'Address' : 'Alamat'}
                   </p>
-                  <p className="text-sm leading-relaxed" style={{ color: 'var(--muted)' }}>
+                  <p className="text-sm leading-relaxed" style={{ color: 'var(--ink-400)' }}>
                     {lang === 'en' ? contact.addressEn : contact.addressBm}
                   </p>
                 </div>
@@ -231,15 +231,15 @@ export default function AboutPage() {
               <div className="flex gap-4 items-start">
                 <div
                   className="w-9 h-9 rounded-full flex items-center justify-center flex-shrink-0 mt-0.5"
-                  style={{ background: 'var(--surface)', border: '1px solid var(--beige)' }}
+                  style={{ background: 'var(--beige-100)', border: '1px solid var(--line)' }}
                 >
-                  <Clock size={15} style={{ color: 'var(--burgundy)' }} />
+                  <Clock size={15} style={{ color: 'var(--wine-700)' }} />
                 </div>
                 <div>
-                  <p className="text-sm font-medium mb-1" style={{ color: 'var(--charcoal)' }}>
+                  <p className="text-sm font-medium mb-1" style={{ color: 'var(--ink-950)' }}>
                     {lang === 'en' ? 'Operating Hours' : 'Waktu Operasi'}
                   </p>
-                  <p className="text-sm" style={{ color: 'var(--muted)' }}>
+                  <p className="text-sm" style={{ color: 'var(--ink-400)' }}>
                     {lang === 'en' ? contact.hoursEn : contact.hoursBm}
                   </p>
                 </div>
@@ -248,15 +248,15 @@ export default function AboutPage() {
               <div className="flex gap-4 items-start">
                 <div
                   className="w-9 h-9 rounded-full flex items-center justify-center flex-shrink-0 mt-0.5"
-                  style={{ background: 'var(--surface)', border: '1px solid var(--beige)' }}
+                  style={{ background: 'var(--beige-100)', border: '1px solid var(--line)' }}
                 >
-                  <Phone size={15} style={{ color: 'var(--burgundy)' }} />
+                  <Phone size={15} style={{ color: 'var(--wine-700)' }} />
                 </div>
                 <div>
-                  <p className="text-sm font-medium mb-1" style={{ color: 'var(--charcoal)' }}>
+                  <p className="text-sm font-medium mb-1" style={{ color: 'var(--ink-950)' }}>
                     {lang === 'en' ? 'Contact' : 'Hubungi'}
                   </p>
-                  <p className="text-sm" style={{ color: 'var(--muted)' }}>
+                  <p className="text-sm" style={{ color: 'var(--ink-400)' }}>
                     {t.about.phone}
                   </p>
                 </div>
@@ -271,8 +271,8 @@ export default function AboutPage() {
                 href={BOOKING_URL}
                 target="_blank"
                 rel="noopener noreferrer"
-                className="inline-flex items-center justify-center gap-2 w-full py-3.5 rounded-full text-sm tracking-wide transition-all duration-300 active:scale-[0.97]"
-                style={{ background: 'var(--burgundy)', color: 'var(--cream)' }}
+                className="inline-flex items-center justify-center gap-2 w-full py-3.5 text-sm tracking-wide transition-all duration-300 active:scale-[0.97]"
+                style={{ background: 'var(--wine-700)', color: 'var(--beige-50)', borderRadius: 'var(--radius-button)' }}
               >
                 {lang === 'en' ? 'Book Appointment' : 'Tempah Temujanji'}
                 <ArrowRight size={13} />
@@ -282,8 +282,8 @@ export default function AboutPage() {
                   href="https://maps.app.goo.gl/Ec1DMm4QCJpZAaG69"
                   target="_blank"
                   rel="noopener noreferrer"
-                  className="inline-flex items-center justify-center gap-2 py-3.5 rounded-full text-sm tracking-wide transition-all duration-300"
-                  style={{ border: '1px solid var(--beige)', color: 'var(--charcoal-mid)' }}
+                  className="inline-flex items-center justify-center gap-2 py-3.5 text-sm tracking-wide transition-all duration-300"
+                  style={{ border: '1px solid var(--line)', color: 'var(--ink-800)', borderRadius: 'var(--radius-button)' }}
                 >
                   <NavigationArrow size={14} />
                   Google Maps
@@ -292,8 +292,8 @@ export default function AboutPage() {
                   href="https://ul.waze.com/ul?place=ChIJmUW_SVxRzDERKZ1a04DTF94&ll=3.16885900%2C101.51710540&navigate=yes"
                   target="_blank"
                   rel="noopener noreferrer"
-                  className="inline-flex items-center justify-center gap-2 py-3.5 rounded-full text-sm tracking-wide transition-all duration-300"
-                  style={{ border: '1px solid var(--beige)', color: 'var(--charcoal-mid)' }}
+                  className="inline-flex items-center justify-center gap-2 py-3.5 text-sm tracking-wide transition-all duration-300"
+                  style={{ border: '1px solid var(--line)', color: 'var(--ink-800)', borderRadius: 'var(--radius-button)' }}
                 >
                   <NavigationArrow size={14} />
                   Waze

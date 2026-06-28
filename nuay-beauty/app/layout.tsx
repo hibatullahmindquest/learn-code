@@ -1,5 +1,5 @@
 import type { Metadata } from 'next';
-import { Playfair_Display, Roboto_Mono } from 'next/font/google';
+import { Cormorant_Garamond, Poppins } from 'next/font/google';
 import './globals.css';
 import { LanguageProvider } from '@/components/LanguageContext';
 import { SiteDataProvider } from '@/components/SiteDataContext';
@@ -7,18 +7,20 @@ import { supabase } from '@/lib/supabase';
 
 export const dynamic = 'force-dynamic';
 
-const playfair = Playfair_Display({
+// Nuay Beauty Design System — Cormorant Garamond display / Poppins body,
+// applied site-wide via CSS variables so no page needs to load these itself.
+const display = Cormorant_Garamond({
   subsets: ['latin'],
   weight: ['400', '500', '600', '700'],
   style: ['normal', 'italic'],
-  variable: '--font-cormorant',
+  variable: '--font-nuay-display',
   display: 'swap',
 });
 
-const robotoMono = Roboto_Mono({
+const body = Poppins({
   subsets: ['latin'],
-  weight: ['300', '400', '500'],
-  variable: '--font-outfit',
+  weight: ['300', '400', '500', '600', '700'],
+  variable: '--font-nuay-body',
   display: 'swap',
 });
 
@@ -40,10 +42,10 @@ export default async function RootLayout({ children }: { children: React.ReactNo
   for (const row of rows ?? []) prefetchedSettings[row.key] = row.value;
 
   return (
-    <html lang="en" className={`${playfair.variable} ${robotoMono.variable}`}>
+    <html lang="en" className={`${display.variable} ${body.variable}`}>
       <body
         className="min-h-screen flex flex-col antialiased"
-        style={{ fontFamily: 'var(--font-outfit), monospace', letterSpacing: '-0.02em' }}
+        style={{ fontFamily: 'var(--font-nuay-body), sans-serif', letterSpacing: '-0.02em' }}
       >
         <LanguageProvider>
           <SiteDataProvider prefetchedSettings={prefetchedSettings}>

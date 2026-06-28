@@ -3,18 +3,10 @@
 import { useState, useEffect } from 'react';
 import Link from 'next/link';
 import { usePathname } from 'next/navigation';
-import { Poppins } from 'next/font/google';
 import { List, X } from '@phosphor-icons/react';
 import { useLang } from './LanguageContext';
 import { content } from '@/lib/data';
 import { useSiteData } from '@/components/SiteDataContext';
-
-const poppins = Poppins({
-  subsets: ['latin'],
-  weight: ['400', '500', '600', '700'],
-  variable: '--font-nav',
-  display: 'swap',
-});
 
 export default function Navbar() {
   const [open, setOpen] = useState(false);
@@ -40,11 +32,11 @@ export default function Navbar() {
     .map((item) => ({ href: NAV_HREF[item.key], label: NAV_LABEL[item.key] }));
 
   return (
-    <div className={poppins.variable} style={{ fontFamily: 'var(--font-nav), sans-serif' }}>
+    <div style={{ fontFamily: 'var(--font-nuay-body), sans-serif' }}>
       <header
         className="fixed top-0 left-0 right-0 z-50 transition-all duration-500"
         style={{
-          background: scrolled ? 'rgba(245,239,230,0.95)' : 'transparent',
+          background: scrolled ? 'rgba(249,246,243,0.95)' : 'transparent',
           backdropFilter: scrolled ? 'blur(12px)' : 'none',
           borderBottom: scrolled ? '1px solid rgba(200,180,160,0.3)' : 'none',
         }}
@@ -54,13 +46,13 @@ export default function Navbar() {
           <Link href="/" className="flex flex-col leading-none group">
             <span
               className="text-xl tracking-[0.25em] font-semibold transition-colors duration-300"
-              style={{ color: scrolled ? 'var(--burgundy)' : 'var(--cream)' }}
+              style={{ color: scrolled ? 'var(--wine-700)' : 'var(--beige-50)' }}
             >
               NUAY
             </span>
             <span
               className="text-[9px] tracking-[0.4em] font-light transition-colors duration-300"
-              style={{ color: scrolled ? 'var(--muted)' : 'rgba(245,239,230,0.6)' }}
+              style={{ color: scrolled ? 'var(--ink-400)' : 'rgba(249,246,243,0.6)' }}
             >
               BEAUTY
             </span>
@@ -75,8 +67,8 @@ export default function Navbar() {
                 className="text-sm tracking-wide transition-colors duration-200"
                 style={{
                   color: scrolled
-                    ? (pathname === l.href ? 'var(--burgundy)' : 'var(--charcoal-mid)')
-                    : (pathname === l.href ? 'var(--cream)' : 'rgba(245,239,230,0.75)'),
+                    ? (pathname === l.href ? 'var(--wine-700)' : 'var(--ink-800)')
+                    : (pathname === l.href ? 'var(--beige-50)' : 'rgba(249,246,243,0.75)'),
                   fontWeight: 600,
                 }}
               >
@@ -92,8 +84,8 @@ export default function Navbar() {
               onClick={() => setLang(lang === 'en' ? 'bm' : 'en')}
               className="text-xs tracking-widest px-2 py-1 rounded transition-colors duration-200"
               style={{
-                color: scrolled ? 'var(--muted)' : 'rgba(245,239,230,0.7)',
-                border: scrolled ? '1px solid var(--beige)' : '1px solid rgba(245,239,230,0.3)',
+                color: scrolled ? 'var(--ink-400)' : 'rgba(249,246,243,0.7)',
+                border: scrolled ? '1px solid var(--line)' : '1px solid rgba(249,246,243,0.3)',
               }}
             >
               {lang === 'en' ? 'BM' : 'EN'}
@@ -103,11 +95,12 @@ export default function Navbar() {
               href={BOOKING_URL}
               target="_blank"
               rel="noopener noreferrer"
-              className="text-sm px-5 py-2 rounded-full transition-all duration-200 active:scale-95"
+              className="text-sm px-5 py-2 transition-all duration-200 active:scale-95"
               style={{
-                background: 'var(--burgundy)',
-                color: 'var(--cream)',
+                background: 'var(--wine-700)',
+                color: 'var(--beige-50)',
                 letterSpacing: '0.05em',
+                borderRadius: 'var(--radius-button)',
               }}
             >
               {t.bookNow}
@@ -120,15 +113,15 @@ export default function Navbar() {
               onClick={() => setLang(lang === 'en' ? 'bm' : 'en')}
               className="text-xs tracking-widest px-2 py-1 rounded transition-colors duration-300"
               style={{
-                color: scrolled ? 'var(--muted)' : 'rgba(245,239,230,0.7)',
-                border: scrolled ? '1px solid var(--beige)' : '1px solid rgba(245,239,230,0.3)',
+                color: scrolled ? 'var(--ink-400)' : 'rgba(249,246,243,0.7)',
+                border: scrolled ? '1px solid var(--line)' : '1px solid rgba(249,246,243,0.3)',
               }}
             >
               {lang === 'en' ? 'BM' : 'EN'}
             </button>
             <button
               onClick={() => setOpen(!open)}
-              style={{ color: scrolled ? 'var(--charcoal)' : 'var(--cream)' }}
+              style={{ color: scrolled ? 'var(--ink-950)' : 'var(--beige-50)' }}
               aria-label="Toggle menu"
             >
               {open ? <X size={22} /> : <List size={22} />}
@@ -141,7 +134,7 @@ export default function Navbar() {
       {open && (
         <div
           className="fixed inset-0 z-40 flex flex-col pt-20 px-8 pb-10"
-          style={{ background: 'var(--cream)' }}
+          style={{ background: 'var(--beige-50)' }}
         >
           <nav className="flex flex-col gap-6 mt-6">
             {links.map((l) => (
@@ -151,7 +144,7 @@ export default function Navbar() {
                 onClick={() => setOpen(false)}
                 className="text-2xl tracking-tight"
                 style={{
-                  color: pathname === l.href ? 'var(--burgundy)' : 'var(--charcoal)',
+                  color: pathname === l.href ? 'var(--wine-700)' : 'var(--ink-950)',
                   fontWeight: pathname === l.href ? '700' : '600',
                 }}
               >
@@ -164,8 +157,8 @@ export default function Navbar() {
             target="_blank"
             rel="noopener noreferrer"
             onClick={() => setOpen(false)}
-            className="mt-auto w-full text-center py-4 rounded-full text-sm tracking-widest"
-            style={{ background: 'var(--burgundy)', color: 'var(--cream)' }}
+            className="mt-auto w-full text-center py-4 text-sm tracking-widest"
+            style={{ background: 'var(--wine-700)', color: 'var(--beige-50)', borderRadius: 'var(--radius-button)' }}
           >
             {t.bookNow}
           </a>
