@@ -82,12 +82,12 @@ export default function GalleryPage() {
             </p>
             <h1
               className="tracking-tight leading-none mb-6"
-              style={{ fontSize: 'var(--fs-page-title)', fontFamily: 'var(--font-nuay-display), serif', fontWeight: 300, color: 'var(--beige-50)' }}
+              style={{ fontSize: 'var(--fs-page-title)', fontFamily: 'var(--font-nuay-display), serif', fontWeight: 600, color: 'var(--beige-50)' }}
             >
               {lang === 'en' ? (
-                <>Our <span style={{ fontStyle: 'italic', fontWeight: 400 }}>Work</span></>
+                <>Our <span style={{ fontStyle: 'italic', color: 'var(--gold-300)' }}>Work</span></>
               ) : (
-                <>Hasil <span style={{ fontStyle: 'italic', fontWeight: 400 }}>Kami</span></>
+                <>Hasil <span style={{ fontStyle: 'italic', color: 'var(--gold-300)' }}>Kami</span></>
               )}
             </h1>
             <p className="text-base max-w-md leading-relaxed" style={{ color: 'rgba(249,246,243,0.5)', fontWeight: 300 }}>
@@ -150,8 +150,8 @@ export default function GalleryPage() {
 
         {/* ─────────────── INSTAGRAM ─────────────── */}
         <div
-          className="reveal mt-20 md:mt-28 rounded-3xl p-10 md:p-14 flex flex-col md:flex-row items-center justify-between gap-6"
-          style={{ background: 'var(--ink-950)', transform: 'translateY(32px)' } as React.CSSProperties}
+          className="reveal mt-20 md:mt-28 p-10 md:p-14 flex flex-col md:flex-row items-center justify-between gap-6"
+          style={{ background: 'var(--wine-700)', borderRadius: 'var(--radius-hero)', boxShadow: 'var(--shadow-wine)', transform: 'translateY(32px)' } as React.CSSProperties}
         >
           <div className="text-center md:text-left">
             <p className="text-xs tracking-[0.38em] uppercase mb-3" style={{ color: 'var(--gold-600)' }}>
@@ -159,12 +159,12 @@ export default function GalleryPage() {
             </p>
             <h2
               className="tracking-tight leading-none"
-              style={{ fontSize: 'var(--fs-cta-title)', fontFamily: 'var(--font-nuay-display), serif', fontWeight: 300, color: 'var(--beige-50)' }}
+              style={{ fontSize: 'var(--fs-cta-title)', fontFamily: 'var(--font-nuay-display), serif', fontWeight: 600, color: 'var(--beige-50)' }}
             >
               {lang === 'en' ? (
-                <>Follow us on <span style={{ fontStyle: 'italic', fontWeight: 400 }}>Instagram</span></>
+                <>Follow us on <span style={{ fontStyle: 'italic', color: 'var(--gold-300)' }}>Instagram</span></>
               ) : (
-                <>Ikuti kami di <span style={{ fontStyle: 'italic', fontWeight: 400 }}>Instagram</span></>
+                <>Ikuti kami di <span style={{ fontStyle: 'italic', color: 'var(--gold-300)' }}>Instagram</span></>
               )}
             </h2>
           </div>
@@ -173,7 +173,7 @@ export default function GalleryPage() {
             target="_blank"
             rel="noopener noreferrer"
             className="inline-flex items-center gap-3 px-7 py-3.5 text-sm tracking-wide transition-all duration-300 active:scale-[0.97]"
-            style={{ background: 'var(--beige-50)', color: 'var(--ink-950)', borderRadius: 'var(--radius-button)' }}
+            style={{ background: 'var(--gold-500)', color: 'var(--ink-950)', borderRadius: 'var(--radius-button)' }}
           >
             <InstagramLogo size={16} weight="bold" />
             @nuaybeauty

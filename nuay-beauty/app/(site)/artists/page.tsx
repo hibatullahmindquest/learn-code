@@ -81,12 +81,12 @@ export default function ArtistsPage() {
             </p>
             <h1
               className="tracking-tight leading-none mb-6"
-              style={{ fontSize: 'var(--fs-page-title)', fontFamily: 'var(--font-nuay-display), serif', fontWeight: 300, color: 'var(--beige-50)' }}
+              style={{ fontSize: 'var(--fs-page-title)', fontFamily: 'var(--font-nuay-display), serif', fontWeight: 600, color: 'var(--beige-50)' }}
             >
               {lang === 'en' ? (
-                <>Meet Our <span style={{ fontStyle: 'italic', fontWeight: 400 }}>Artists</span></>
+                <>Meet Our <span style={{ fontStyle: 'italic', color: 'var(--gold-300)' }}>Artists</span></>
               ) : (
-                <>Kenali <span style={{ fontStyle: 'italic', fontWeight: 400 }}>Artist</span> Kami</>
+                <>Kenali <span style={{ fontStyle: 'italic', color: 'var(--gold-300)' }}>Artist</span> Kami</>
               )}
             </h1>
             <p className="text-base max-w-md leading-relaxed" style={{ color: 'rgba(249,246,243,0.5)', fontWeight: 300 }}>
@@ -147,7 +147,7 @@ export default function ArtistsPage() {
                     </p>
                     <h2
                       className="tracking-tight leading-none mb-6"
-                      style={{ fontSize: 'var(--fs-page-title)', fontFamily: 'var(--font-nuay-display), serif', fontWeight: 300, color: 'var(--ink-950)' }}
+                      style={{ fontSize: 'var(--fs-page-title)', fontFamily: 'var(--font-nuay-display), serif', fontWeight: 600, color: 'var(--ink-950)' }}
                     >
                       {artist.name}
                     </h2>

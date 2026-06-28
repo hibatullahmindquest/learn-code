@@ -107,12 +107,12 @@ export default function ServicesPage() {
             </p>
             <h1
               className="tracking-tight leading-none mb-6"
-              style={{ fontSize: 'var(--fs-page-title)', fontFamily: 'var(--font-nuay-display), serif', fontWeight: 300, color: 'var(--beige-50)' }}
+              style={{ fontSize: 'var(--fs-page-title)', fontFamily: 'var(--font-nuay-display), serif', fontWeight: 600, color: 'var(--beige-50)' }}
             >
               {lang === 'en' ? (
-                <>Our <span style={{ fontStyle: 'italic', fontWeight: 400 }}>Services</span></>
+                <>Our <span style={{ fontStyle: 'italic', color: 'var(--gold-300)' }}>Services</span></>
               ) : (
-                <>Servis <span style={{ fontStyle: 'italic', fontWeight: 400 }}>Kami</span></>
+                <>Servis <span style={{ fontStyle: 'italic', color: 'var(--gold-300)' }}>Kami</span></>
               )}
             </h1>
             <p className="text-base max-w-md leading-relaxed" style={{ color: 'rgba(249,246,243,0.5)', fontWeight: 300 }}>
@@ -186,7 +186,7 @@ export default function ServicesPage() {
                   </p>
                   <h2
                     className="tracking-tight leading-none"
-                    style={{ fontSize: 'var(--fs-section-title)', fontFamily: 'var(--font-nuay-display), serif', fontWeight: 300, color: 'var(--ink-950)' }}
+                    style={{ fontSize: 'var(--fs-section-title)', fontFamily: 'var(--font-nuay-display), serif', fontWeight: 600, color: 'var(--ink-950)' }}
                   >
                     {label}
                   </h2>
@@ -198,7 +198,7 @@ export default function ServicesPage() {
               </div>
 
               {/* Service rows */}
-              <div className="flex flex-col">
+              <div className="flex flex-col gap-4">
                 {items.map((svc, i) => (
                   <div
                     key={svc.id}
@@ -206,10 +206,8 @@ export default function ServicesPage() {
                     style={{ transform: 'translateY(28px)', '--delay': `${i * 0.06}s` } as React.CSSProperties}
                   >
                     <div
-                      className="py-6 md:py-7 flex flex-col md:flex-row md:items-center justify-between gap-4 px-5 -mx-5 rounded-2xl transition-colors duration-300"
-                      style={{ borderBottom: '1px solid var(--line)' }}
-                      onMouseEnter={(e) => (e.currentTarget.style.background = 'var(--beige-100)')}
-                      onMouseLeave={(e) => (e.currentTarget.style.background = 'transparent')}
+                      className="p-5 md:p-6 flex flex-col md:flex-row md:items-center justify-between gap-4 transition-all duration-300 hover:-translate-y-1 hover:shadow-[var(--shadow-lg)]"
+                      style={{ background: 'var(--white)', borderRadius: 'var(--radius-card)', boxShadow: 'var(--shadow-sm)' }}
                     >
                       <div className="flex items-center gap-4 flex-1 min-w-0">
                         {svc.image && (
@@ -221,7 +219,7 @@ export default function ServicesPage() {
                           <div className="flex items-center gap-3 mb-1.5">
                             <h3
                               className="text-xl md:text-[1.35rem]"
-                              style={{ fontFamily: 'var(--font-nuay-display), serif', fontWeight: 400, color: 'var(--ink-950)' }}
+                              style={{ fontFamily: 'var(--font-nuay-display), serif', fontWeight: 500, color: 'var(--ink-950)' }}
                             >
                               {lang === 'en' ? svc.nameEn : svc.nameBm}
                             </h3>
@@ -292,12 +290,12 @@ export default function ServicesPage() {
             </p>
             <h2
               className="mb-4 leading-tight"
-              style={{ fontSize: 'var(--fs-cta-title)', fontFamily: 'var(--font-nuay-display), serif', fontWeight: 300, color: 'var(--beige-50)' }}
+              style={{ fontSize: 'var(--fs-cta-title)', fontFamily: 'var(--font-nuay-display), serif', fontWeight: 600, color: 'var(--beige-50)' }}
             >
               {lang === 'en' ? (
-                <>Let us <span style={{ fontStyle: 'italic', fontWeight: 400 }}>guide</span> you.</>
+                <>Let us <span style={{ fontStyle: 'italic', color: 'var(--gold-300)' }}>guide</span> you.</>
               ) : (
-                <>Biar kami <span style={{ fontStyle: 'italic', fontWeight: 400 }}>bantu</span> anda.</>
+                <>Biar kami <span style={{ fontStyle: 'italic', color: 'var(--gold-300)' }}>bantu</span> anda.</>
               )}
             </h2>
             <p className="text-sm mb-8 max-w-md mx-auto" style={{ color: 'rgba(249,246,243,0.45)', fontWeight: 300 }}>

@@ -52,7 +52,7 @@ export default function BlogPostPage() {
           )}
           <h1
             className="text-4xl md:text-5xl lg:text-6xl tracking-tight leading-tight mb-5"
-            style={{ fontFamily: 'var(--font-nuay-display), serif', fontWeight: 300, color: 'var(--beige-50)' }}
+            style={{ fontFamily: 'var(--font-nuay-display), serif', fontWeight: 600, color: 'var(--beige-50)' }}
           >
             {title}
           </h1>

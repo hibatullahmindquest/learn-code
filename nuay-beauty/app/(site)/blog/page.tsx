@@ -43,12 +43,12 @@ export default function BlogPage() {
             </p>
             <h1
               className="text-5xl md:text-6xl lg:text-7xl tracking-tight leading-none mb-6"
-              style={{ fontFamily: 'var(--font-nuay-display), serif', fontWeight: 300, color: 'var(--beige-50)' }}
+              style={{ fontFamily: 'var(--font-nuay-display), serif', fontWeight: 600, color: 'var(--beige-50)' }}
             >
               {lang === 'en' ? (
-                <>Our <span style={{ fontStyle: 'italic', fontWeight: 400 }}>Blog</span></>
+                <>Our <span style={{ fontStyle: 'italic', color: 'var(--gold-300)' }}>Blog</span></>
               ) : (
-                <>Blog <span style={{ fontStyle: 'italic', fontWeight: 400 }}>Kami</span></>
+                <>Blog <span style={{ fontStyle: 'italic', color: 'var(--gold-300)' }}>Kami</span></>
               )}
             </h1>
           </div>
@@ -94,7 +94,7 @@ export default function BlogPage() {
                   )}
                   <h2
                     className="text-xl leading-snug mb-3 group-hover:text-[var(--wine-700)] transition-colors duration-200"
-                    style={{ fontFamily: 'var(--font-nuay-display), serif', fontWeight: 400, color: 'var(--ink-950)' }}
+                    style={{ fontFamily: 'var(--font-nuay-display), serif', fontWeight: 500, color: 'var(--ink-950)' }}
                   >
                     {lang === 'en' ? post.titleEn : post.titleBm}
                   </h2>

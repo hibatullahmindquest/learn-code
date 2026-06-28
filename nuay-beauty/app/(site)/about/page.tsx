@@ -55,12 +55,12 @@ export default function AboutPage() {
             </p>
             <h1
               className="tracking-tight leading-none mb-6"
-              style={{ fontSize: 'var(--fs-page-title)', fontFamily: 'var(--font-nuay-display), serif', fontWeight: 300, color: 'var(--beige-50)' }}
+              style={{ fontSize: 'var(--fs-page-title)', fontFamily: 'var(--font-nuay-display), serif', fontWeight: 600, color: 'var(--beige-50)' }}
             >
               {lang === 'en' ? (
-                <>Our <span style={{ fontStyle: 'italic', fontWeight: 400 }}>Story</span></>
+                <>Our <span style={{ fontStyle: 'italic', color: 'var(--gold-300)' }}>Story</span></>
               ) : (
-                <>Kisah <span style={{ fontStyle: 'italic', fontWeight: 400 }}>Kami</span></>
+                <>Kisah <span style={{ fontStyle: 'italic', color: 'var(--gold-300)' }}>Kami</span></>
               )}
             </h1>
             <p className="text-base leading-relaxed max-w-md" style={{ color: 'rgba(249,246,243,0.5)', fontWeight: 300 }}>
@@ -85,7 +85,7 @@ export default function AboutPage() {
               </p>
               <h2
                 className="tracking-tight leading-tight mb-7"
-                style={{ fontSize: 'var(--fs-section-title)', fontFamily: 'var(--font-nuay-display), serif', fontWeight: 300, color: 'var(--ink-950)' }}
+                style={{ fontSize: 'var(--fs-section-title)', fontFamily: 'var(--font-nuay-display), serif', fontWeight: 600, color: 'var(--ink-950)' }}
               >
                 {t.about.beliefHeading}
               </h2>
@@ -143,7 +143,7 @@ export default function AboutPage() {
             </p>
             <h2
               className="tracking-tight leading-none"
-              style={{ fontSize: 'var(--fs-section-title)', fontFamily: 'var(--font-nuay-display), serif', fontWeight: 300, color: 'var(--ink-950)' }}
+              style={{ fontSize: 'var(--fs-section-title)', fontFamily: 'var(--font-nuay-display), serif', fontWeight: 600, color: 'var(--ink-950)' }}
             >
               {t.faq.title}
             </h2>
@@ -197,12 +197,12 @@ export default function AboutPage() {
               </p>
               <h2
                 className="tracking-tight leading-none mb-10"
-                style={{ fontSize: 'var(--fs-section-title)', fontFamily: 'var(--font-nuay-display), serif', fontWeight: 300, color: 'var(--ink-950)' }}
+                style={{ fontSize: 'var(--fs-section-title)', fontFamily: 'var(--font-nuay-display), serif', fontWeight: 600, color: 'var(--ink-950)' }}
               >
                 {lang === 'en' ? (
-                  <>Visit the <span style={{ fontStyle: 'italic', fontWeight: 400 }}>Studio</span></>
+                  <>Visit the <span style={{ fontStyle: 'italic' }}>Studio</span></>
                 ) : (
-                  <>Lawati <span style={{ fontStyle: 'italic', fontWeight: 400 }}>Studio</span></>
+                  <>Lawati <span style={{ fontStyle: 'italic' }}>Studio</span></>
                 )}
               </h2>
             </div>
