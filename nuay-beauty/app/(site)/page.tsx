@@ -208,7 +208,7 @@ export default function HomePage() {
       <section style={{ position: 'relative', minHeight: 620, overflow: 'hidden' }}>
         <Image
           src={images.hero || '/images/nuay-hero.avif'}
-          alt="Close-up beauty portrait with lash and brow detail"
+          alt={en ? 'Nuay Beauty studio' : 'Studio Nuay Beauty'}
           fill
           priority
           style={{ objectFit: 'cover' }}
@@ -574,7 +574,12 @@ export default function HomePage() {
           {publishedArtists.map((a) => (
             <Link key={a.id} href={`/artists#${a.id}`} style={{ background: 'var(--white, #fff)', borderRadius: 'var(--radius-card)', overflow: 'hidden', boxShadow: 'var(--shadow-md)', display: 'block' }}>
               <div style={{ position: 'relative', aspectRatio: '4/5' }}>
-                <Image src={a.image || '/images/nuay-artist.png'} alt={a.name} fill style={{ objectFit: 'cover' }} />
+                <Image
+                  src={a.image || '/images/nuay-artist.png'}
+                  alt={`${a.name}, ${a.tier === 'junior' ? (en ? 'Junior Artist' : 'Artis Junior') : (en ? 'Senior Artist' : 'Artis Senior')}`}
+                  fill
+                  style={{ objectFit: 'cover' }}
+                />
               </div>
               <div style={{ padding: 24 }}>
                 <h3 style={{ ...DISPLAY, fontSize: 24, fontWeight: 500, color: 'var(--ink-950)', margin: 0 }}>{a.name}</h3>
