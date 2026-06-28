@@ -330,7 +330,7 @@ export default function AdminPage() {
         </div>
 
         {/* Page content */}
-        <div className="max-w-4xl mx-auto w-full px-8 py-8">
+        <div className="max-w-7xl mx-auto w-full px-8 py-8">
 
           {/* ── DASHBOARD ─────────────────────────────────────────────────── */}
           {tab === 'dashboard' && (
