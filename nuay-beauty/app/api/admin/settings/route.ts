@@ -1,9 +1,9 @@
 import { createServiceClient } from '@/lib/supabase';
+import { isAuthedRequest } from '@/lib/adminSession';
 import { NextRequest, NextResponse } from 'next/server';
 
 export async function PUT(request: NextRequest) {
-  const password = request.headers.get('x-admin-password');
-  if (!password || password !== process.env.ADMIN_PASSWORD) {
+  if (!isAuthedRequest(request)) {
     return NextResponse.json({ error: 'Unauthorized' }, { status: 401 });
   }
 

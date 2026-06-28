@@ -126,6 +126,7 @@ const PAGE_TITLES: Record<Tab, string> = {
 export default function AdminPage() {
   const [password, setPassword] = useState('');
   const [authed, setAuthed] = useState(false);
+  const [authChecked, setAuthChecked] = useState(false);
   const [authError, setAuthError] = useState('');
   const [tab, setTab] = useState<Tab>('dashboard');
 
@@ -152,8 +153,11 @@ export default function AdminPage() {
   const clearDirty = (saveKey: string) => { const t = KEY_TO_TAB[saveKey] ?? saveKey; setDirtyTabs((prev) => { const n = new Set(prev); n.delete(t); return n; }); };
 
   useEffect(() => {
-    const saved = sessionStorage.getItem('nuay_admin_pw');
-    if (saved) { setPassword(saved); setAuthed(true); }
+    fetch('/api/admin/login')
+      .then((res) => res.json())
+      .then((data) => setAuthed(Boolean(data?.authed)))
+      .catch(() => setAuthed(false))
+      .finally(() => setAuthChecked(true));
   }, []);
 
   const loadSettings = useCallback(async () => {
@@ -189,22 +193,26 @@ export default function AdminPage() {
 
   async function login(e: React.FormEvent) {
     e.preventDefault();
-    const res = await fetch('/api/admin/settings', {
-      method: 'PUT',
-      headers: { 'Content-Type': 'application/json', 'x-admin-password': password },
-      body: JSON.stringify({ key: '_ping', value: true }),
+    const res = await fetch('/api/admin/login', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ password }),
     });
-    if (res.status === 401) { setAuthError('Password salah. Cuba lagi.'); return; }
-    sessionStorage.setItem('nuay_admin_pw', password);
+    if (!res.ok) {
+      const data = await res.json().catch(() => null);
+      setAuthError(data?.error || 'Password salah. Cuba lagi.');
+      return;
+    }
     setAuthed(true);
     setAuthError('');
+    setPassword('');
   }
 
   async function save(key: string, value: unknown) {
     setStatuses((s) => ({ ...s, [key]: 'saving' }));
     const res = await fetch('/api/admin/settings', {
       method: 'PUT',
-      headers: { 'Content-Type': 'application/json', 'x-admin-password': password },
+      headers: { 'Content-Type': 'application/json' },
       body: JSON.stringify({ key, value }),
     });
     setStatuses((s) => ({ ...s, [key]: res.ok ? 'saved' : 'error' }));
@@ -212,11 +220,10 @@ export default function AdminPage() {
     setTimeout(() => setStatuses((s) => ({ ...s, [key]: 'idle' })), 3000);
   }
 
-  function logout() {
+  async function logout() {
     if (dirtyTabs.size > 0 && !window.confirm('Ada perubahan yang belum disimpan. Log keluar akan hilangkan semua perubahan. Teruskan?')) return;
-    sessionStorage.removeItem('nuay_admin_pw');
+    await fetch('/api/admin/login', { method: 'DELETE' });
     setAuthed(false);
-    setPassword('');
   }
 
   // Per-tab dirty tracking
@@ -244,6 +251,10 @@ export default function AdminPage() {
   }, [dirtyTabs]);
 
   // ── Login screen ────────────────────────────────────────────────────────────
+  if (!authChecked) {
+    return <div className="min-h-screen" style={{ background: 'var(--beige-100)' }} />;
+  }
+
   if (!authed) {
     return (
       <div className="min-h-screen flex items-center justify-center" style={{ background: 'var(--beige-100)', fontFamily: 'system-ui, -apple-system, sans-serif' }}>
@@ -471,21 +482,21 @@ export default function AdminPage() {
 
           {/* ── ARTISTS ───────────────────────────────────────────────────── */}
           {tab === 'artists' && (
-            <ArtistsTab artists={artists} setArtists={setArtists} services={services} save={save} status={statuses['artists'] ?? 'idle'} password={password} />
+            <ArtistsTab artists={artists} setArtists={setArtists} services={services} save={save} status={statuses['artists'] ?? 'idle'} />
           )}
 
           {/* ── SERVICES ──────────────────────────────────────────────────── */}
           {tab === 'services' && (
-            <ServicesTab services={services} setServices={setServices} save={save} status={statuses['services'] ?? 'idle'} password={password} artists={artists} />
+            <ServicesTab services={services} setServices={setServices} save={save} status={statuses['services'] ?? 'idle'} artists={artists} />
           )}
 
           {/* ── GALLERY ───────────────────────────────────────────────────── */}
           {tab === 'gallery' && (
-            <GalleryTab images={images} setImages={setImages} save={save} status={statuses['images'] ?? 'idle'} password={password} />
+            <GalleryTab images={images} setImages={setImages} save={save} status={statuses['images'] ?? 'idle'} />
           )}
 
           {/* ── MEDIA LIBRARY ─────────────────────────────────────────────── */}
-          {tab === 'media' && <MediaLibraryTab password={password} />}
+          {tab === 'media' && <MediaLibraryTab />}
 
           {/* ── FAQ ───────────────────────────────────────────────────────── */}
           {tab === 'faq' && (
@@ -818,7 +829,7 @@ export default function AdminPage() {
                           </div>
                           <div className="md:col-span-2">
                             <label className={labelClass}>Featured Image</label>
-                            <MediaPicker value={post.featuredImage} onChange={(url) => update({ featuredImage: url })} password={password} label="Featured Image" />
+                            <MediaPicker value={post.featuredImage} onChange={(url) => update({ featuredImage: url })} label="Featured Image" />
                           </div>
                         </div>
                       </div>

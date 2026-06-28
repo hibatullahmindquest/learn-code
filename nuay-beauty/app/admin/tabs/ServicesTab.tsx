@@ -12,11 +12,10 @@ type Props = {
   setServices: (services: Service[]) => void;
   save: (key: string, value: unknown) => Promise<void>;
   status: 'idle' | 'saving' | 'saved' | 'error';
-  password: string;
   artists: Artist[];
 };
 
-export function ServicesTab({ services, setServices, save, status, password, artists }: Props) {
+export function ServicesTab({ services, setServices, save, status, artists }: Props) {
   const [editingId, setEditingId] = useState<string | null>(null);
   const [validationError, setValidationError] = useState<string | null>(null);
 
@@ -75,7 +74,7 @@ export function ServicesTab({ services, setServices, save, status, password, art
           </div>
           <div className="mb-4">
             <label className={labelClass}>Gambar Servis</label>
-            <MediaPicker value={svc.image} onChange={(url) => update({ image: url })} password={password} label={svc.nameEn || 'Servis Baru'} />
+            <MediaPicker value={svc.image} onChange={(url) => update({ image: url })} label={svc.nameEn || 'Servis Baru'} />
           </div>
           <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
             <div>
@@ -162,7 +161,6 @@ export function ServicesTab({ services, setServices, save, status, password, art
                       g[gi] = newUrl;
                       update({ detailImages: g });
                     }}
-                    password={password}
                     label={`${svc.nameEn || 'Servis'} Detail ${gi + 1}`}
                   />
                 </div>

@@ -10,10 +10,9 @@ import { inputClass, labelClass, sectionClass, btnAdd, btnSecondary, btnDanger }
 type Props = {
   images: GalleryImage[];
   onChange: (images: GalleryImage[]) => void;
-  password: string;
 };
 
-export function MediaGrid({ images, onChange, password }: Props) {
+export function MediaGrid({ images, onChange }: Props) {
   const [editingIndex, setEditingIndex] = useState<number | null>(null);
 
   const update = (i: number, fields: Partial<GalleryImage>) => {
@@ -50,7 +49,6 @@ export function MediaGrid({ images, onChange, password }: Props) {
           <MediaPicker
             value={img.url}
             onChange={(url) => update(editingIndex, { url })}
-            password={password}
             label={img.label || `Gallery ${editingIndex + 1}`}
           />
           <label className={labelClass + ' mt-4'}>Label</label>

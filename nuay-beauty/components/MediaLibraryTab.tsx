@@ -7,7 +7,7 @@ import { sectionClass } from '@/components/admin/AdminUI';
 
 type MediaFile = { name: string; url: string };
 
-export function MediaLibraryTab({ password }: { password: string }) {
+export function MediaLibraryTab() {
   const [files, setFiles] = useState<MediaFile[]>([]);
   const [loading, setLoading] = useState(false);
   const [deleting, setDeleting] = useState<string | null>(null);
@@ -16,13 +16,13 @@ export function MediaLibraryTab({ password }: { password: string }) {
   const loadMedia = useCallback(async () => {
     setLoading(true);
     try {
-      const res = await fetch('/api/admin/media', { headers: { 'x-admin-password': password } });
+      const res = await fetch('/api/admin/media');
       const data = await res.json();
       if (data.files) setFiles(data.files);
     } finally {
       setLoading(false);
     }
-  }, [password]);
+  }, []);
 
   useEffect(() => {
     loadMedia();
@@ -31,9 +31,7 @@ export function MediaLibraryTab({ password }: { password: string }) {
   async function handleDelete(f: MediaFile) {
     setDeleting(f.name);
     try {
-      const checkRes = await fetch(`/api/admin/media?checkUrl=${encodeURIComponent(f.url)}`, {
-        headers: { 'x-admin-password': password },
-      });
+      const checkRes = await fetch(`/api/admin/media?checkUrl=${encodeURIComponent(f.url)}`);
       const checkData = await checkRes.json();
       const usedIn: string[] = checkData.usedIn ?? [];
 
@@ -48,7 +46,7 @@ export function MediaLibraryTab({ password }: { password: string }) {
 
       const res = await fetch('/api/admin/media', {
         method: 'DELETE',
-        headers: { 'Content-Type': 'application/json', 'x-admin-password': password },
+        headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({ name: f.name }),
       });
       const data = await res.json();
