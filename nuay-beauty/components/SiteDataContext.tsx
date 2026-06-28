@@ -33,6 +33,7 @@ export type ImageSettings = {
   gallery: Array<{ url: string; label: string; span: string }>;
   aboutPhotos: [string, string, string];
   beforeAfter: { before: string; after: string };
+  whyNuay: string;
 };
 
 // ── Copy (all editable text strings) ─────────────────────────────────────────
@@ -341,6 +342,7 @@ const defaultImages: ImageSettings = {
   featuredService: '/images/nuay-hero.avif',
   aboutPhotos: ['/images/nuay-artist.png', '/images/nuay-studio-3.avif', '/images/nuay-studio-4.avif'],
   beforeAfter: { before: '/images/nuay-reception.webp', after: '/images/nuay-lounge.webp' },
+  whyNuay: '/images/nuay-lounge.webp',
   studio: [
     '/images/nuay-studio-1.avif',
     '/images/nuay-studio-2.avif',

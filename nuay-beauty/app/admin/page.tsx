@@ -66,9 +66,10 @@ type ImageData = {
   gallery: GalleryImage[];
   aboutPhotos: [string, string, string];
   beforeAfter: { before: string; after: string };
+  whyNuay: string;
 };
 
-const IMAGE_DEFAULTS: ImageData = { hero: '', featuredService: '', studio: ['', '', '', '', ''], gallery: [], aboutPhotos: ['', '', ''], beforeAfter: { before: '', after: '' } };
+const IMAGE_DEFAULTS: ImageData = { hero: '', featuredService: '', studio: ['', '', '', '', ''], gallery: [], aboutPhotos: ['', '', ''], beforeAfter: { before: '', after: '' }, whyNuay: '' };
 
 type FaqItem = {
   id: string;
@@ -694,6 +695,16 @@ export default function AdminPage() {
                 </div>
                 <label className={LABEL}>URL Gambar Hero</label>
                 <MediaPicker value={images.hero} onChange={(url) => setImages({ ...images, hero: url })} password={password} label="Hero Image" />
+              </div>
+
+              <div className={SECTION}>
+                <div className="flex items-center justify-between mb-5">
+                  <h2 className="font-semibold text-gray-800">Gambar Why Nuay (Homepage)</h2>
+                  <StatusBadge status={statuses['images'] ?? 'idle'} />
+                </div>
+                <p className="text-xs text-gray-400 mb-3">Gambar di sebelah section &quot;Why Nuay&quot; di homepage.</p>
+                <label className={LABEL}>URL Gambar Why Nuay</label>
+                <MediaPicker value={images.whyNuay ?? ''} onChange={(url) => setImages({ ...images, whyNuay: url })} password={password} label="Why Nuay Image" />
               </div>
 
               <div className={SECTION}>
