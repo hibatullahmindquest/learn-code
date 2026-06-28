@@ -4,14 +4,20 @@ import { useEffect, useState, useCallback } from 'react';
 import Image from 'next/image';
 import { useLang } from '@/components/LanguageContext';
 import { useSiteData, getCopy } from '@/components/SiteDataContext';
+import { Rating } from '@/components/DesignSystem';
 import { ArrowRight, InstagramLogo, X, CaretLeft, CaretRight } from '@phosphor-icons/react';
+
+const TESTIMONIALS_PER_PAGE = 9;
 
 export default function ArtistsPage() {
   const { lang } = useLang();
-  const { contact, artists: allArtists, services, copy } = useSiteData();
+  const { contact, artists: allArtists, services, copy, testimonials } = useSiteData();
   const t = getCopy(copy, lang);
   const BOOKING_URL = contact.bookingUrl;
   const artists = allArtists.filter((a) => a.published !== false);
+  const publishedTestimonials = testimonials.filter((tm) => tm.published !== false);
+  const [visibleCount, setVisibleCount] = useState(TESTIMONIALS_PER_PAGE);
+  const visibleTestimonials = publishedTestimonials.slice(0, visibleCount);
 
   // Lightbox: { artistIndex, imageIndex }
   const [lightbox, setLightbox] = useState<{ ai: number; ii: number } | null>(null);
@@ -253,6 +259,69 @@ export default function ArtistsPage() {
           ))}
         </div>
       </section>
+
+      {/* ─────────────── TESTIMONIALS ─────────────── */}
+      {publishedTestimonials.length > 0 && (
+        <section
+          id="testimonials"
+          className="scroll-mt-24 py-24 md:py-32 px-6 lg:px-10"
+          style={{ background: 'var(--beige-100)', borderTop: '1px solid var(--line)' }}
+        >
+          <div className="max-w-7xl mx-auto">
+            <div className="reveal text-center mb-16" style={{ transform: 'translateY(28px)' } as React.CSSProperties}>
+              <p className="text-xs tracking-[0.42em] uppercase mb-5" style={{ color: 'var(--gold-600)' }}>
+                {lang === 'en' ? 'In Their Words' : 'Kata Mereka'}
+              </p>
+              <h2
+                className="tracking-tight leading-none"
+                style={{ fontSize: 'var(--fs-page-title)', fontFamily: 'var(--font-nuay-display), serif', fontWeight: 600, color: 'var(--ink-950)' }}
+              >
+                {lang === 'en' ? 'Client Reviews' : 'Testimoni Pelanggan'}
+              </h2>
+            </div>
+
+            <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
+              {visibleTestimonials.map((item) => (
+                <div
+                  key={item.id}
+                  style={{
+                    background: 'var(--white)',
+                    borderRadius: 'var(--radius-surface)',
+                    padding: 32,
+                    boxShadow: 'var(--shadow-sm)',
+                  }}
+                >
+                  <div style={{ marginBottom: 18 }}>
+                    <Rating score={item.rating ?? 5} />
+                  </div>
+                  <p
+                    className="italic mb-6"
+                    style={{ fontFamily: 'var(--font-nuay-display), serif', fontSize: 19, color: 'var(--ink-800)', lineHeight: 1.4 }}
+                  >
+                    &ldquo;{lang === 'en' ? item.quoteEn : item.quoteBm}&rdquo;
+                  </p>
+                  <div className="text-sm font-bold" style={{ color: 'var(--ink-950)' }}>{item.name}</div>
+                  <div className="text-[11px] tracking-[0.08em] uppercase mt-1" style={{ color: 'var(--ink-400)' }}>
+                    {item.service}
+                  </div>
+                </div>
+              ))}
+            </div>
+
+            {visibleCount < publishedTestimonials.length && (
+              <div className="text-center mt-14">
+                <button
+                  onClick={() => setVisibleCount((c) => c + TESTIMONIALS_PER_PAGE)}
+                  className="inline-flex items-center gap-2 px-7 py-3 text-sm tracking-wide transition-all duration-300 active:scale-[0.97]"
+                  style={{ background: 'var(--wine-700)', color: 'var(--beige-50)', borderRadius: 'var(--radius-button)' }}
+                >
+                  {lang === 'en' ? 'Load More' : 'Lihat Lagi'}
+                </button>
+              </div>
+            )}
+          </div>
+        </section>
+      )}
 
       {/* ─────────────── LIGHTBOX ─────────────── */}
       {lightbox !== null && (

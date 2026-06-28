@@ -28,7 +28,8 @@ export default function HomePage() {
 
   const featured = services.filter((s) => s.featured && s.published !== false).slice(0, 3);
   const publishedTestimonials = testimonials.filter((t) => t.published !== false);
-  const loop = [...publishedTestimonials, ...publishedTestimonials, ...publishedTestimonials];
+  const homepageTestimonials = publishedTestimonials.slice(0, 5);
+  const loop = [...homepageTestimonials, ...homepageTestimonials, ...homepageTestimonials];
   const publishedArtists = artists.filter((a) => a.published !== false);
   const averageRating = publishedTestimonials.length > 0
     ? (publishedTestimonials.reduce((sum, item) => sum + (item.rating ?? 5), 0) / publishedTestimonials.length).toFixed(1)
@@ -230,6 +231,22 @@ export default function HomePage() {
             </Link>
           ))}
         </div>
+        <div style={{ textAlign: 'center', marginTop: 40 }}>
+          <Link
+            href="/services"
+            style={{
+              ...BODY,
+              fontSize: 14.5,
+              fontWeight: 600,
+              color: 'var(--wine-700)',
+              textDecoration: 'none',
+              borderBottom: '1px solid var(--wine-700)',
+              paddingBottom: 2,
+            }}
+          >
+            {en ? 'View All Services →' : 'Lihat Semua Servis →'}
+          </Link>
+        </div>
       </Section>
       )}
 
@@ -395,6 +412,22 @@ export default function HomePage() {
               </div>
             ))}
           </div>
+        </div>
+        <div style={{ textAlign: 'center', marginTop: 40 }}>
+          <Link
+            href="/artists#testimonials"
+            style={{
+              ...BODY,
+              fontSize: 14.5,
+              fontWeight: 600,
+              color: 'var(--wine-700)',
+              textDecoration: 'none',
+              borderBottom: '1px solid var(--wine-700)',
+              paddingBottom: 2,
+            }}
+          >
+            {en ? 'See More Reviews →' : 'Lihat Lagi Testimoni →'}
+          </Link>
         </div>
       </Section>
       )}
