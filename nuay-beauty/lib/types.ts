@@ -75,3 +75,11 @@ export type ImageData = {
 };
 
 export const IMAGE_DEFAULTS: ImageData = { hero: '', featuredService: '', studio: ['', '', '', '', ''], gallery: [], aboutPhotos: ['', '', ''], beforeAfter: { before: '', after: '' }, whyNuay: '' };
+
+export type FontFamily = 'default' | 'montserrat' | 'urbanist';
+
+export const FONT_OPTIONS: { value: FontFamily; label: string }[] = [
+  { value: 'default', label: 'Default (Poppins)' },
+  { value: 'montserrat', label: 'Montserrat' },
+  { value: 'urbanist', label: 'Urbanist' },
+];

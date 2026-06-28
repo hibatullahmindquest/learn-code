@@ -54,6 +54,17 @@
   --shadow-wine: 0 18px 44px rgba(94, 31, 31, 0.22);
   --ease-out: cubic-bezier(0.16, 1, 0.3, 1);
   --dur-fast: 160ms;
+
+  /* Admin-selectable body font — default is Poppins, overridden below. */
+  --font-nuay-body: var(--font-poppins);
+}
+
+html[data-body-font="montserrat"] {
+  --font-nuay-body: var(--font-montserrat);
+}
+
+html[data-body-font="urbanist"] {
+  --font-nuay-body: var(--font-urbanist);
 }
 
 * {

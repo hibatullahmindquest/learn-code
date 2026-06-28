@@ -5,14 +5,14 @@ import { useState, useEffect, useCallback } from 'react';
 import { defaultCopy, defaultNavItems, type CopyData, type NavItemSetting } from '@/components/SiteDataContext';
 import { MediaPicker } from '@/components/MediaPicker';
 import { MediaLibraryTab } from '@/components/MediaLibraryTab';
-import { type Artist, type Service, type FaqItem, type Testimonial, type ImageData, ARTIST_DEFAULTS, SERVICE_DEFAULTS, IMAGE_DEFAULTS } from '@/lib/types';
+import { type Artist, type Service, type FaqItem, type Testimonial, type ImageData, type FontFamily, ARTIST_DEFAULTS, SERVICE_DEFAULTS, IMAGE_DEFAULTS, FONT_OPTIONS } from '@/lib/types';
 import { FaqTab } from './tabs/FaqTab';
 import { TestimonialsTab } from './tabs/TestimonialsTab';
 import { ServicesTab } from './tabs/ServicesTab';
 import { ArtistsTab } from './tabs/ArtistsTab';
 import { GalleryTab } from './tabs/GalleryTab';
 
-type Tab = 'dashboard' | 'contact' | 'artists' | 'services' | 'gallery' | 'media' | 'faq' | 'testimonials' | 'content' | 'blog' | 'nav';
+type Tab = 'dashboard' | 'contact' | 'artists' | 'services' | 'gallery' | 'media' | 'faq' | 'testimonials' | 'content' | 'blog' | 'nav' | 'settings';
 type ContentSubTab = 'homepage' | 'about' | 'footer';
 
 type ContactData = {
@@ -54,7 +54,7 @@ function uid() { return Math.random().toString(36).slice(2, 9); }
 const KEY_TO_TAB: Record<string, string> = {
   contact: 'contact', artists: 'artists', services: 'services',
   images: 'gallery', faqs: 'faq', testimonials: 'testimonials',
-  copy: 'content', blog_posts: 'blog', nav_items: 'nav',
+  copy: 'content', blog_posts: 'blog', nav_items: 'nav', font_family: 'settings',
 };
 
 function StatusBadge({ status }: { status: 'idle' | 'saving' | 'saved' | 'error' }) {
@@ -110,6 +110,10 @@ const NAV: { key: Tab; label: string; icon: React.ReactNode }[] = [
     key: 'nav', label: 'Navigation',
     icon: <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth={1.8} className="w-5 h-5"><line x1="3" y1="6" x2="21" y2="6"/><line x1="3" y1="12" x2="21" y2="12"/><line x1="3" y1="18" x2="21" y2="18"/></svg>,
   },
+  {
+    key: 'settings', label: 'Settings',
+    icon: <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth={1.8} className="w-5 h-5"><circle cx="12" cy="12" r="3"/><path d="M19.4 15a1.65 1.65 0 0 0 .33 1.82l.06.06a2 2 0 1 1-2.83 2.83l-.06-.06a1.65 1.65 0 0 0-1.82-.33 1.65 1.65 0 0 0-1 1.51V21a2 2 0 0 1-4 0v-.09A1.65 1.65 0 0 0 9 19.4a1.65 1.65 0 0 0-1.82.33l-.06.06a2 2 0 1 1-2.83-2.83l.06-.06a1.65 1.65 0 0 0 .33-1.82 1.65 1.65 0 0 0-1.51-1H3a2 2 0 0 1 0-4h.09A1.65 1.65 0 0 0 4.6 9a1.65 1.65 0 0 0-.33-1.82l-.06-.06a2 2 0 1 1 2.83-2.83l.06.06a1.65 1.65 0 0 0 1.82.33H9a1.65 1.65 0 0 0 1-1.51V3a2 2 0 0 1 4 0v.09a1.65 1.65 0 0 0 1 1.51 1.65 1.65 0 0 0 1.82-.33l.06-.06a2 2 0 1 1 2.83 2.83l-.06.06a1.65 1.65 0 0 0-.33 1.82V9a1.65 1.65 0 0 0 1.51 1H21a2 2 0 0 1 0 4h-.09a1.65 1.65 0 0 0-1.51 1z"/></svg>,
+  },
 ];
 
 const PAGE_TITLES: Record<Tab, string> = {
@@ -124,6 +128,7 @@ const PAGE_TITLES: Record<Tab, string> = {
   content: 'Content / Copy',
   blog: 'Blog',
   nav: 'Navigation',
+  settings: 'Settings',
 };
 
 // ── Main component ───────────────────────────────────────────────────────────
@@ -147,6 +152,7 @@ export default function AdminPage() {
   const [blogPosts, setBlogPosts] = useState<BlogPost[]>([]);
   const [blogEditIdx, setBlogEditIdx] = useState<number | null>(null);
   const [navItems, setNavItems] = useState<NavItemSetting[]>(defaultNavItems);
+  const [fontFamily, setFontFamily] = useState<FontFamily>('default');
 
   const [statuses, setStatuses] = useState<Record<string, 'idle' | 'saving' | 'saved' | 'error'>>({});
   const [dirtyTabs, setDirtyTabs] = useState<Set<string>>(new Set());
@@ -184,6 +190,7 @@ export default function AdminPage() {
     if (data.copy) setCopy({ ...defaultCopy, ...data.copy });
     if (data.blog_posts) setBlogPosts(data.blog_posts);
     if (data.nav_items) setNavItems(data.nav_items);
+    if (data.font_family) setFontFamily(data.font_family);
     setLoadCount((c) => c + 1);
   }, []);
 
@@ -231,6 +238,7 @@ export default function AdminPage() {
   useEffect(() => { setDirtyTabs((p) => new Set([...p, 'content'])); }, [copy]);
   useEffect(() => { setDirtyTabs((p) => new Set([...p, 'blog'])); }, [blogPosts]);
   useEffect(() => { setDirtyTabs((p) => new Set([...p, 'nav'])); }, [navItems]);
+  useEffect(() => { setDirtyTabs((p) => new Set([...p, 'settings'])); }, [fontFamily]);
   // Runs AFTER all dirty effects above (React fires effects in definition order).
   // When loadCount increments (batched with all setX calls in loadSettings), this
   // clears the set — overriding any dirty marks from the same render cycle.
@@ -801,6 +809,37 @@ export default function AdminPage() {
                 </div>
               </div>
               <button onClick={() => save('nav_items', navItems)} className={BTN_SAVE}>Simpan Navigation</button>
+            </div>
+          )}
+
+          {/* ── SETTINGS ──────────────────────────────────────────────────── */}
+          {tab === 'settings' && (
+            <div className="flex flex-col gap-6">
+              <div className={SECTION}>
+                <div className="flex items-center justify-between mb-5">
+                  <h2 className="font-semibold text-gray-800">Site Font</h2>
+                  <StatusBadge status={statuses['font_family'] ?? 'idle'} />
+                </div>
+                <p className="text-xs text-gray-400 mb-4">Pilih body font untuk seluruh website. Heading font (Cormorant) tidak terjejas.</p>
+                <div className="flex flex-col gap-2">
+                  {FONT_OPTIONS.map((opt) => (
+                    <label
+                      key={opt.value}
+                      className="flex items-center gap-3 p-3 rounded-xl border cursor-pointer transition-all"
+                      style={{ borderColor: fontFamily === opt.value ? '#be123c' : '#f3f4f6', background: fontFamily === opt.value ? '#fff1f2' : '#f9fafb' }}
+                    >
+                      <input
+                        type="radio"
+                        name="fontFamily"
+                        checked={fontFamily === opt.value}
+                        onChange={() => setFontFamily(opt.value)}
+                      />
+                      <span className="text-sm font-medium text-gray-700">{opt.label}</span>
+                    </label>
+                  ))}
+                </div>
+              </div>
+              <button onClick={() => save('font_family', fontFamily)} className={BTN_SAVE}>Simpan Font</button>
             </div>
           )}
 
