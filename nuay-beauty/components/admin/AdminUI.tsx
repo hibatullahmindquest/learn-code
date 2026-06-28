@@ -1,5 +1,7 @@
 'use client';
 
+import type { ReactNode } from 'react';
+
 // Token-based style primitives for the admin panel, built on the Nuay Beauty
 // Design System CSS variables (wine/gold/ink/beige) instead of generic
 // Tailwind rose/gray. Used by CollectionList/CollectionDetail and the four
@@ -19,6 +21,10 @@ export const btnDanger =
   'px-3 py-1.5 rounded-[var(--radius-button)] text-xs font-medium border border-red-200 text-red-500 hover:bg-red-50 transition-all';
 export const btnAdd =
   'px-4 py-2 rounded-[var(--radius-button)] text-sm font-medium border border-dashed border-[var(--line)] text-[var(--ink-400)] hover:border-[var(--gold-600)] hover:text-[var(--ink-600)] transition-all';
+
+export function RequiredLabel({ children }: { children: ReactNode }) {
+  return <label className={labelClass}>{children} <span style={{ color: '#dc2626' }}>*</span></label>;
+}
 
 export function StatusBadge({ status }: { status: 'idle' | 'saving' | 'saved' | 'error' }) {
   if (status === 'idle') return null;

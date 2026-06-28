@@ -2,7 +2,7 @@
 
 import { useState } from 'react';
 import { PencilSimple, Trash, Plus, ArrowUp, ArrowDown, CaretUp, CaretDown } from '@phosphor-icons/react';
-import { inputClass, sectionClass, btnSecondary, btnAdd, btnDanger, StatusBadge } from './AdminUI';
+import { inputClass, sectionClass, btnSecondary, btnAdd, StatusBadge } from './AdminUI';
 
 export type CollectionColumn<T> = {
   key: string;
@@ -157,14 +157,19 @@ export function CollectionList<T>({
                       </td>
                     )}
                     <td className="px-4 py-3.5">
-                      <div className="flex items-center justify-end gap-2">
+                      <div className="flex items-center justify-end gap-3">
                         <button className={btnSecondary + ' text-xs px-3 py-1.5 inline-flex items-center gap-1.5'} onClick={() => onEdit(id)}>
                           <PencilSimple size={14} weight="bold" />
                           <span>Edit</span>
                         </button>
-                        <button className={btnDanger + ' inline-flex items-center gap-1.5'} onClick={() => { if (window.confirm('Padam item ini?')) onDelete(id); }}>
+                        <div className="w-px h-5" style={{ background: 'var(--line)' }} />
+                        <button
+                          onClick={() => { if (window.confirm('Padam item ini?')) onDelete(id); }}
+                          aria-label="Padam"
+                          title="Padam"
+                          className="w-7 h-7 flex items-center justify-center rounded-md text-red-400 hover:text-red-600 hover:bg-red-50 transition-all"
+                        >
                           <Trash size={14} weight="bold" />
-                          <span>Padam</span>
                         </button>
                       </div>
                     </td>

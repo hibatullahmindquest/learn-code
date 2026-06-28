@@ -53,50 +53,53 @@ const KEY_TO_TAB: Record<string, string> = {
 };
 
 // ── Sidebar nav config ───────────────────────────────────────────────────────
+// Ordered by how often a non-technical salon admin actually edits each
+// section (gallery/services/artists weekly-monthly) rather than dev
+// build-order — contact/settings are touched once and rarely again.
 const NAV: { key: Tab; label: string; icon: React.ReactNode }[] = [
   {
     key: 'dashboard', label: 'Dashboard',
     icon: <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth={1.8} className="w-5 h-5"><rect x="3" y="3" width="7" height="7" rx="1"/><rect x="14" y="3" width="7" height="7" rx="1"/><rect x="3" y="14" width="7" height="7" rx="1"/><rect x="14" y="14" width="7" height="7" rx="1"/></svg>,
   },
   {
-    key: 'contact', label: 'Contact & URLs',
-    icon: <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth={1.8} className="w-5 h-5"><path d="M22 16.92v3a2 2 0 0 1-2.18 2 19.79 19.79 0 0 1-8.63-3.07A19.5 19.5 0 0 1 4.69 12a19.79 19.79 0 0 1-3.07-8.67A2 2 0 0 1 3.56 1h3a2 2 0 0 1 2 1.72c.127.96.361 1.903.7 2.81a2 2 0 0 1-.45 2.11L7.91 8.5a16 16 0 0 0 5.59 5.59l.9-.9a2 2 0 0 1 2.11-.45c.907.339 1.85.573 2.81.7A2 2 0 0 1 22 16.92z"/></svg>,
-  },
-  {
-    key: 'artists', label: 'Artists',
-    icon: <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth={1.8} className="w-5 h-5"><path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"/><circle cx="9" cy="7" r="4"/><path d="M23 21v-2a4 4 0 0 0-3-3.87"/><path d="M16 3.13a4 4 0 0 1 0 7.75"/></svg>,
+    key: 'gallery', label: 'Gallery',
+    icon: <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth={1.8} className="w-5 h-5"><rect x="3" y="3" width="18" height="18" rx="2"/><circle cx="8.5" cy="8.5" r="1.5"/><path d="m21 15-5-5L5 21"/></svg>,
   },
   {
     key: 'services', label: 'Services',
     icon: <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth={1.8} className="w-5 h-5"><path d="M14.7 6.3a1 1 0 0 0 0 1.4l1.6 1.6a1 1 0 0 0 1.4 0l3.77-3.77a6 6 0 0 1-7.94 7.94l-6.91 6.91a2.12 2.12 0 0 1-3-3l6.91-6.91a6 6 0 0 1 7.94-7.94l-3.76 3.76z"/></svg>,
   },
   {
-    key: 'gallery', label: 'Gallery',
-    icon: <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth={1.8} className="w-5 h-5"><rect x="3" y="3" width="18" height="18" rx="2"/><circle cx="8.5" cy="8.5" r="1.5"/><path d="m21 15-5-5L5 21"/></svg>,
-  },
-  {
-    key: 'media', label: 'Media Library',
-    icon: <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth={1.8} className="w-5 h-5"><path d="M22 19a2 2 0 0 1-2 2H4a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h5l2 3h9a2 2 0 0 1 2 2z"/></svg>,
-  },
-  {
-    key: 'faq', label: 'FAQ',
-    icon: <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth={1.8} className="w-5 h-5"><circle cx="12" cy="12" r="10"/><path d="M9.09 9a3 3 0 0 1 5.83 1c0 2-3 3-3 3"/><line x1="12" y1="17" x2="12.01" y2="17" strokeLinecap="round"/></svg>,
-  },
-  {
-    key: 'testimonials', label: 'Testimonials',
-    icon: <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth={1.8} className="w-5 h-5"><path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z"/></svg>,
-  },
-  {
-    key: 'content', label: 'Content / Copy',
-    icon: <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth={1.8} className="w-5 h-5"><path d="M11 4H4a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2v-7"/><path d="M18.5 2.5a2.121 2.121 0 0 1 3 3L12 15l-4 1 1-4 9.5-9.5z"/></svg>,
+    key: 'artists', label: 'Artists',
+    icon: <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth={1.8} className="w-5 h-5"><path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"/><circle cx="9" cy="7" r="4"/><path d="M23 21v-2a4 4 0 0 0-3-3.87"/><path d="M16 3.13a4 4 0 0 1 0 7.75"/></svg>,
   },
   {
     key: 'blog', label: 'Blog',
     icon: <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth={1.8} className="w-5 h-5"><path d="M4 19.5A2.5 2.5 0 0 1 6.5 17H20"/><path d="M6.5 2H20v20H6.5A2.5 2.5 0 0 1 4 19.5v-15A2.5 2.5 0 0 1 6.5 2z"/></svg>,
   },
   {
+    key: 'testimonials', label: 'Testimonials',
+    icon: <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth={1.8} className="w-5 h-5"><path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z"/></svg>,
+  },
+  {
+    key: 'faq', label: 'FAQ',
+    icon: <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth={1.8} className="w-5 h-5"><circle cx="12" cy="12" r="10"/><path d="M9.09 9a3 3 0 0 1 5.83 1c0 2-3 3-3 3"/><line x1="12" y1="17" x2="12.01" y2="17" strokeLinecap="round"/></svg>,
+  },
+  {
+    key: 'content', label: 'Content / Copy',
+    icon: <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth={1.8} className="w-5 h-5"><path d="M11 4H4a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2v-7"/><path d="M18.5 2.5a2.121 2.121 0 0 1 3 3L12 15l-4 1 1-4 9.5-9.5z"/></svg>,
+  },
+  {
+    key: 'contact', label: 'Contact & URLs',
+    icon: <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth={1.8} className="w-5 h-5"><path d="M22 16.92v3a2 2 0 0 1-2.18 2 19.79 19.79 0 0 1-8.63-3.07A19.5 19.5 0 0 1 4.69 12a19.79 19.79 0 0 1-3.07-8.67A2 2 0 0 1 3.56 1h3a2 2 0 0 1 2 1.72c.127.96.361 1.903.7 2.81a2 2 0 0 1-.45 2.11L7.91 8.5a16 16 0 0 0 5.59 5.59l.9-.9a2 2 0 0 1 2.11-.45c.907.339 1.85.573 2.81.7A2 2 0 0 1 22 16.92z"/></svg>,
+  },
+  {
     key: 'nav', label: 'Navigation',
     icon: <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth={1.8} className="w-5 h-5"><line x1="3" y1="6" x2="21" y2="6"/><line x1="3" y1="12" x2="21" y2="12"/><line x1="3" y1="18" x2="21" y2="18"/></svg>,
+  },
+  {
+    key: 'media', label: 'Media Library',
+    icon: <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth={1.8} className="w-5 h-5"><path d="M22 19a2 2 0 0 1-2 2H4a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h5l2 3h9a2 2 0 0 1 2 2z"/></svg>,
   },
   {
     key: 'settings', label: 'Settings',
@@ -349,6 +352,36 @@ export default function AdminPage() {
                 ))}
               </div>
               <div className={sectionClass}>
+                <h2 className="font-semibold text-gray-800 mb-4">Perlu Tindakan</h2>
+                {(() => {
+                  const items: { label: string; tab: Tab }[] = [];
+                  const pendingTestimonials = testimonials.filter((t) => !t.published).length;
+                  const servicesNoImage = services.filter((s) => !s.image).length;
+                  const artistsNoImage = artists.filter((a) => !a.image).length;
+                  if (pendingTestimonials > 0) items.push({ label: `${pendingTestimonials} testimoni belum disahkan`, tab: 'testimonials' });
+                  if (servicesNoImage > 0) items.push({ label: `${servicesNoImage} servis tiada gambar`, tab: 'services' });
+                  if (artistsNoImage > 0) items.push({ label: `${artistsNoImage} artist tiada gambar`, tab: 'artists' });
+                  if (items.length === 0) {
+                    return <p className="text-sm" style={{ color: 'var(--ink-400)' }}>Semua kemas kini.</p>;
+                  }
+                  return (
+                    <div className="flex flex-col gap-2">
+                      {items.map((item) => (
+                        <button
+                          key={item.label}
+                          onClick={() => setTab(item.tab)}
+                          className="flex items-center justify-between gap-2 px-4 py-2.5 rounded-lg border text-sm text-left transition-all hover:bg-[var(--beige-100)]"
+                          style={{ borderColor: 'var(--line)', color: 'var(--ink-800)' }}
+                        >
+                          {item.label}
+                          <span style={{ color: 'var(--ink-400)' }}>→</span>
+                        </button>
+                      ))}
+                    </div>
+                  );
+                })()}
+              </div>
+              <div className={sectionClass}>
                 <h2 className="font-semibold text-gray-800 mb-4">Quick Links</h2>
                 <div className="grid grid-cols-2 md:grid-cols-3 gap-3">
                   {NAV.filter((n) => n.key !== 'dashboard').map((n) => (
@@ -443,7 +476,7 @@ export default function AdminPage() {
 
           {/* ── SERVICES ──────────────────────────────────────────────────── */}
           {tab === 'services' && (
-            <ServicesTab services={services} setServices={setServices} save={save} status={statuses['services'] ?? 'idle'} password={password} />
+            <ServicesTab services={services} setServices={setServices} save={save} status={statuses['services'] ?? 'idle'} password={password} artists={artists} />
           )}
 
           {/* ── GALLERY ───────────────────────────────────────────────────── */}
@@ -476,7 +509,7 @@ export default function AdminPage() {
               {/* ── Homepage copy ── */}
               {contentSubTab === 'homepage' && (
                 <div className="flex flex-col gap-6">
-                  <AccordionItem title="Hero Section" defaultOpen={true}>
+                  <AccordionItem title="Hero Section" description="Apa pelawat lihat dahulu di homepage" defaultOpen={true}>
                     <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                       <div><label className={labelClass}>Tagline (English)</label><input className={inputClass} value={copy.hero.taglineEn} onChange={(e) => setCopy({ ...copy, hero: { ...copy.hero, taglineEn: e.target.value } })} /></div>
                       <div><label className={labelClass}>Tagline (BM)</label><input className={inputClass} value={copy.hero.taglineBm} onChange={(e) => setCopy({ ...copy, hero: { ...copy.hero, taglineBm: e.target.value } })} /></div>
@@ -491,27 +524,32 @@ export default function AdminPage() {
                     </div>
                   </AccordionItem>
 
-                  <AccordionItem title="Section Headings" defaultOpen={false}>
+                  <AccordionItem title="Section Headings" description="Tajuk setiap seksyen di homepage" defaultOpen={false}>
                     <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                      <p className="md:col-span-2 text-xs font-medium uppercase tracking-wide mt-2 mb-1" style={{ color: 'var(--ink-400)' }}>Services</p>
                       <div><label className={labelClass}>Services Title (EN)</label><input className={inputClass} value={copy.sections.servicesTitleEn} onChange={(e) => setCopy({ ...copy, sections: { ...copy.sections, servicesTitleEn: e.target.value } })} /></div>
                       <div><label className={labelClass}>Services Title (BM)</label><input className={inputClass} value={copy.sections.servicesTitleBm} onChange={(e) => setCopy({ ...copy, sections: { ...copy.sections, servicesTitleBm: e.target.value } })} /></div>
                       <div><label className={labelClass}>Services Subtitle (EN)</label><input className={inputClass} value={copy.sections.servicesSubEn} onChange={(e) => setCopy({ ...copy, sections: { ...copy.sections, servicesSubEn: e.target.value } })} /></div>
                       <div><label className={labelClass}>Services Subtitle (BM)</label><input className={inputClass} value={copy.sections.servicesSubBm} onChange={(e) => setCopy({ ...copy, sections: { ...copy.sections, servicesSubBm: e.target.value } })} /></div>
+                      <p className="md:col-span-2 text-xs font-medium uppercase tracking-wide mt-2 mb-1" style={{ color: 'var(--ink-400)' }}>Artists</p>
                       <div><label className={labelClass}>Artists Title (EN)</label><input className={inputClass} value={copy.sections.artistsTitleEn} onChange={(e) => setCopy({ ...copy, sections: { ...copy.sections, artistsTitleEn: e.target.value } })} /></div>
                       <div><label className={labelClass}>Artists Title (BM)</label><input className={inputClass} value={copy.sections.artistsTitleBm} onChange={(e) => setCopy({ ...copy, sections: { ...copy.sections, artistsTitleBm: e.target.value } })} /></div>
                       <div><label className={labelClass}>Artists Subtitle (EN)</label><input className={inputClass} value={copy.sections.artistsSubEn} onChange={(e) => setCopy({ ...copy, sections: { ...copy.sections, artistsSubEn: e.target.value } })} /></div>
                       <div><label className={labelClass}>Artists Subtitle (BM)</label><input className={inputClass} value={copy.sections.artistsSubBm} onChange={(e) => setCopy({ ...copy, sections: { ...copy.sections, artistsSubBm: e.target.value } })} /></div>
+                      <p className="md:col-span-2 text-xs font-medium uppercase tracking-wide mt-2 mb-1" style={{ color: 'var(--ink-400)' }}>Gallery</p>
                       <div><label className={labelClass}>Gallery Title (EN)</label><input className={inputClass} value={copy.sections.galleryTitleEn} onChange={(e) => setCopy({ ...copy, sections: { ...copy.sections, galleryTitleEn: e.target.value } })} /></div>
                       <div><label className={labelClass}>Gallery Title (BM)</label><input className={inputClass} value={copy.sections.galleryTitleBm} onChange={(e) => setCopy({ ...copy, sections: { ...copy.sections, galleryTitleBm: e.target.value } })} /></div>
                       <div><label className={labelClass}>Gallery Subtitle (EN)</label><input className={inputClass} value={copy.sections.gallerySubEn} onChange={(e) => setCopy({ ...copy, sections: { ...copy.sections, gallerySubEn: e.target.value } })} /></div>
                       <div><label className={labelClass}>Gallery Subtitle (BM)</label><input className={inputClass} value={copy.sections.gallerySubBm} onChange={(e) => setCopy({ ...copy, sections: { ...copy.sections, gallerySubBm: e.target.value } })} /></div>
+                      <p className="md:col-span-2 text-xs font-medium uppercase tracking-wide mt-2 mb-1" style={{ color: 'var(--ink-400)' }}>Testimonials</p>
                       <div><label className={labelClass}>Testimonials Title (EN)</label><input className={inputClass} value={copy.sections.testimonialsTitleEn} onChange={(e) => setCopy({ ...copy, sections: { ...copy.sections, testimonialsTitleEn: e.target.value } })} /></div>
                       <div><label className={labelClass}>Testimonials Title (BM)</label><input className={inputClass} value={copy.sections.testimonialsTitleBm} onChange={(e) => setCopy({ ...copy, sections: { ...copy.sections, testimonialsTitleBm: e.target.value } })} /></div>
+                      <p className="md:col-span-2 text-xs font-medium uppercase tracking-wide mt-2 mb-1" style={{ color: 'var(--ink-400)' }}>FAQ</p>
                       <div><label className={labelClass}>FAQ Title (EN)</label><input className={inputClass} value={copy.sections.faqTitleEn} onChange={(e) => setCopy({ ...copy, sections: { ...copy.sections, faqTitleEn: e.target.value } })} /></div>
                       <div><label className={labelClass}>FAQ Title (BM)</label><input className={inputClass} value={copy.sections.faqTitleBm} onChange={(e) => setCopy({ ...copy, sections: { ...copy.sections, faqTitleBm: e.target.value } })} /></div>
                     </div>
                   </AccordionItem>
-                  <AccordionItem title="Our Promise Section" defaultOpen={false}>
+                  <AccordionItem title="Our Promise Section" description="3 sebab pelanggan pilih Nuay" defaultOpen={false}>
                     <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                       <div><label className={labelClass}>Heading Line 1 (EN)</label><input className={inputClass} value={copy.usp.headingLine1En} onChange={(e) => setCopy({ ...copy, usp: { ...copy.usp, headingLine1En: e.target.value } })} /></div>
                       <div><label className={labelClass}>Heading Line 1 (BM)</label><input className={inputClass} value={copy.usp.headingLine1Bm} onChange={(e) => setCopy({ ...copy, usp: { ...copy.usp, headingLine1Bm: e.target.value } })} /></div>
@@ -519,14 +557,17 @@ export default function AdminPage() {
                       <div><label className={labelClass}>Heading Line 2 — italic (BM)</label><input className={inputClass} value={copy.usp.headingLine2Bm} onChange={(e) => setCopy({ ...copy, usp: { ...copy.usp, headingLine2Bm: e.target.value } })} /></div>
                       <div><label className={labelClass}>Subtitle (EN)</label><textarea className={inputClass + ' h-16 resize-none'} value={copy.usp.subtitleEn} onChange={(e) => setCopy({ ...copy, usp: { ...copy.usp, subtitleEn: e.target.value } })} /></div>
                       <div><label className={labelClass}>Subtitle (BM)</label><textarea className={inputClass + ' h-16 resize-none'} value={copy.usp.subtitleBm} onChange={(e) => setCopy({ ...copy, usp: { ...copy.usp, subtitleBm: e.target.value } })} /></div>
+                      <p className="md:col-span-2 text-xs font-medium uppercase tracking-wide mt-2 mb-1" style={{ color: 'var(--ink-400)' }}>Pillar 1</p>
                       <div><label className={labelClass}>Pillar 1 Title (EN)</label><input className={inputClass} value={copy.usp.pillar1TitleEn} onChange={(e) => setCopy({ ...copy, usp: { ...copy.usp, pillar1TitleEn: e.target.value } })} /></div>
                       <div><label className={labelClass}>Pillar 1 Title (BM)</label><input className={inputClass} value={copy.usp.pillar1TitleBm} onChange={(e) => setCopy({ ...copy, usp: { ...copy.usp, pillar1TitleBm: e.target.value } })} /></div>
                       <div><label className={labelClass}>Pillar 1 Description (EN)</label><textarea className={inputClass + ' h-16 resize-none'} value={copy.usp.pillar1DescEn} onChange={(e) => setCopy({ ...copy, usp: { ...copy.usp, pillar1DescEn: e.target.value } })} /></div>
                       <div><label className={labelClass}>Pillar 1 Description (BM)</label><textarea className={inputClass + ' h-16 resize-none'} value={copy.usp.pillar1DescBm} onChange={(e) => setCopy({ ...copy, usp: { ...copy.usp, pillar1DescBm: e.target.value } })} /></div>
+                      <p className="md:col-span-2 text-xs font-medium uppercase tracking-wide mt-2 mb-1" style={{ color: 'var(--ink-400)' }}>Pillar 2</p>
                       <div><label className={labelClass}>Pillar 2 Title (EN)</label><input className={inputClass} value={copy.usp.pillar2TitleEn} onChange={(e) => setCopy({ ...copy, usp: { ...copy.usp, pillar2TitleEn: e.target.value } })} /></div>
                       <div><label className={labelClass}>Pillar 2 Title (BM)</label><input className={inputClass} value={copy.usp.pillar2TitleBm} onChange={(e) => setCopy({ ...copy, usp: { ...copy.usp, pillar2TitleBm: e.target.value } })} /></div>
                       <div><label className={labelClass}>Pillar 2 Description (EN)</label><textarea className={inputClass + ' h-16 resize-none'} value={copy.usp.pillar2DescEn} onChange={(e) => setCopy({ ...copy, usp: { ...copy.usp, pillar2DescEn: e.target.value } })} /></div>
                       <div><label className={labelClass}>Pillar 2 Description (BM)</label><textarea className={inputClass + ' h-16 resize-none'} value={copy.usp.pillar2DescBm} onChange={(e) => setCopy({ ...copy, usp: { ...copy.usp, pillar2DescBm: e.target.value } })} /></div>
+                      <p className="md:col-span-2 text-xs font-medium uppercase tracking-wide mt-2 mb-1" style={{ color: 'var(--ink-400)' }}>Pillar 3</p>
                       <div><label className={labelClass}>Pillar 3 Title (EN)</label><input className={inputClass} value={copy.usp.pillar3TitleEn} onChange={(e) => setCopy({ ...copy, usp: { ...copy.usp, pillar3TitleEn: e.target.value } })} /></div>
                       <div><label className={labelClass}>Pillar 3 Title (BM)</label><input className={inputClass} value={copy.usp.pillar3TitleBm} onChange={(e) => setCopy({ ...copy, usp: { ...copy.usp, pillar3TitleBm: e.target.value } })} /></div>
                       <div><label className={labelClass}>Pillar 3 Description (EN)</label><textarea className={inputClass + ' h-16 resize-none'} value={copy.usp.pillar3DescEn} onChange={(e) => setCopy({ ...copy, usp: { ...copy.usp, pillar3DescEn: e.target.value } })} /></div>
