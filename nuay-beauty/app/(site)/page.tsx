@@ -555,7 +555,7 @@ export default function HomePage() {
               <div style={{ padding: 24 }}>
                 <h3 style={{ ...DISPLAY, fontSize: 24, fontWeight: 500, color: 'var(--ink-950)', margin: 0 }}>{a.name}</h3>
                 <p style={{ ...BODY, fontSize: 12, letterSpacing: '0.1em', textTransform: 'uppercase', color: 'var(--gold-600)', margin: '6px 0 14px' }}>
-                  {en ? a.roleEn : a.roleBm}
+                  {a.tier === 'junior' ? (en ? 'Junior Artist' : 'Artis Junior') : (en ? 'Senior Artist' : 'Artis Senior')}
                 </p>
                 <p style={{ ...BODY, fontSize: 14, color: 'var(--ink-600)', margin: 0, lineHeight: 1.6 }}>{en ? a.bioEn : a.bioBm}</p>
               </div>

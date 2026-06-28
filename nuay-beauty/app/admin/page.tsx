@@ -20,11 +20,12 @@ type ContactData = {
   hoursBm: string;
 };
 
+type ArtistTier = 'senior' | 'junior';
+
 type Artist = {
   id: string;
   name: string;
-  roleEn: string;
-  roleBm: string;
+  tier: ArtistTier;
   bioEn: string;
   bioBm: string;
   services: string[];
@@ -34,7 +35,7 @@ type Artist = {
   published: boolean;
 };
 
-const ARTIST_DEFAULTS = { published: true };
+const ARTIST_DEFAULTS = { published: true, tier: 'senior' as ArtistTier };
 
 type Service = {
   id: string;
@@ -216,8 +217,21 @@ export default function AdminPage() {
     const res = await fetch('/api/settings');
     const data = await res.json();
     if (data.contact) setContact(data.contact);
-    if (data.artists) setArtists((data.artists as Artist[]).map((a) => ({ ...ARTIST_DEFAULTS, ...a })));
-    if (data.services) setServices((data.services as Service[]).map((s) => ({ ...SERVICE_DEFAULTS, ...s })));
+    const resolvedServices = data.services ? (data.services as Service[]).map((s) => ({ ...SERVICE_DEFAULTS, ...s })) : services;
+    if (data.services) setServices(resolvedServices);
+    if (data.artists) {
+      setArtists((data.artists as Artist[]).map((a) => {
+        const artist = { ...ARTIST_DEFAULTS, ...a };
+        artist.services = (a.services ?? [])
+          .map((entry) => {
+            if (resolvedServices.some((s) => s.id === entry)) return entry;
+            const byName = resolvedServices.find((s) => s.nameEn === entry);
+            return byName ? byName.id : null;
+          })
+          .filter((id): id is string => id !== null);
+        return artist;
+      }));
+    }
     if (data.images) setImages({ hero: '', featuredService: '', studio: ['', '', '', '', ''], gallery: [], aboutPhotos: ['', '', ''], ...data.images });
     if (data.faqs) setFaqs(data.faqs);
     if (data.testimonials) setTestimonials(data.testimonials);
@@ -507,12 +521,11 @@ export default function AdminPage() {
                       <MediaPicker value={artist.image} onChange={(url) => { const u = [...artists]; u[i] = { ...artist, image: url }; setArtists(u); }} password={password} label={artist.name || 'Artist Image'} />
                     </div>
                     <div>
-                      <label className={LABEL}>Role (English)</label>
-                      <input className={INPUT} value={artist.roleEn} onChange={(e) => { const u = [...artists]; u[i] = { ...artist, roleEn: e.target.value }; setArtists(u); }} />
-                    </div>
-                    <div>
-                      <label className={LABEL}>Role (BM)</label>
-                      <input className={INPUT} value={artist.roleBm} onChange={(e) => { const u = [...artists]; u[i] = { ...artist, roleBm: e.target.value }; setArtists(u); }} />
+                      <label className={LABEL}>Tahap Artist</label>
+                      <select className={INPUT} value={artist.tier} onChange={(e) => { const u = [...artists]; u[i] = { ...artist, tier: e.target.value as ArtistTier }; setArtists(u); }}>
+                        <option value="senior">Senior Artist</option>
+                        <option value="junior">Junior Artist</option>
+                      </select>
                     </div>
                     <div>
                       <label className={LABEL}>Bio (English)</label>
@@ -521,6 +534,33 @@ export default function AdminPage() {
                     <div>
                       <label className={LABEL}>Bio (BM)</label>
                       <textarea className={INPUT + ' h-20 resize-none'} value={artist.bioBm} onChange={(e) => { const u = [...artists]; u[i] = { ...artist, bioBm: e.target.value }; setArtists(u); }} />
+                    </div>
+                    <div className="md:col-span-2">
+                      <label className={LABEL}>Servis Yang Dicover</label>
+                      <div className="flex flex-wrap gap-2 mt-1">
+                        {services.map((svc) => {
+                          const checked = artist.services.includes(svc.id);
+                          return (
+                            <label key={svc.id} className={`text-sm px-3 py-1.5 rounded-full border cursor-pointer transition-colors ${checked ? 'bg-rose-700 text-white border-rose-700' : 'bg-white text-gray-600 border-gray-300'}`}>
+                              <input
+                                type="checkbox"
+                                className="sr-only"
+                                checked={checked}
+                                onChange={(e) => {
+                                  const u = [...artists];
+                                  const svcIds = e.target.checked
+                                    ? [...artist.services, svc.id]
+                                    : artist.services.filter((id) => id !== svc.id);
+                                  u[i] = { ...artist, services: svcIds };
+                                  setArtists(u);
+                                }}
+                              />
+                              {svc.nameEn || 'Servis Tanpa Nama'}
+                            </label>
+                          );
+                        })}
+                        {services.length === 0 && <p className="text-sm text-gray-400">Tiada servis lagi — tambah servis dahulu di tab Services.</p>}
+                      </div>
                     </div>
                     <div className="md:col-span-2">
                       <label className={LABEL}>Gambar Galeri (Portfolio Lightbox)</label>
@@ -545,7 +585,7 @@ export default function AdminPage() {
                   </div>
                 </div>
               ))}
-              <button className={BTN_ADD} onClick={() => setArtists([...artists, { id: uid(), name: '', roleEn: '', roleBm: '', bioEn: '', bioBm: '', services: [], image: '', instagram: null, gallery: [], published: true }])}>
+              <button className={BTN_ADD} onClick={() => setArtists([...artists, { id: uid(), name: '', tier: 'senior', bioEn: '', bioBm: '', services: [], image: '', instagram: null, gallery: [], published: true }])}>
                 + Tambah Artist
               </button>
               <button onClick={() => save('artists', artists)} className={BTN_SAVE}>Simpan Semua Artist</button>

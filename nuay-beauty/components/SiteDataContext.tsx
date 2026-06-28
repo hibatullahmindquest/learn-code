@@ -261,11 +261,12 @@ function normalizeServices(items: ServiceItem[]): ServiceItem[] {
   return items.map((s) => ({ ...SERVICE_DEFAULTS, ...s }));
 }
 
+export type ArtistTier = 'senior' | 'junior';
+
 export type ArtistItem = {
   id: string;
   name: string;
-  roleEn: string;
-  roleBm: string;
+  tier?: ArtistTier;
   bioEn: string;
   bioBm: string;
   services: string[];
@@ -275,9 +276,23 @@ export type ArtistItem = {
   published?: boolean;
 };
 
-const ARTIST_DEFAULTS = { published: true };
-function normalizeArtists(items: ArtistItem[]): ArtistItem[] {
-  return items.map((a) => ({ ...ARTIST_DEFAULTS, ...a }));
+const ARTIST_DEFAULTS = { published: true, tier: 'senior' as ArtistTier };
+
+// Legacy artist.services entries stored plain service names instead of ids — match
+// each entry against a service id first, falling back to a name lookup, so
+// existing data keeps working once it's saved back through the admin panel.
+function normalizeArtists(items: ArtistItem[], services: ServiceItem[]): ArtistItem[] {
+  return items.map((a) => {
+    const normalized = { ...ARTIST_DEFAULTS, ...a };
+    normalized.services = (a.services ?? [])
+      .map((entry) => {
+        if (services.some((s) => s.id === entry)) return entry;
+        const byName = services.find((s) => s.nameEn === entry);
+        return byName ? byName.id : null;
+      })
+      .filter((id): id is string => id !== null);
+    return normalized;
+  });
 }
 
 export type NavItemSetting = {
@@ -347,7 +362,7 @@ const defaultImages: ImageSettings = {
 };
 
 const normalizedDefaultServices = normalizeServices(defaultServices as ServiceItem[]);
-const normalizedDefaultArtists = normalizeArtists(defaultArtists as ArtistItem[]);
+const normalizedDefaultArtists = normalizeArtists(defaultArtists as ArtistItem[], normalizedDefaultServices);
 
 const initialData: SiteData = {
   contact: defaultContact,
@@ -363,10 +378,11 @@ const initialData: SiteData = {
 };
 
 function mapSettings(settings: Record<string, unknown>): SiteData {
+  const resolvedServices = normalizeServices((settings.services as ServiceItem[]) ?? normalizedDefaultServices);
   return {
     contact: (settings.contact as ContactSettings) ?? defaultContact,
-    services: normalizeServices((settings.services as ServiceItem[]) ?? normalizedDefaultServices),
-    artists: normalizeArtists((settings.artists as ArtistItem[]) ?? normalizedDefaultArtists),
+    services: resolvedServices,
+    artists: normalizeArtists((settings.artists as ArtistItem[]) ?? normalizedDefaultArtists, resolvedServices),
     testimonials: (settings.testimonials as Testimonial[]) ?? [],
     faqs: (settings.faqs as FaqItem[]) ?? [],
     blogPosts: (settings.blog_posts as BlogPost[]) ?? [],
