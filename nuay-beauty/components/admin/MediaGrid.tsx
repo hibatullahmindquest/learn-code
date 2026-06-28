@@ -2,6 +2,7 @@
 
 import { useState } from 'react';
 import Image from 'next/image';
+import { ArrowLeft, Trash, Plus } from '@phosphor-icons/react';
 import { type GalleryImage } from '@/lib/types';
 import { MediaPicker } from '@/components/MediaPicker';
 import { inputClass, labelClass, sectionClass, btnAdd, btnSecondary, btnDanger } from './AdminUI';
@@ -35,8 +36,14 @@ export function MediaGrid({ images, onChange, password }: Props) {
     return (
       <div className="flex flex-col gap-4">
         <div className="flex items-center justify-between">
-          <button className={btnSecondary} onClick={() => setEditingIndex(null)}>&larr; Kembali ke Galeri</button>
-          <button className={btnDanger} onClick={() => { if (window.confirm('Padam gambar ini?')) remove(editingIndex); }}>Padam</button>
+          <button className={btnSecondary + ' inline-flex items-center gap-1.5'} onClick={() => setEditingIndex(null)}>
+            <ArrowLeft size={14} weight="bold" />
+            <span>Kembali ke Galeri</span>
+          </button>
+          <button className={btnDanger + ' inline-flex items-center gap-1.5'} onClick={() => { if (window.confirm('Padam gambar ini?')) remove(editingIndex); }}>
+            <Trash size={14} weight="bold" />
+            <span>Padam</span>
+          </button>
         </div>
         <div className={sectionClass}>
           <label className={labelClass}>URL Gambar</label>
@@ -85,13 +92,14 @@ export function MediaGrid({ images, onChange, password }: Props) {
         </div>
       )}
       <button
-        className={btnAdd}
+        className={btnAdd + ' inline-flex items-center gap-1.5'}
         onClick={() => {
           onChange([...images, { url: '', label: '', span: '1' }]);
           setEditingIndex(images.length);
         }}
       >
-        + Tambah Gambar Galeri
+        <Plus size={14} weight="bold" />
+        <span>Tambah Gambar Galeri</span>
       </button>
     </div>
   );

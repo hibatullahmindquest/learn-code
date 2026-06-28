@@ -4,7 +4,7 @@ import { useState } from 'react';
 import { type Artist, type ArtistTier, type Service, uid } from '@/lib/types';
 import { CollectionList } from '@/components/admin/CollectionList';
 import { CollectionDetail } from '@/components/admin/CollectionDetail';
-import { inputClass, labelClass, sectionClass, btnAdd, btnDanger } from '@/components/admin/AdminUI';
+import { inputClass, labelClass, sectionClass, btnAdd, btnDanger, RequiredLabel } from '@/components/admin/AdminUI';
 import { MediaPicker } from '@/components/MediaPicker';
 
 type Props = {
@@ -18,6 +18,7 @@ type Props = {
 
 export function ArtistsTab({ artists, setArtists, services, save, status, password }: Props) {
   const [editingId, setEditingId] = useState<string | null>(null);
+  const [validationError, setValidationError] = useState<string | null>(null);
 
   if (editingId !== null) {
     const i = artists.findIndex((a) => a.id === editingId);
@@ -43,9 +44,19 @@ export function ArtistsTab({ artists, setArtists, services, save, status, passwo
             setEditingId(null);
           }
         }}
-        onSave={() => save('artists', artists)}
+        onSave={() => {
+          if (!artist.name.trim()) {
+            setValidationError('Sila isi Nama artist sebelum simpan.');
+            return;
+          }
+          setValidationError(null);
+          save('artists', artists);
+        }}
         saving={status}
       >
+        {validationError && (
+          <p className="text-sm" style={{ color: '#dc2626' }}>{validationError}</p>
+        )}
         <div className={sectionClass}>
           <div className="flex items-center justify-between mb-4">
             <label className="relative inline-flex items-center cursor-pointer" title={artist.published !== false ? 'Sembunyikan artist' : 'Tunjuk artist'}>
@@ -56,7 +67,7 @@ export function ArtistsTab({ artists, setArtists, services, save, status, passwo
           </div>
           <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
             <div>
-              <label className={labelClass}>Nama</label>
+              <RequiredLabel>Nama</RequiredLabel>
               <input className={inputClass} value={artist.name} onChange={(e) => update({ name: e.target.value })} />
             </div>
             <div>

@@ -4,7 +4,7 @@ import { useState } from 'react';
 import { type Testimonial, uid } from '@/lib/types';
 import { CollectionList } from '@/components/admin/CollectionList';
 import { CollectionDetail } from '@/components/admin/CollectionDetail';
-import { inputClass, labelClass, sectionClass } from '@/components/admin/AdminUI';
+import { inputClass, labelClass, sectionClass, RequiredLabel } from '@/components/admin/AdminUI';
 
 type Props = {
   testimonials: Testimonial[];
@@ -15,6 +15,7 @@ type Props = {
 
 export function TestimonialsTab({ testimonials, setTestimonials, save, status }: Props) {
   const [editingId, setEditingId] = useState<string | null>(null);
+  const [validationError, setValidationError] = useState<string | null>(null);
 
   if (editingId !== null) {
     const i = testimonials.findIndex((t) => t.id === editingId);
@@ -40,13 +41,23 @@ export function TestimonialsTab({ testimonials, setTestimonials, save, status }:
             setEditingId(null);
           }
         }}
-        onSave={() => save('testimonials', testimonials)}
+        onSave={() => {
+          if (!t.name.trim() || !t.quoteEn.trim()) {
+            setValidationError('Sila isi Nama Pelanggan dan Ulasan (English) sebelum simpan.');
+            return;
+          }
+          setValidationError(null);
+          save('testimonials', testimonials);
+        }}
         saving={status}
       >
+        {validationError && (
+          <p className="text-sm" style={{ color: '#dc2626' }}>{validationError}</p>
+        )}
         <div className={sectionClass}>
           <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
             <div>
-              <label className={labelClass}>Nama Pelanggan</label>
+              <RequiredLabel>Nama Pelanggan</RequiredLabel>
               <input className={inputClass} value={t.name} onChange={(e) => update({ name: e.target.value })} placeholder="Sarah K." />
             </div>
             <div>
@@ -71,7 +82,7 @@ export function TestimonialsTab({ testimonials, setTestimonials, save, status }:
               </label>
             </div>
             <div>
-              <label className={labelClass}>Ulasan (English)</label>
+              <RequiredLabel>Ulasan (English)</RequiredLabel>
               <textarea className={inputClass + ' h-20 resize-none'} value={t.quoteEn} onChange={(e) => update({ quoteEn: e.target.value })} placeholder="The service was amazing..." />
             </div>
             <div>

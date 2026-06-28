@@ -4,7 +4,7 @@ import { useState } from 'react';
 import { type FaqItem, uid } from '@/lib/types';
 import { CollectionList } from '@/components/admin/CollectionList';
 import { CollectionDetail } from '@/components/admin/CollectionDetail';
-import { inputClass, labelClass, sectionClass } from '@/components/admin/AdminUI';
+import { inputClass, labelClass, sectionClass, RequiredLabel } from '@/components/admin/AdminUI';
 
 type Props = {
   faqs: FaqItem[];
@@ -15,6 +15,7 @@ type Props = {
 
 export function FaqTab({ faqs, setFaqs, save, status }: Props) {
   const [editingId, setEditingId] = useState<string | null>(null);
+  const [validationError, setValidationError] = useState<string | null>(null);
 
   if (editingId !== null) {
     const i = faqs.findIndex((f) => f.id === editingId);
@@ -40,13 +41,23 @@ export function FaqTab({ faqs, setFaqs, save, status }: Props) {
             setEditingId(null);
           }
         }}
-        onSave={() => save('faqs', faqs)}
+        onSave={() => {
+          if (!faq.questionEn.trim() || !faq.answerEn.trim()) {
+            setValidationError('Sila isi Soalan (English) dan Jawapan (English) sebelum simpan.');
+            return;
+          }
+          setValidationError(null);
+          save('faqs', faqs);
+        }}
         saving={status}
       >
+        {validationError && (
+          <p className="text-sm" style={{ color: '#dc2626' }}>{validationError}</p>
+        )}
         <div className={sectionClass}>
           <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
             <div>
-              <label className={labelClass}>Soalan (English)</label>
+              <RequiredLabel>Soalan (English)</RequiredLabel>
               <input className={inputClass} value={faq.questionEn} onChange={(e) => update({ questionEn: e.target.value })} placeholder="e.g. How early should I book?" />
             </div>
             <div>
@@ -54,7 +65,7 @@ export function FaqTab({ faqs, setFaqs, save, status }: Props) {
               <input className={inputClass} value={faq.questionBm} onChange={(e) => update({ questionBm: e.target.value })} placeholder="cth. Berapa awal saya perlu tempah?" />
             </div>
             <div>
-              <label className={labelClass}>Jawapan (English)</label>
+              <RequiredLabel>Jawapan (English)</RequiredLabel>
               <textarea className={inputClass + ' h-24 resize-none'} value={faq.answerEn} onChange={(e) => update({ answerEn: e.target.value })} />
             </div>
             <div>

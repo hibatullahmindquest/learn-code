@@ -1,10 +1,10 @@
 'use client';
 
 import { useState } from 'react';
-import { type Service, SERVICE_DETAIL_IMAGES_MAX, uid } from '@/lib/types';
+import { type Artist, type Service, SERVICE_DETAIL_IMAGES_MAX, uid } from '@/lib/types';
 import { CollectionList } from '@/components/admin/CollectionList';
 import { CollectionDetail } from '@/components/admin/CollectionDetail';
-import { inputClass, labelClass, sectionClass, btnAdd, btnDanger } from '@/components/admin/AdminUI';
+import { inputClass, labelClass, sectionClass, btnAdd, btnDanger, RequiredLabel } from '@/components/admin/AdminUI';
 import { MediaPicker } from '@/components/MediaPicker';
 
 type Props = {
@@ -13,10 +13,20 @@ type Props = {
   save: (key: string, value: unknown) => Promise<void>;
   status: 'idle' | 'saving' | 'saved' | 'error';
   password: string;
+  artists: Artist[];
 };
 
-export function ServicesTab({ services, setServices, save, status, password }: Props) {
+export function ServicesTab({ services, setServices, save, status, password, artists }: Props) {
   const [editingId, setEditingId] = useState<string | null>(null);
+  const [validationError, setValidationError] = useState<string | null>(null);
+
+  const confirmDelete = (id: string) => {
+    const usedBy = artists.filter((a) => a.services.includes(id)).map((a) => a.name);
+    const message = usedBy.length > 0
+      ? `Servis ini digunakan oleh: ${usedBy.join(', ')}. Padam juga?`
+      : 'Padam servis ini? Tindakan ini tidak boleh dibatalkan.';
+    return window.confirm(message);
+  };
 
   if (editingId !== null) {
     const i = services.findIndex((s) => s.id === editingId);
@@ -35,16 +45,26 @@ export function ServicesTab({ services, setServices, save, status, password }: P
         title={svc.nameEn || 'Servis Baru'}
         onBack={() => setEditingId(null)}
         onDelete={() => {
-          if (window.confirm('Padam servis ini? Tindakan ini tidak boleh dibatalkan.')) {
+          if (confirmDelete(svc.id)) {
             const u = services.filter((_, idx) => idx !== i);
             setServices(u);
             save('services', u);
             setEditingId(null);
           }
         }}
-        onSave={() => save('services', services)}
+        onSave={() => {
+          if (!svc.nameEn.trim() || !svc.price) {
+            setValidationError('Sila isi Nama Servis (English) dan Harga sebelum simpan.');
+            return;
+          }
+          setValidationError(null);
+          save('services', services);
+        }}
         saving={status}
       >
+        {validationError && (
+          <p className="text-sm" style={{ color: '#dc2626' }}>{validationError}</p>
+        )}
         <div className={sectionClass}>
           <div className="flex items-center justify-between mb-4">
             <label className="relative inline-flex items-center cursor-pointer" title={svc.published !== false ? 'Sembunyikan servis' : 'Tunjuk servis'}>
@@ -59,7 +79,7 @@ export function ServicesTab({ services, setServices, save, status, password }: P
           </div>
           <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
             <div>
-              <label className={labelClass}>Nama (English)</label>
+              <RequiredLabel>Nama (English)</RequiredLabel>
               <input className={inputClass} value={svc.nameEn} onChange={(e) => update({ nameEn: e.target.value })} />
             </div>
             <div>
@@ -67,7 +87,7 @@ export function ServicesTab({ services, setServices, save, status, password }: P
               <input className={inputClass} value={svc.nameBm} onChange={(e) => update({ nameBm: e.target.value })} />
             </div>
             <div>
-              <label className={labelClass}>Harga (RM)</label>
+              <RequiredLabel>Harga (RM)</RequiredLabel>
               <input type="number" min={0} className={inputClass} value={svc.price} onChange={(e) => update({ price: Number(e.target.value) || 0 })} />
             </div>
             <div>
@@ -183,6 +203,8 @@ export function ServicesTab({ services, setServices, save, status, password }: P
       searchableText={(s) => `${s.nameEn} ${s.nameBm} ${s.category}`}
       onEdit={setEditingId}
       onDelete={(id) => {
+        const usedBy = artists.filter((a) => a.services.includes(id)).map((a) => a.name);
+        if (usedBy.length > 0 && !window.confirm(`Servis ini digunakan oleh: ${usedBy.join(', ')}. Padam juga?`)) return;
         const u = services.filter((s) => s.id !== id);
         setServices(u);
         save('services', u);

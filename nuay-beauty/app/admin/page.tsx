@@ -2,11 +2,14 @@
 
 import { useState, useEffect, useCallback } from 'react';
 import Image from 'next/image';
+import { SignIn, ArrowSquareOut, FloppyDisk, PencilSimple, Trash, Plus, ArrowLeft, ArrowUp, ArrowDown, X } from '@phosphor-icons/react';
 
 import { defaultCopy, defaultNavItems, type CopyData, type NavItemSetting } from '@/components/SiteDataContext';
 import { MediaPicker } from '@/components/MediaPicker';
 import { MediaLibraryTab } from '@/components/MediaLibraryTab';
 import { type Artist, type Service, type FaqItem, type Testimonial, type ImageData, type FontFamily, ARTIST_DEFAULTS, SERVICE_DEFAULTS, IMAGE_DEFAULTS, FONT_OPTIONS } from '@/lib/types';
+import { inputClass, labelClass, sectionClass, btnPrimary, btnSecondary, btnDanger, StatusBadge } from '@/components/admin/AdminUI';
+import { AccordionItem } from '@/components/admin/Accordion';
 import { FaqTab } from './tabs/FaqTab';
 import { TestimonialsTab } from './tabs/TestimonialsTab';
 import { ServicesTab } from './tabs/ServicesTab';
@@ -41,15 +44,6 @@ type BlogPost = {
   createdAt: string;
 };
 
-// ── Style tokens ────────────────────────────────────────────────────────────
-const INPUT = 'w-full border border-gray-200 rounded-lg px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-rose-300';
-const LABEL = 'block text-xs font-medium text-gray-500 mb-1 uppercase tracking-wide';
-const SECTION = 'bg-white rounded-xl border border-gray-100 p-6 shadow-sm';
-const BTN_SAVE = 'px-5 py-2 rounded-lg text-sm font-medium bg-rose-700 text-white hover:bg-rose-800 active:scale-95 transition-all disabled:opacity-50';
-const BTN_SEC = 'px-4 py-2 rounded-lg text-sm font-medium border border-gray-200 text-gray-600 hover:bg-gray-50 transition-all';
-const BTN_DANGER = 'px-3 py-1.5 rounded-lg text-xs font-medium border border-red-200 text-red-500 hover:bg-red-50 transition-all';
-const BTN_ADD = 'px-4 py-2 rounded-lg text-sm font-medium border border-dashed border-gray-300 text-gray-500 hover:border-gray-400 hover:text-gray-700 transition-all w-full mt-2';
-
 function uid() { return Math.random().toString(36).slice(2, 9); }
 
 const KEY_TO_TAB: Record<string, string> = {
@@ -58,58 +52,54 @@ const KEY_TO_TAB: Record<string, string> = {
   copy: 'content', blog_posts: 'blog', nav_items: 'nav', font_family: 'settings',
 };
 
-function StatusBadge({ status }: { status: 'idle' | 'saving' | 'saved' | 'error' }) {
-  if (status === 'idle') return null;
-  const map = { saving: 'bg-yellow-100 text-yellow-700', saved: 'bg-green-100 text-green-700', error: 'bg-red-100 text-red-700' };
-  const label = { saving: 'Saving…', saved: 'Saved!', error: 'Error saving' };
-  return <span className={`text-xs px-2 py-1 rounded-full font-medium ${map[status]}`}>{label[status]}</span>;
-}
-
 // ── Sidebar nav config ───────────────────────────────────────────────────────
+// Ordered by how often a non-technical salon admin actually edits each
+// section (gallery/services/artists weekly-monthly) rather than dev
+// build-order — contact/settings are touched once and rarely again.
 const NAV: { key: Tab; label: string; icon: React.ReactNode }[] = [
   {
     key: 'dashboard', label: 'Dashboard',
     icon: <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth={1.8} className="w-5 h-5"><rect x="3" y="3" width="7" height="7" rx="1"/><rect x="14" y="3" width="7" height="7" rx="1"/><rect x="3" y="14" width="7" height="7" rx="1"/><rect x="14" y="14" width="7" height="7" rx="1"/></svg>,
   },
   {
-    key: 'contact', label: 'Contact & URLs',
-    icon: <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth={1.8} className="w-5 h-5"><path d="M22 16.92v3a2 2 0 0 1-2.18 2 19.79 19.79 0 0 1-8.63-3.07A19.5 19.5 0 0 1 4.69 12a19.79 19.79 0 0 1-3.07-8.67A2 2 0 0 1 3.56 1h3a2 2 0 0 1 2 1.72c.127.96.361 1.903.7 2.81a2 2 0 0 1-.45 2.11L7.91 8.5a16 16 0 0 0 5.59 5.59l.9-.9a2 2 0 0 1 2.11-.45c.907.339 1.85.573 2.81.7A2 2 0 0 1 22 16.92z"/></svg>,
-  },
-  {
-    key: 'artists', label: 'Artists',
-    icon: <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth={1.8} className="w-5 h-5"><path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"/><circle cx="9" cy="7" r="4"/><path d="M23 21v-2a4 4 0 0 0-3-3.87"/><path d="M16 3.13a4 4 0 0 1 0 7.75"/></svg>,
+    key: 'gallery', label: 'Gallery',
+    icon: <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth={1.8} className="w-5 h-5"><rect x="3" y="3" width="18" height="18" rx="2"/><circle cx="8.5" cy="8.5" r="1.5"/><path d="m21 15-5-5L5 21"/></svg>,
   },
   {
     key: 'services', label: 'Services',
     icon: <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth={1.8} className="w-5 h-5"><path d="M14.7 6.3a1 1 0 0 0 0 1.4l1.6 1.6a1 1 0 0 0 1.4 0l3.77-3.77a6 6 0 0 1-7.94 7.94l-6.91 6.91a2.12 2.12 0 0 1-3-3l6.91-6.91a6 6 0 0 1 7.94-7.94l-3.76 3.76z"/></svg>,
   },
   {
-    key: 'gallery', label: 'Gallery',
-    icon: <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth={1.8} className="w-5 h-5"><rect x="3" y="3" width="18" height="18" rx="2"/><circle cx="8.5" cy="8.5" r="1.5"/><path d="m21 15-5-5L5 21"/></svg>,
-  },
-  {
-    key: 'media', label: 'Media Library',
-    icon: <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth={1.8} className="w-5 h-5"><rect x="3" y="3" width="18" height="18" rx="2"/><circle cx="8.5" cy="8.5" r="1.5"/><path d="m21 15-5-5L5 21"/></svg>,
-  },
-  {
-    key: 'faq', label: 'FAQ',
-    icon: <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth={1.8} className="w-5 h-5"><circle cx="12" cy="12" r="10"/><path d="M9.09 9a3 3 0 0 1 5.83 1c0 2-3 3-3 3"/><line x1="12" y1="17" x2="12.01" y2="17" strokeLinecap="round"/></svg>,
-  },
-  {
-    key: 'testimonials', label: 'Testimonials',
-    icon: <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth={1.8} className="w-5 h-5"><path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z"/></svg>,
-  },
-  {
-    key: 'content', label: 'Content / Copy',
-    icon: <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth={1.8} className="w-5 h-5"><path d="M11 4H4a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2v-7"/><path d="M18.5 2.5a2.121 2.121 0 0 1 3 3L12 15l-4 1 1-4 9.5-9.5z"/></svg>,
+    key: 'artists', label: 'Artists',
+    icon: <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth={1.8} className="w-5 h-5"><path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"/><circle cx="9" cy="7" r="4"/><path d="M23 21v-2a4 4 0 0 0-3-3.87"/><path d="M16 3.13a4 4 0 0 1 0 7.75"/></svg>,
   },
   {
     key: 'blog', label: 'Blog',
     icon: <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth={1.8} className="w-5 h-5"><path d="M4 19.5A2.5 2.5 0 0 1 6.5 17H20"/><path d="M6.5 2H20v20H6.5A2.5 2.5 0 0 1 4 19.5v-15A2.5 2.5 0 0 1 6.5 2z"/></svg>,
   },
   {
+    key: 'testimonials', label: 'Testimonials',
+    icon: <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth={1.8} className="w-5 h-5"><path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z"/></svg>,
+  },
+  {
+    key: 'faq', label: 'FAQ',
+    icon: <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth={1.8} className="w-5 h-5"><circle cx="12" cy="12" r="10"/><path d="M9.09 9a3 3 0 0 1 5.83 1c0 2-3 3-3 3"/><line x1="12" y1="17" x2="12.01" y2="17" strokeLinecap="round"/></svg>,
+  },
+  {
+    key: 'content', label: 'Content / Copy',
+    icon: <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth={1.8} className="w-5 h-5"><path d="M11 4H4a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2v-7"/><path d="M18.5 2.5a2.121 2.121 0 0 1 3 3L12 15l-4 1 1-4 9.5-9.5z"/></svg>,
+  },
+  {
+    key: 'contact', label: 'Contact & URLs',
+    icon: <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth={1.8} className="w-5 h-5"><path d="M22 16.92v3a2 2 0 0 1-2.18 2 19.79 19.79 0 0 1-8.63-3.07A19.5 19.5 0 0 1 4.69 12a19.79 19.79 0 0 1-3.07-8.67A2 2 0 0 1 3.56 1h3a2 2 0 0 1 2 1.72c.127.96.361 1.903.7 2.81a2 2 0 0 1-.45 2.11L7.91 8.5a16 16 0 0 0 5.59 5.59l.9-.9a2 2 0 0 1 2.11-.45c.907.339 1.85.573 2.81.7A2 2 0 0 1 22 16.92z"/></svg>,
+  },
+  {
     key: 'nav', label: 'Navigation',
     icon: <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth={1.8} className="w-5 h-5"><line x1="3" y1="6" x2="21" y2="6"/><line x1="3" y1="12" x2="21" y2="12"/><line x1="3" y1="18" x2="21" y2="18"/></svg>,
+  },
+  {
+    key: 'media', label: 'Media Library',
+    icon: <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth={1.8} className="w-5 h-5"><path d="M22 19a2 2 0 0 1-2 2H4a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h5l2 3h9a2 2 0 0 1 2 2z"/></svg>,
   },
   {
     key: 'settings', label: 'Settings',
@@ -256,7 +246,7 @@ export default function AdminPage() {
   // ── Login screen ────────────────────────────────────────────────────────────
   if (!authed) {
     return (
-      <div className="min-h-screen flex items-center justify-center" style={{ background: '#faf7f4', fontFamily: 'system-ui, -apple-system, sans-serif' }}>
+      <div className="min-h-screen flex items-center justify-center" style={{ background: 'var(--beige-100)', fontFamily: 'system-ui, -apple-system, sans-serif' }}>
         <div className="w-full max-w-sm bg-white rounded-2xl shadow-sm border border-gray-100 p-8">
           <div className="text-center mb-8">
             <Image src="/logo/logo-dark.png" alt="Nuay Beauty" width={140} height={81} className="h-10 w-auto mx-auto" />
@@ -264,12 +254,15 @@ export default function AdminPage() {
           </div>
           <form onSubmit={login} className="flex flex-col gap-4">
             <div>
-              <label className={LABEL}>Password</label>
+              <label className={labelClass}>Password</label>
               <input type="password" value={password} onChange={(e) => setPassword(e.target.value)}
-                className={INPUT} placeholder="Masukkan password admin" required />
+                className={inputClass} placeholder="Masukkan password admin" required />
               {authError && <p className="text-xs text-red-500 mt-1">{authError}</p>}
             </div>
-            <button type="submit" className={BTN_SAVE + ' w-full py-3'}>Log Masuk</button>
+            <button type="submit" className={btnPrimary + ' w-full py-3 inline-flex items-center justify-center gap-2'}>
+              <SignIn size={16} weight="bold" />
+              Log Masuk
+            </button>
           </form>
         </div>
       </div>
@@ -281,10 +274,10 @@ export default function AdminPage() {
     <div className="flex min-h-screen" style={{ fontFamily: 'system-ui, -apple-system, sans-serif' }}>
 
       {/* Sidebar */}
-      <aside className="fixed top-0 left-0 bottom-0 flex flex-col z-20" style={{ width: 240, background: '#1C1C1C' }}>
+      <aside className="fixed top-0 left-0 bottom-0 flex flex-col z-20" style={{ width: 240, background: 'var(--ink-950)' }}>
         {/* Logo */}
         <div className="flex items-center gap-3 px-5 py-5 border-b" style={{ borderColor: 'rgba(255,255,255,0.08)' }}>
-          <div className="w-8 h-8 rounded-full flex items-center justify-center text-white text-xs font-bold flex-shrink-0" style={{ background: '#8B2252' }}>NB</div>
+          <div className="w-8 h-8 rounded-full flex items-center justify-center text-white text-xs font-bold flex-shrink-0" style={{ background: 'var(--wine-700)' }}>NB</div>
           <div>
             <p className="text-white text-sm font-semibold leading-tight">Nuay Beauty</p>
             <p className="text-xs" style={{ color: 'rgba(255,255,255,0.35)' }}>Admin Panel</p>
@@ -304,12 +297,12 @@ export default function AdminPage() {
                 style={{
                   color: active ? '#fff' : 'rgba(255,255,255,0.5)',
                   background: active ? 'rgba(201,169,110,0.12)' : 'transparent',
-                  borderRight: active ? '3px solid #C9A96E' : '3px solid transparent',
+                  borderRight: active ? '3px solid var(--gold-600)' : '3px solid transparent',
                 }}
               >
-                <span style={{ color: active ? '#C9A96E' : 'rgba(255,255,255,0.4)' }}>{item.icon}</span>
+                <span style={{ color: active ? 'var(--gold-600)' : 'rgba(255,255,255,0.4)' }}>{item.icon}</span>
                 <span className="flex-1">{item.label}</span>
-                {dirty && <span className="w-2 h-2 rounded-full flex-shrink-0" style={{ background: '#facc15' }} />}
+                {dirty && <span className="w-2 h-2 rounded-full flex-shrink-0" style={{ background: 'var(--gold-500)' }} />}
               </button>
             );
           })}
@@ -326,36 +319,69 @@ export default function AdminPage() {
       </aside>
 
       {/* Main */}
-      <div className="flex-1 flex flex-col" style={{ marginLeft: 240, background: '#faf7f4' }}>
+      <div className="flex-1 flex flex-col" style={{ marginLeft: 240, background: 'var(--beige-100)' }}>
         {/* Topbar */}
         <div className="bg-white border-b border-gray-100 px-8 py-4 flex items-center justify-between sticky top-0 z-10">
           <div>
             <p className="font-semibold text-gray-800">{PAGE_TITLES[tab]}</p>
             <p className="text-xs text-gray-400">Kemaskini kandungan website</p>
           </div>
-          <a href="/" target="_blank" rel="noopener" className={BTN_SEC + ' text-xs'}>Lihat Website ↗</a>
+          <a href="/" target="_blank" rel="noopener" className={btnSecondary + ' text-xs inline-flex items-center gap-1'}>
+            Lihat Website
+            <ArrowSquareOut size={12} weight="bold" />
+          </a>
         </div>
 
         {/* Page content */}
-        <div className="max-w-4xl mx-auto w-full px-8 py-8">
+        <div className="max-w-7xl mx-auto w-full px-8 py-8">
 
           {/* ── DASHBOARD ─────────────────────────────────────────────────── */}
           {tab === 'dashboard' && (
             <div className="flex flex-col gap-6">
               <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
                 {[
-                  { label: 'Artists', value: artists.length, color: '#8B2252' },
-                  { label: 'Services', value: services.length, color: '#C9A96E' },
-                  { label: 'Gallery Photos', value: images.gallery.length, color: '#1C1C1C' },
-                  { label: 'FAQ Items', value: faqs.length, color: '#6b7280' },
+                  { label: 'Artists', value: artists.length, color: 'var(--wine-700)' },
+                  { label: 'Services', value: services.length, color: 'var(--gold-600)' },
+                  { label: 'Gallery Photos', value: images.gallery.length, color: 'var(--ink-950)' },
+                  { label: 'FAQ Items', value: faqs.length, color: 'var(--ink-400)' },
                 ].map((s) => (
-                  <div key={s.label} className={SECTION}>
+                  <div key={s.label} className={sectionClass}>
                     <p className="text-xs text-gray-400 uppercase tracking-wide mb-2">{s.label}</p>
                     <p className="text-3xl font-bold" style={{ color: s.color }}>{s.value}</p>
                   </div>
                 ))}
               </div>
-              <div className={SECTION}>
+              <div className={sectionClass}>
+                <h2 className="font-semibold text-gray-800 mb-4">Perlu Tindakan</h2>
+                {(() => {
+                  const items: { label: string; tab: Tab }[] = [];
+                  const pendingTestimonials = testimonials.filter((t) => !t.published).length;
+                  const servicesNoImage = services.filter((s) => !s.image).length;
+                  const artistsNoImage = artists.filter((a) => !a.image).length;
+                  if (pendingTestimonials > 0) items.push({ label: `${pendingTestimonials} testimoni belum disahkan`, tab: 'testimonials' });
+                  if (servicesNoImage > 0) items.push({ label: `${servicesNoImage} servis tiada gambar`, tab: 'services' });
+                  if (artistsNoImage > 0) items.push({ label: `${artistsNoImage} artist tiada gambar`, tab: 'artists' });
+                  if (items.length === 0) {
+                    return <p className="text-sm" style={{ color: 'var(--ink-400)' }}>Semua kemas kini.</p>;
+                  }
+                  return (
+                    <div className="flex flex-col gap-2">
+                      {items.map((item) => (
+                        <button
+                          key={item.label}
+                          onClick={() => setTab(item.tab)}
+                          className="flex items-center justify-between gap-2 px-4 py-2.5 rounded-lg border text-sm text-left transition-all hover:bg-[var(--beige-100)]"
+                          style={{ borderColor: 'var(--line)', color: 'var(--ink-800)' }}
+                        >
+                          {item.label}
+                          <span style={{ color: 'var(--ink-400)' }}>→</span>
+                        </button>
+                      ))}
+                    </div>
+                  );
+                })()}
+              </div>
+              <div className={sectionClass}>
                 <h2 className="font-semibold text-gray-800 mb-4">Quick Links</h2>
                 <div className="grid grid-cols-2 md:grid-cols-3 gap-3">
                   {NAV.filter((n) => n.key !== 'dashboard').map((n) => (
@@ -367,7 +393,7 @@ export default function AdminPage() {
                   ))}
                 </div>
               </div>
-              <div className={SECTION}>
+              <div className={sectionClass}>
                 <h2 className="font-semibold text-gray-800 mb-1">Testimonials</h2>
                 <p className="text-sm text-gray-500">
                   {testimonials.filter((t) => t.published).length} published &nbsp;·&nbsp;{' '}
@@ -380,63 +406,66 @@ export default function AdminPage() {
           {/* ── CONTACT ───────────────────────────────────────────────────── */}
           {tab === 'contact' && (
             <div className="flex flex-col gap-6">
-              <div className={SECTION}>
+              <div className={sectionClass}>
                 <div className="flex items-center justify-between mb-5">
                   <h2 className="font-semibold text-gray-800">Nombor & URL</h2>
                   <StatusBadge status={statuses['contact'] ?? 'idle'} />
                 </div>
                 <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                   <div>
-                    <label className={LABEL}>Nombor WhatsApp</label>
-                    <input className={INPUT} value={contact.whatsapp} onChange={(e) => setContact({ ...contact, whatsapp: e.target.value })} placeholder="601XXXXXXXX" />
+                    <label className={labelClass}>Nombor WhatsApp</label>
+                    <input className={inputClass} value={contact.whatsapp} onChange={(e) => setContact({ ...contact, whatsapp: e.target.value })} placeholder="601XXXXXXXX" />
                     <p className="text-xs text-gray-400 mt-1">Format: 601XXXXXXXX (tanpa +)</p>
                   </div>
                   <div>
-                    <label className={LABEL}>Booking URL</label>
-                    <input className={INPUT} value={contact.bookingUrl} onChange={(e) => setContact({ ...contact, bookingUrl: e.target.value })} placeholder="https://..." />
+                    <label className={labelClass}>Booking URL</label>
+                    <input className={inputClass} value={contact.bookingUrl} onChange={(e) => setContact({ ...contact, bookingUrl: e.target.value })} placeholder="https://..." />
                   </div>
                   <div>
-                    <label className={LABEL}>Instagram URL</label>
-                    <input className={INPUT} value={contact.instagramUrl} onChange={(e) => setContact({ ...contact, instagramUrl: e.target.value })} placeholder="https://instagram.com/..." />
+                    <label className={labelClass}>Instagram URL</label>
+                    <input className={inputClass} value={contact.instagramUrl} onChange={(e) => setContact({ ...contact, instagramUrl: e.target.value })} placeholder="https://instagram.com/..." />
                   </div>
                   <div>
-                    <label className={LABEL}>Facebook URL</label>
-                    <input className={INPUT} value={contact.facebookUrl} onChange={(e) => setContact({ ...contact, facebookUrl: e.target.value })} placeholder="https://facebook.com/..." />
+                    <label className={labelClass}>Facebook URL</label>
+                    <input className={inputClass} value={contact.facebookUrl} onChange={(e) => setContact({ ...contact, facebookUrl: e.target.value })} placeholder="https://facebook.com/..." />
                   </div>
                 </div>
               </div>
-              <div className={SECTION}>
+              <div className={sectionClass}>
                 <h2 className="font-semibold text-gray-800 mb-5">Alamat & Waktu Operasi</h2>
                 <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                   <div>
-                    <label className={LABEL}>Alamat (English)</label>
-                    <input className={INPUT} value={contact.addressEn} onChange={(e) => setContact({ ...contact, addressEn: e.target.value })} />
+                    <label className={labelClass}>Alamat (English)</label>
+                    <input className={inputClass} value={contact.addressEn} onChange={(e) => setContact({ ...contact, addressEn: e.target.value })} />
                   </div>
                   <div>
-                    <label className={LABEL}>Alamat (BM)</label>
-                    <input className={INPUT} value={contact.addressBm} onChange={(e) => setContact({ ...contact, addressBm: e.target.value })} />
+                    <label className={labelClass}>Alamat (BM)</label>
+                    <input className={inputClass} value={contact.addressBm} onChange={(e) => setContact({ ...contact, addressBm: e.target.value })} />
                   </div>
                   <div>
-                    <label className={LABEL}>Waktu Operasi (English)</label>
-                    <input className={INPUT} value={contact.hoursEn} onChange={(e) => setContact({ ...contact, hoursEn: e.target.value })} placeholder="Mon – Sat: 10am – 7pm" />
+                    <label className={labelClass}>Waktu Operasi (English)</label>
+                    <input className={inputClass} value={contact.hoursEn} onChange={(e) => setContact({ ...contact, hoursEn: e.target.value })} placeholder="Mon – Sat: 10am – 7pm" />
                   </div>
                   <div>
-                    <label className={LABEL}>Waktu Operasi (BM)</label>
-                    <input className={INPUT} value={contact.hoursBm} onChange={(e) => setContact({ ...contact, hoursBm: e.target.value })} placeholder="Isnin – Sabtu: 10pg – 7mlm" />
+                    <label className={labelClass}>Waktu Operasi (BM)</label>
+                    <input className={inputClass} value={contact.hoursBm} onChange={(e) => setContact({ ...contact, hoursBm: e.target.value })} placeholder="Isnin – Sabtu: 10pg – 7mlm" />
                   </div>
                 </div>
               </div>
-              <div className={SECTION}>
+              <div className={sectionClass}>
                 <h2 className="font-semibold text-gray-800 mb-4">Google Maps Embed URL</h2>
-                <label className={LABEL}>Embed URL (dari Google Maps → Share → Embed)</label>
+                <label className={labelClass}>Embed URL (dari Google Maps → Share → Embed)</label>
                 <textarea
-                  className={INPUT + ' h-24 resize-none'}
+                  className={inputClass + ' h-24 resize-none'}
                   value={contact.googleMapsEmbed}
                   onChange={(e) => setContact({ ...contact, googleMapsEmbed: e.target.value })}
                   placeholder="https://www.google.com/maps/embed?pb=..."
                 />
               </div>
-              <button onClick={() => save('contact', contact)} className={BTN_SAVE}>Simpan Semua Maklumat Hubungan</button>
+              <button onClick={() => save('contact', contact)} className={btnPrimary + ' inline-flex items-center gap-2'}>
+                <FloppyDisk size={15} weight="bold" />
+                Simpan Semua Maklumat Hubungan
+              </button>
             </div>
           )}
 
@@ -447,7 +476,7 @@ export default function AdminPage() {
 
           {/* ── SERVICES ──────────────────────────────────────────────────── */}
           {tab === 'services' && (
-            <ServicesTab services={services} setServices={setServices} save={save} status={statuses['services'] ?? 'idle'} password={password} />
+            <ServicesTab services={services} setServices={setServices} save={save} status={statuses['services'] ?? 'idle'} password={password} artists={artists} />
           )}
 
           {/* ── GALLERY ───────────────────────────────────────────────────── */}
@@ -470,7 +499,8 @@ export default function AdminPage() {
               <div className="flex gap-1 bg-white rounded-xl border border-gray-100 p-1 w-fit shadow-sm">
                 {(['homepage', 'about', 'joinUs', 'footer'] as ContentSubTab[]).map((st) => (
                   <button key={st} onClick={() => setContentSubTab(st)}
-                    className={`px-4 py-2 rounded-lg text-sm font-medium transition-all capitalize ${contentSubTab === st ? 'bg-rose-700 text-white' : 'text-gray-500 hover:text-gray-700'}`}>
+                    className="px-4 py-2 rounded-lg text-sm font-medium transition-all capitalize"
+                    style={contentSubTab === st ? { background: 'var(--wine-700)', color: 'var(--beige-50)' } : { color: 'var(--ink-400)' }}>
                     {st === 'homepage' ? 'Homepage' : st === 'about' ? 'About Page' : st === 'joinUs' ? 'Join Us / Learn' : 'Footer'}
                   </button>
                 ))}
@@ -479,150 +509,167 @@ export default function AdminPage() {
               {/* ── Homepage copy ── */}
               {contentSubTab === 'homepage' && (
                 <div className="flex flex-col gap-6">
-                  <div className={SECTION}>
-                    <div className="flex items-center justify-between mb-5">
-                      <h2 className="font-semibold text-gray-800">Hero Section</h2>
-                      <StatusBadge status={statuses['copy'] ?? 'idle'} />
-                    </div>
+                  <AccordionItem title="Hero Section" description="Apa pelawat lihat dahulu di homepage" defaultOpen={true}>
                     <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-                      <div><label className={LABEL}>Tagline (English)</label><input className={INPUT} value={copy.hero.taglineEn} onChange={(e) => setCopy({ ...copy, hero: { ...copy.hero, taglineEn: e.target.value } })} /></div>
-                      <div><label className={LABEL}>Tagline (BM)</label><input className={INPUT} value={copy.hero.taglineBm} onChange={(e) => setCopy({ ...copy, hero: { ...copy.hero, taglineBm: e.target.value } })} /></div>
-                      <div><label className={LABEL}>Headline (English)</label><textarea className={INPUT + ' h-16 resize-none'} value={copy.hero.headlineEn} onChange={(e) => setCopy({ ...copy, hero: { ...copy.hero, headlineEn: e.target.value } })} /></div>
-                      <div><label className={LABEL}>Headline (BM)</label><textarea className={INPUT + ' h-16 resize-none'} value={copy.hero.headlineBm} onChange={(e) => setCopy({ ...copy, hero: { ...copy.hero, headlineBm: e.target.value } })} /></div>
-                      <div><label className={LABEL}>Subtitle (English)</label><textarea className={INPUT + ' h-20 resize-none'} value={copy.hero.subtitleEn} onChange={(e) => setCopy({ ...copy, hero: { ...copy.hero, subtitleEn: e.target.value } })} /></div>
-                      <div><label className={LABEL}>Subtitle (BM)</label><textarea className={INPUT + ' h-20 resize-none'} value={copy.hero.subtitleBm} onChange={(e) => setCopy({ ...copy, hero: { ...copy.hero, subtitleBm: e.target.value } })} /></div>
-                      <div><label className={LABEL}>CTA Button (English)</label><input className={INPUT} value={copy.hero.ctaEn} onChange={(e) => setCopy({ ...copy, hero: { ...copy.hero, ctaEn: e.target.value } })} /></div>
-                      <div><label className={LABEL}>CTA Button (BM)</label><input className={INPUT} value={copy.hero.ctaBm} onChange={(e) => setCopy({ ...copy, hero: { ...copy.hero, ctaBm: e.target.value } })} /></div>
-                      <div><label className={LABEL}>Secondary CTA (English)</label><input className={INPUT} value={copy.hero.ctaSubEn} onChange={(e) => setCopy({ ...copy, hero: { ...copy.hero, ctaSubEn: e.target.value } })} /></div>
-                      <div><label className={LABEL}>Secondary CTA (BM)</label><input className={INPUT} value={copy.hero.ctaSubBm} onChange={(e) => setCopy({ ...copy, hero: { ...copy.hero, ctaSubBm: e.target.value } })} /></div>
+                      <div><label className={labelClass}>Tagline (English)</label><input className={inputClass} value={copy.hero.taglineEn} onChange={(e) => setCopy({ ...copy, hero: { ...copy.hero, taglineEn: e.target.value } })} /></div>
+                      <div><label className={labelClass}>Tagline (BM)</label><input className={inputClass} value={copy.hero.taglineBm} onChange={(e) => setCopy({ ...copy, hero: { ...copy.hero, taglineBm: e.target.value } })} /></div>
+                      <div><label className={labelClass}>Headline (English)</label><textarea className={inputClass + ' h-16 resize-none'} value={copy.hero.headlineEn} onChange={(e) => setCopy({ ...copy, hero: { ...copy.hero, headlineEn: e.target.value } })} /></div>
+                      <div><label className={labelClass}>Headline (BM)</label><textarea className={inputClass + ' h-16 resize-none'} value={copy.hero.headlineBm} onChange={(e) => setCopy({ ...copy, hero: { ...copy.hero, headlineBm: e.target.value } })} /></div>
+                      <div><label className={labelClass}>Subtitle (English)</label><textarea className={inputClass + ' h-20 resize-none'} value={copy.hero.subtitleEn} onChange={(e) => setCopy({ ...copy, hero: { ...copy.hero, subtitleEn: e.target.value } })} /></div>
+                      <div><label className={labelClass}>Subtitle (BM)</label><textarea className={inputClass + ' h-20 resize-none'} value={copy.hero.subtitleBm} onChange={(e) => setCopy({ ...copy, hero: { ...copy.hero, subtitleBm: e.target.value } })} /></div>
+                      <div><label className={labelClass}>CTA Button (English)</label><input className={inputClass} value={copy.hero.ctaEn} onChange={(e) => setCopy({ ...copy, hero: { ...copy.hero, ctaEn: e.target.value } })} /></div>
+                      <div><label className={labelClass}>CTA Button (BM)</label><input className={inputClass} value={copy.hero.ctaBm} onChange={(e) => setCopy({ ...copy, hero: { ...copy.hero, ctaBm: e.target.value } })} /></div>
+                      <div><label className={labelClass}>Secondary CTA (English)</label><input className={inputClass} value={copy.hero.ctaSubEn} onChange={(e) => setCopy({ ...copy, hero: { ...copy.hero, ctaSubEn: e.target.value } })} /></div>
+                      <div><label className={labelClass}>Secondary CTA (BM)</label><input className={inputClass} value={copy.hero.ctaSubBm} onChange={(e) => setCopy({ ...copy, hero: { ...copy.hero, ctaSubBm: e.target.value } })} /></div>
                     </div>
-                  </div>
+                  </AccordionItem>
 
-                  <div className={SECTION}>
-                    <h2 className="font-semibold text-gray-800 mb-5">Section Headings</h2>
+                  <AccordionItem title="Section Headings" description="Tajuk setiap seksyen di homepage" defaultOpen={false}>
                     <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-                      <div><label className={LABEL}>Services Title (EN)</label><input className={INPUT} value={copy.sections.servicesTitleEn} onChange={(e) => setCopy({ ...copy, sections: { ...copy.sections, servicesTitleEn: e.target.value } })} /></div>
-                      <div><label className={LABEL}>Services Title (BM)</label><input className={INPUT} value={copy.sections.servicesTitleBm} onChange={(e) => setCopy({ ...copy, sections: { ...copy.sections, servicesTitleBm: e.target.value } })} /></div>
-                      <div><label className={LABEL}>Services Subtitle (EN)</label><input className={INPUT} value={copy.sections.servicesSubEn} onChange={(e) => setCopy({ ...copy, sections: { ...copy.sections, servicesSubEn: e.target.value } })} /></div>
-                      <div><label className={LABEL}>Services Subtitle (BM)</label><input className={INPUT} value={copy.sections.servicesSubBm} onChange={(e) => setCopy({ ...copy, sections: { ...copy.sections, servicesSubBm: e.target.value } })} /></div>
-                      <div><label className={LABEL}>Artists Title (EN)</label><input className={INPUT} value={copy.sections.artistsTitleEn} onChange={(e) => setCopy({ ...copy, sections: { ...copy.sections, artistsTitleEn: e.target.value } })} /></div>
-                      <div><label className={LABEL}>Artists Title (BM)</label><input className={INPUT} value={copy.sections.artistsTitleBm} onChange={(e) => setCopy({ ...copy, sections: { ...copy.sections, artistsTitleBm: e.target.value } })} /></div>
-                      <div><label className={LABEL}>Artists Subtitle (EN)</label><input className={INPUT} value={copy.sections.artistsSubEn} onChange={(e) => setCopy({ ...copy, sections: { ...copy.sections, artistsSubEn: e.target.value } })} /></div>
-                      <div><label className={LABEL}>Artists Subtitle (BM)</label><input className={INPUT} value={copy.sections.artistsSubBm} onChange={(e) => setCopy({ ...copy, sections: { ...copy.sections, artistsSubBm: e.target.value } })} /></div>
-                      <div><label className={LABEL}>Gallery Title (EN)</label><input className={INPUT} value={copy.sections.galleryTitleEn} onChange={(e) => setCopy({ ...copy, sections: { ...copy.sections, galleryTitleEn: e.target.value } })} /></div>
-                      <div><label className={LABEL}>Gallery Title (BM)</label><input className={INPUT} value={copy.sections.galleryTitleBm} onChange={(e) => setCopy({ ...copy, sections: { ...copy.sections, galleryTitleBm: e.target.value } })} /></div>
-                      <div><label className={LABEL}>Gallery Subtitle (EN)</label><input className={INPUT} value={copy.sections.gallerySubEn} onChange={(e) => setCopy({ ...copy, sections: { ...copy.sections, gallerySubEn: e.target.value } })} /></div>
-                      <div><label className={LABEL}>Gallery Subtitle (BM)</label><input className={INPUT} value={copy.sections.gallerySubBm} onChange={(e) => setCopy({ ...copy, sections: { ...copy.sections, gallerySubBm: e.target.value } })} /></div>
-                      <div><label className={LABEL}>Testimonials Title (EN)</label><input className={INPUT} value={copy.sections.testimonialsTitleEn} onChange={(e) => setCopy({ ...copy, sections: { ...copy.sections, testimonialsTitleEn: e.target.value } })} /></div>
-                      <div><label className={LABEL}>Testimonials Title (BM)</label><input className={INPUT} value={copy.sections.testimonialsTitleBm} onChange={(e) => setCopy({ ...copy, sections: { ...copy.sections, testimonialsTitleBm: e.target.value } })} /></div>
-                      <div><label className={LABEL}>FAQ Title (EN)</label><input className={INPUT} value={copy.sections.faqTitleEn} onChange={(e) => setCopy({ ...copy, sections: { ...copy.sections, faqTitleEn: e.target.value } })} /></div>
-                      <div><label className={LABEL}>FAQ Title (BM)</label><input className={INPUT} value={copy.sections.faqTitleBm} onChange={(e) => setCopy({ ...copy, sections: { ...copy.sections, faqTitleBm: e.target.value } })} /></div>
+                      <p className="md:col-span-2 text-xs font-medium uppercase tracking-wide mt-2 mb-1" style={{ color: 'var(--ink-400)' }}>Services</p>
+                      <div><label className={labelClass}>Services Title (EN)</label><input className={inputClass} value={copy.sections.servicesTitleEn} onChange={(e) => setCopy({ ...copy, sections: { ...copy.sections, servicesTitleEn: e.target.value } })} /></div>
+                      <div><label className={labelClass}>Services Title (BM)</label><input className={inputClass} value={copy.sections.servicesTitleBm} onChange={(e) => setCopy({ ...copy, sections: { ...copy.sections, servicesTitleBm: e.target.value } })} /></div>
+                      <div><label className={labelClass}>Services Subtitle (EN)</label><input className={inputClass} value={copy.sections.servicesSubEn} onChange={(e) => setCopy({ ...copy, sections: { ...copy.sections, servicesSubEn: e.target.value } })} /></div>
+                      <div><label className={labelClass}>Services Subtitle (BM)</label><input className={inputClass} value={copy.sections.servicesSubBm} onChange={(e) => setCopy({ ...copy, sections: { ...copy.sections, servicesSubBm: e.target.value } })} /></div>
+                      <p className="md:col-span-2 text-xs font-medium uppercase tracking-wide mt-2 mb-1" style={{ color: 'var(--ink-400)' }}>Artists</p>
+                      <div><label className={labelClass}>Artists Title (EN)</label><input className={inputClass} value={copy.sections.artistsTitleEn} onChange={(e) => setCopy({ ...copy, sections: { ...copy.sections, artistsTitleEn: e.target.value } })} /></div>
+                      <div><label className={labelClass}>Artists Title (BM)</label><input className={inputClass} value={copy.sections.artistsTitleBm} onChange={(e) => setCopy({ ...copy, sections: { ...copy.sections, artistsTitleBm: e.target.value } })} /></div>
+                      <div><label className={labelClass}>Artists Subtitle (EN)</label><input className={inputClass} value={copy.sections.artistsSubEn} onChange={(e) => setCopy({ ...copy, sections: { ...copy.sections, artistsSubEn: e.target.value } })} /></div>
+                      <div><label className={labelClass}>Artists Subtitle (BM)</label><input className={inputClass} value={copy.sections.artistsSubBm} onChange={(e) => setCopy({ ...copy, sections: { ...copy.sections, artistsSubBm: e.target.value } })} /></div>
+                      <p className="md:col-span-2 text-xs font-medium uppercase tracking-wide mt-2 mb-1" style={{ color: 'var(--ink-400)' }}>Gallery</p>
+                      <div><label className={labelClass}>Gallery Title (EN)</label><input className={inputClass} value={copy.sections.galleryTitleEn} onChange={(e) => setCopy({ ...copy, sections: { ...copy.sections, galleryTitleEn: e.target.value } })} /></div>
+                      <div><label className={labelClass}>Gallery Title (BM)</label><input className={inputClass} value={copy.sections.galleryTitleBm} onChange={(e) => setCopy({ ...copy, sections: { ...copy.sections, galleryTitleBm: e.target.value } })} /></div>
+                      <div><label className={labelClass}>Gallery Subtitle (EN)</label><input className={inputClass} value={copy.sections.gallerySubEn} onChange={(e) => setCopy({ ...copy, sections: { ...copy.sections, gallerySubEn: e.target.value } })} /></div>
+                      <div><label className={labelClass}>Gallery Subtitle (BM)</label><input className={inputClass} value={copy.sections.gallerySubBm} onChange={(e) => setCopy({ ...copy, sections: { ...copy.sections, gallerySubBm: e.target.value } })} /></div>
+                      <p className="md:col-span-2 text-xs font-medium uppercase tracking-wide mt-2 mb-1" style={{ color: 'var(--ink-400)' }}>Testimonials</p>
+                      <div><label className={labelClass}>Testimonials Title (EN)</label><input className={inputClass} value={copy.sections.testimonialsTitleEn} onChange={(e) => setCopy({ ...copy, sections: { ...copy.sections, testimonialsTitleEn: e.target.value } })} /></div>
+                      <div><label className={labelClass}>Testimonials Title (BM)</label><input className={inputClass} value={copy.sections.testimonialsTitleBm} onChange={(e) => setCopy({ ...copy, sections: { ...copy.sections, testimonialsTitleBm: e.target.value } })} /></div>
+                      <p className="md:col-span-2 text-xs font-medium uppercase tracking-wide mt-2 mb-1" style={{ color: 'var(--ink-400)' }}>FAQ</p>
+                      <div><label className={labelClass}>FAQ Title (EN)</label><input className={inputClass} value={copy.sections.faqTitleEn} onChange={(e) => setCopy({ ...copy, sections: { ...copy.sections, faqTitleEn: e.target.value } })} /></div>
+                      <div><label className={labelClass}>FAQ Title (BM)</label><input className={inputClass} value={copy.sections.faqTitleBm} onChange={(e) => setCopy({ ...copy, sections: { ...copy.sections, faqTitleBm: e.target.value } })} /></div>
                     </div>
-                  </div>
-                  <div className={SECTION}>
-                    <h2 className="font-semibold text-gray-800 mb-5">Our Promise Section</h2>
+                  </AccordionItem>
+                  <AccordionItem title="Our Promise Section" description="3 sebab pelanggan pilih Nuay" defaultOpen={false}>
                     <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-                      <div><label className={LABEL}>Heading Line 1 (EN)</label><input className={INPUT} value={copy.usp.headingLine1En} onChange={(e) => setCopy({ ...copy, usp: { ...copy.usp, headingLine1En: e.target.value } })} /></div>
-                      <div><label className={LABEL}>Heading Line 1 (BM)</label><input className={INPUT} value={copy.usp.headingLine1Bm} onChange={(e) => setCopy({ ...copy, usp: { ...copy.usp, headingLine1Bm: e.target.value } })} /></div>
-                      <div><label className={LABEL}>Heading Line 2 — italic (EN)</label><input className={INPUT} value={copy.usp.headingLine2En} onChange={(e) => setCopy({ ...copy, usp: { ...copy.usp, headingLine2En: e.target.value } })} /></div>
-                      <div><label className={LABEL}>Heading Line 2 — italic (BM)</label><input className={INPUT} value={copy.usp.headingLine2Bm} onChange={(e) => setCopy({ ...copy, usp: { ...copy.usp, headingLine2Bm: e.target.value } })} /></div>
-                      <div><label className={LABEL}>Subtitle (EN)</label><textarea className={INPUT + ' h-16 resize-none'} value={copy.usp.subtitleEn} onChange={(e) => setCopy({ ...copy, usp: { ...copy.usp, subtitleEn: e.target.value } })} /></div>
-                      <div><label className={LABEL}>Subtitle (BM)</label><textarea className={INPUT + ' h-16 resize-none'} value={copy.usp.subtitleBm} onChange={(e) => setCopy({ ...copy, usp: { ...copy.usp, subtitleBm: e.target.value } })} /></div>
-                      <div><label className={LABEL}>Pillar 1 Title (EN)</label><input className={INPUT} value={copy.usp.pillar1TitleEn} onChange={(e) => setCopy({ ...copy, usp: { ...copy.usp, pillar1TitleEn: e.target.value } })} /></div>
-                      <div><label className={LABEL}>Pillar 1 Title (BM)</label><input className={INPUT} value={copy.usp.pillar1TitleBm} onChange={(e) => setCopy({ ...copy, usp: { ...copy.usp, pillar1TitleBm: e.target.value } })} /></div>
-                      <div><label className={LABEL}>Pillar 1 Description (EN)</label><textarea className={INPUT + ' h-16 resize-none'} value={copy.usp.pillar1DescEn} onChange={(e) => setCopy({ ...copy, usp: { ...copy.usp, pillar1DescEn: e.target.value } })} /></div>
-                      <div><label className={LABEL}>Pillar 1 Description (BM)</label><textarea className={INPUT + ' h-16 resize-none'} value={copy.usp.pillar1DescBm} onChange={(e) => setCopy({ ...copy, usp: { ...copy.usp, pillar1DescBm: e.target.value } })} /></div>
-                      <div><label className={LABEL}>Pillar 2 Title (EN)</label><input className={INPUT} value={copy.usp.pillar2TitleEn} onChange={(e) => setCopy({ ...copy, usp: { ...copy.usp, pillar2TitleEn: e.target.value } })} /></div>
-                      <div><label className={LABEL}>Pillar 2 Title (BM)</label><input className={INPUT} value={copy.usp.pillar2TitleBm} onChange={(e) => setCopy({ ...copy, usp: { ...copy.usp, pillar2TitleBm: e.target.value } })} /></div>
-                      <div><label className={LABEL}>Pillar 2 Description (EN)</label><textarea className={INPUT + ' h-16 resize-none'} value={copy.usp.pillar2DescEn} onChange={(e) => setCopy({ ...copy, usp: { ...copy.usp, pillar2DescEn: e.target.value } })} /></div>
-                      <div><label className={LABEL}>Pillar 2 Description (BM)</label><textarea className={INPUT + ' h-16 resize-none'} value={copy.usp.pillar2DescBm} onChange={(e) => setCopy({ ...copy, usp: { ...copy.usp, pillar2DescBm: e.target.value } })} /></div>
-                      <div><label className={LABEL}>Pillar 3 Title (EN)</label><input className={INPUT} value={copy.usp.pillar3TitleEn} onChange={(e) => setCopy({ ...copy, usp: { ...copy.usp, pillar3TitleEn: e.target.value } })} /></div>
-                      <div><label className={LABEL}>Pillar 3 Title (BM)</label><input className={INPUT} value={copy.usp.pillar3TitleBm} onChange={(e) => setCopy({ ...copy, usp: { ...copy.usp, pillar3TitleBm: e.target.value } })} /></div>
-                      <div><label className={LABEL}>Pillar 3 Description (EN)</label><textarea className={INPUT + ' h-16 resize-none'} value={copy.usp.pillar3DescEn} onChange={(e) => setCopy({ ...copy, usp: { ...copy.usp, pillar3DescEn: e.target.value } })} /></div>
-                      <div><label className={LABEL}>Pillar 3 Description (BM)</label><textarea className={INPUT + ' h-16 resize-none'} value={copy.usp.pillar3DescBm} onChange={(e) => setCopy({ ...copy, usp: { ...copy.usp, pillar3DescBm: e.target.value } })} /></div>
+                      <div><label className={labelClass}>Heading Line 1 (EN)</label><input className={inputClass} value={copy.usp.headingLine1En} onChange={(e) => setCopy({ ...copy, usp: { ...copy.usp, headingLine1En: e.target.value } })} /></div>
+                      <div><label className={labelClass}>Heading Line 1 (BM)</label><input className={inputClass} value={copy.usp.headingLine1Bm} onChange={(e) => setCopy({ ...copy, usp: { ...copy.usp, headingLine1Bm: e.target.value } })} /></div>
+                      <div><label className={labelClass}>Heading Line 2 — italic (EN)</label><input className={inputClass} value={copy.usp.headingLine2En} onChange={(e) => setCopy({ ...copy, usp: { ...copy.usp, headingLine2En: e.target.value } })} /></div>
+                      <div><label className={labelClass}>Heading Line 2 — italic (BM)</label><input className={inputClass} value={copy.usp.headingLine2Bm} onChange={(e) => setCopy({ ...copy, usp: { ...copy.usp, headingLine2Bm: e.target.value } })} /></div>
+                      <div><label className={labelClass}>Subtitle (EN)</label><textarea className={inputClass + ' h-16 resize-none'} value={copy.usp.subtitleEn} onChange={(e) => setCopy({ ...copy, usp: { ...copy.usp, subtitleEn: e.target.value } })} /></div>
+                      <div><label className={labelClass}>Subtitle (BM)</label><textarea className={inputClass + ' h-16 resize-none'} value={copy.usp.subtitleBm} onChange={(e) => setCopy({ ...copy, usp: { ...copy.usp, subtitleBm: e.target.value } })} /></div>
+                      <p className="md:col-span-2 text-xs font-medium uppercase tracking-wide mt-2 mb-1" style={{ color: 'var(--ink-400)' }}>Pillar 1</p>
+                      <div><label className={labelClass}>Pillar 1 Title (EN)</label><input className={inputClass} value={copy.usp.pillar1TitleEn} onChange={(e) => setCopy({ ...copy, usp: { ...copy.usp, pillar1TitleEn: e.target.value } })} /></div>
+                      <div><label className={labelClass}>Pillar 1 Title (BM)</label><input className={inputClass} value={copy.usp.pillar1TitleBm} onChange={(e) => setCopy({ ...copy, usp: { ...copy.usp, pillar1TitleBm: e.target.value } })} /></div>
+                      <div><label className={labelClass}>Pillar 1 Description (EN)</label><textarea className={inputClass + ' h-16 resize-none'} value={copy.usp.pillar1DescEn} onChange={(e) => setCopy({ ...copy, usp: { ...copy.usp, pillar1DescEn: e.target.value } })} /></div>
+                      <div><label className={labelClass}>Pillar 1 Description (BM)</label><textarea className={inputClass + ' h-16 resize-none'} value={copy.usp.pillar1DescBm} onChange={(e) => setCopy({ ...copy, usp: { ...copy.usp, pillar1DescBm: e.target.value } })} /></div>
+                      <p className="md:col-span-2 text-xs font-medium uppercase tracking-wide mt-2 mb-1" style={{ color: 'var(--ink-400)' }}>Pillar 2</p>
+                      <div><label className={labelClass}>Pillar 2 Title (EN)</label><input className={inputClass} value={copy.usp.pillar2TitleEn} onChange={(e) => setCopy({ ...copy, usp: { ...copy.usp, pillar2TitleEn: e.target.value } })} /></div>
+                      <div><label className={labelClass}>Pillar 2 Title (BM)</label><input className={inputClass} value={copy.usp.pillar2TitleBm} onChange={(e) => setCopy({ ...copy, usp: { ...copy.usp, pillar2TitleBm: e.target.value } })} /></div>
+                      <div><label className={labelClass}>Pillar 2 Description (EN)</label><textarea className={inputClass + ' h-16 resize-none'} value={copy.usp.pillar2DescEn} onChange={(e) => setCopy({ ...copy, usp: { ...copy.usp, pillar2DescEn: e.target.value } })} /></div>
+                      <div><label className={labelClass}>Pillar 2 Description (BM)</label><textarea className={inputClass + ' h-16 resize-none'} value={copy.usp.pillar2DescBm} onChange={(e) => setCopy({ ...copy, usp: { ...copy.usp, pillar2DescBm: e.target.value } })} /></div>
+                      <p className="md:col-span-2 text-xs font-medium uppercase tracking-wide mt-2 mb-1" style={{ color: 'var(--ink-400)' }}>Pillar 3</p>
+                      <div><label className={labelClass}>Pillar 3 Title (EN)</label><input className={inputClass} value={copy.usp.pillar3TitleEn} onChange={(e) => setCopy({ ...copy, usp: { ...copy.usp, pillar3TitleEn: e.target.value } })} /></div>
+                      <div><label className={labelClass}>Pillar 3 Title (BM)</label><input className={inputClass} value={copy.usp.pillar3TitleBm} onChange={(e) => setCopy({ ...copy, usp: { ...copy.usp, pillar3TitleBm: e.target.value } })} /></div>
+                      <div><label className={labelClass}>Pillar 3 Description (EN)</label><textarea className={inputClass + ' h-16 resize-none'} value={copy.usp.pillar3DescEn} onChange={(e) => setCopy({ ...copy, usp: { ...copy.usp, pillar3DescEn: e.target.value } })} /></div>
+                      <div><label className={labelClass}>Pillar 3 Description (BM)</label><textarea className={inputClass + ' h-16 resize-none'} value={copy.usp.pillar3DescBm} onChange={(e) => setCopy({ ...copy, usp: { ...copy.usp, pillar3DescBm: e.target.value } })} /></div>
                     </div>
+                  </AccordionItem>
+                  <div className="flex items-center gap-3">
+                    <button onClick={() => save('copy', copy)} className={btnPrimary + ' inline-flex items-center gap-2'}>
+                      <FloppyDisk size={15} weight="bold" />
+                      Simpan Homepage Copy
+                    </button>
+                    <StatusBadge status={statuses['copy'] ?? 'idle'} />
                   </div>
-                  <button onClick={() => save('copy', copy)} className={BTN_SAVE}>Simpan Homepage Copy</button>
                 </div>
               )}
 
               {/* ── About page copy ── */}
               {contentSubTab === 'about' && (
                 <div className="flex flex-col gap-6">
-                  <div className={SECTION}>
+                  <div className={sectionClass}>
                     <div className="flex items-center justify-between mb-5">
                       <h2 className="font-semibold text-gray-800">Page Header</h2>
                       <StatusBadge status={statuses['copy'] ?? 'idle'} />
                     </div>
                     <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-                      <div><label className={LABEL}>Header Subtitle (EN)</label><textarea className={INPUT + ' h-20 resize-none'} value={copy.about.headerSubEn} onChange={(e) => setCopy({ ...copy, about: { ...copy.about, headerSubEn: e.target.value } })} /></div>
-                      <div><label className={LABEL}>Header Subtitle (BM)</label><textarea className={INPUT + ' h-20 resize-none'} value={copy.about.headerSubBm} onChange={(e) => setCopy({ ...copy, about: { ...copy.about, headerSubBm: e.target.value } })} /></div>
+                      <div><label className={labelClass}>Header Subtitle (EN)</label><textarea className={inputClass + ' h-20 resize-none'} value={copy.about.headerSubEn} onChange={(e) => setCopy({ ...copy, about: { ...copy.about, headerSubEn: e.target.value } })} /></div>
+                      <div><label className={labelClass}>Header Subtitle (BM)</label><textarea className={inputClass + ' h-20 resize-none'} value={copy.about.headerSubBm} onChange={(e) => setCopy({ ...copy, about: { ...copy.about, headerSubBm: e.target.value } })} /></div>
                     </div>
                   </div>
-                  <div className={SECTION}>
+                  <div className={sectionClass}>
                     <h2 className="font-semibold text-gray-800 mb-5">Our Belief Section</h2>
                     <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-                      <div><label className={LABEL}>Heading (EN)</label><input className={INPUT} value={copy.about.beliefHeadingEn} onChange={(e) => setCopy({ ...copy, about: { ...copy.about, beliefHeadingEn: e.target.value } })} /></div>
-                      <div><label className={LABEL}>Heading (BM)</label><input className={INPUT} value={copy.about.beliefHeadingBm} onChange={(e) => setCopy({ ...copy, about: { ...copy.about, beliefHeadingBm: e.target.value } })} /></div>
-                      <div><label className={LABEL}>Paragraph 1 (EN)</label><textarea className={INPUT + ' h-28 resize-none'} value={copy.about.beliefPara1En} onChange={(e) => setCopy({ ...copy, about: { ...copy.about, beliefPara1En: e.target.value } })} /></div>
-                      <div><label className={LABEL}>Paragraph 1 (BM)</label><textarea className={INPUT + ' h-28 resize-none'} value={copy.about.beliefPara1Bm} onChange={(e) => setCopy({ ...copy, about: { ...copy.about, beliefPara1Bm: e.target.value } })} /></div>
-                      <div><label className={LABEL}>Paragraph 2 (EN)</label><textarea className={INPUT + ' h-24 resize-none'} value={copy.about.beliefPara2En} onChange={(e) => setCopy({ ...copy, about: { ...copy.about, beliefPara2En: e.target.value } })} /></div>
-                      <div><label className={LABEL}>Paragraph 2 (BM)</label><textarea className={INPUT + ' h-24 resize-none'} value={copy.about.beliefPara2Bm} onChange={(e) => setCopy({ ...copy, about: { ...copy.about, beliefPara2Bm: e.target.value } })} /></div>
-                      <div><label className={LABEL}>Phone Number</label><input className={INPUT} value={copy.about.phoneNumber} onChange={(e) => setCopy({ ...copy, about: { ...copy.about, phoneNumber: e.target.value } })} placeholder="+60 11-XXXX XXXX" /></div>
+                      <div><label className={labelClass}>Heading (EN)</label><input className={inputClass} value={copy.about.beliefHeadingEn} onChange={(e) => setCopy({ ...copy, about: { ...copy.about, beliefHeadingEn: e.target.value } })} /></div>
+                      <div><label className={labelClass}>Heading (BM)</label><input className={inputClass} value={copy.about.beliefHeadingBm} onChange={(e) => setCopy({ ...copy, about: { ...copy.about, beliefHeadingBm: e.target.value } })} /></div>
+                      <div><label className={labelClass}>Paragraph 1 (EN)</label><textarea className={inputClass + ' h-28 resize-none'} value={copy.about.beliefPara1En} onChange={(e) => setCopy({ ...copy, about: { ...copy.about, beliefPara1En: e.target.value } })} /></div>
+                      <div><label className={labelClass}>Paragraph 1 (BM)</label><textarea className={inputClass + ' h-28 resize-none'} value={copy.about.beliefPara1Bm} onChange={(e) => setCopy({ ...copy, about: { ...copy.about, beliefPara1Bm: e.target.value } })} /></div>
+                      <div><label className={labelClass}>Paragraph 2 (EN)</label><textarea className={inputClass + ' h-24 resize-none'} value={copy.about.beliefPara2En} onChange={(e) => setCopy({ ...copy, about: { ...copy.about, beliefPara2En: e.target.value } })} /></div>
+                      <div><label className={labelClass}>Paragraph 2 (BM)</label><textarea className={inputClass + ' h-24 resize-none'} value={copy.about.beliefPara2Bm} onChange={(e) => setCopy({ ...copy, about: { ...copy.about, beliefPara2Bm: e.target.value } })} /></div>
+                      <div><label className={labelClass}>Phone Number</label><input className={inputClass} value={copy.about.phoneNumber} onChange={(e) => setCopy({ ...copy, about: { ...copy.about, phoneNumber: e.target.value } })} placeholder="+60 11-XXXX XXXX" /></div>
                     </div>
                   </div>
-                  <button onClick={() => save('copy', copy)} className={BTN_SAVE}>Simpan About Page Copy</button>
+                  <button onClick={() => save('copy', copy)} className={btnPrimary + ' inline-flex items-center gap-2'}>
+                    <FloppyDisk size={15} weight="bold" />
+                    Simpan About Page Copy
+                  </button>
                 </div>
               )}
 
               {/* ── Footer copy ── */}
               {contentSubTab === 'footer' && (
                 <div className="flex flex-col gap-6">
-                  <div className={SECTION}>
+                  <div className={sectionClass}>
                     <div className="flex items-center justify-between mb-5">
                       <h2 className="font-semibold text-gray-800">Footer Text</h2>
                       <StatusBadge status={statuses['copy'] ?? 'idle'} />
                     </div>
                     <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-                      <div><label className={LABEL}>Tagline (EN)</label><input className={INPUT} value={copy.footer.taglineEn} onChange={(e) => setCopy({ ...copy, footer: { ...copy.footer, taglineEn: e.target.value } })} /></div>
-                      <div><label className={LABEL}>Tagline (BM)</label><input className={INPUT} value={copy.footer.taglineBm} onChange={(e) => setCopy({ ...copy, footer: { ...copy.footer, taglineBm: e.target.value } })} /></div>
-                      <div><label className={LABEL}>CTA Heading (EN)</label><input className={INPUT} value={copy.footer.ctaHeadingEn} onChange={(e) => setCopy({ ...copy, footer: { ...copy.footer, ctaHeadingEn: e.target.value } })} /></div>
-                      <div><label className={LABEL}>CTA Heading (BM)</label><input className={INPUT} value={copy.footer.ctaHeadingBm} onChange={(e) => setCopy({ ...copy, footer: { ...copy.footer, ctaHeadingBm: e.target.value } })} /></div>
-                      <div><label className={LABEL}>CTA Subtitle (EN)</label><input className={INPUT} value={copy.footer.ctaSubEn} onChange={(e) => setCopy({ ...copy, footer: { ...copy.footer, ctaSubEn: e.target.value } })} /></div>
-                      <div><label className={LABEL}>CTA Subtitle (BM)</label><input className={INPUT} value={copy.footer.ctaSubBm} onChange={(e) => setCopy({ ...copy, footer: { ...copy.footer, ctaSubBm: e.target.value } })} /></div>
+                      <div><label className={labelClass}>Tagline (EN)</label><input className={inputClass} value={copy.footer.taglineEn} onChange={(e) => setCopy({ ...copy, footer: { ...copy.footer, taglineEn: e.target.value } })} /></div>
+                      <div><label className={labelClass}>Tagline (BM)</label><input className={inputClass} value={copy.footer.taglineBm} onChange={(e) => setCopy({ ...copy, footer: { ...copy.footer, taglineBm: e.target.value } })} /></div>
+                      <div><label className={labelClass}>CTA Heading (EN)</label><input className={inputClass} value={copy.footer.ctaHeadingEn} onChange={(e) => setCopy({ ...copy, footer: { ...copy.footer, ctaHeadingEn: e.target.value } })} /></div>
+                      <div><label className={labelClass}>CTA Heading (BM)</label><input className={inputClass} value={copy.footer.ctaHeadingBm} onChange={(e) => setCopy({ ...copy, footer: { ...copy.footer, ctaHeadingBm: e.target.value } })} /></div>
+                      <div><label className={labelClass}>CTA Subtitle (EN)</label><input className={inputClass} value={copy.footer.ctaSubEn} onChange={(e) => setCopy({ ...copy, footer: { ...copy.footer, ctaSubEn: e.target.value } })} /></div>
+                      <div><label className={labelClass}>CTA Subtitle (BM)</label><input className={inputClass} value={copy.footer.ctaSubBm} onChange={(e) => setCopy({ ...copy, footer: { ...copy.footer, ctaSubBm: e.target.value } })} /></div>
                     </div>
                   </div>
-                  <button onClick={() => save('copy', copy)} className={BTN_SAVE}>Simpan Footer Copy</button>
+                  <button onClick={() => save('copy', copy)} className={btnPrimary + ' inline-flex items-center gap-2'}>
+                    <FloppyDisk size={15} weight="bold" />
+                    Simpan Footer Copy
+                  </button>
                 </div>
               )}
 
               {/* ── Join Us / Learn With Us copy ── */}
               {contentSubTab === 'joinUs' && (
                 <div className="flex flex-col gap-6">
-                  <div className={SECTION}>
+                  <div className={sectionClass}>
                     <div className="flex items-center justify-between mb-5">
                       <h2 className="font-semibold text-gray-800">Vacancy CTA (Join Our Team)</h2>
                       <StatusBadge status={statuses['copy'] ?? 'idle'} />
                     </div>
                     <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-                      <div><label className={LABEL}>Heading (EN)</label><input className={INPUT} value={copy.joinUs.vacancyHeadingEn} onChange={(e) => setCopy({ ...copy, joinUs: { ...copy.joinUs, vacancyHeadingEn: e.target.value } })} /></div>
-                      <div><label className={LABEL}>Heading (BM)</label><input className={INPUT} value={copy.joinUs.vacancyHeadingBm} onChange={(e) => setCopy({ ...copy, joinUs: { ...copy.joinUs, vacancyHeadingBm: e.target.value } })} /></div>
-                      <div><label className={LABEL}>Text (EN)</label><textarea className={INPUT + ' h-24 resize-none'} value={copy.joinUs.vacancyTextEn} onChange={(e) => setCopy({ ...copy, joinUs: { ...copy.joinUs, vacancyTextEn: e.target.value } })} /></div>
-                      <div><label className={LABEL}>Text (BM)</label><textarea className={INPUT + ' h-24 resize-none'} value={copy.joinUs.vacancyTextBm} onChange={(e) => setCopy({ ...copy, joinUs: { ...copy.joinUs, vacancyTextBm: e.target.value } })} /></div>
-                      <div><label className={LABEL}>WhatsApp Number</label><input className={INPUT} value={copy.joinUs.vacancyWhatsapp} onChange={(e) => setCopy({ ...copy, joinUs: { ...copy.joinUs, vacancyWhatsapp: e.target.value } })} placeholder="Format: 601XXXXXXXX (tanpa +)" /></div>
+                      <div><label className={labelClass}>Heading (EN)</label><input className={inputClass} value={copy.joinUs.vacancyHeadingEn} onChange={(e) => setCopy({ ...copy, joinUs: { ...copy.joinUs, vacancyHeadingEn: e.target.value } })} /></div>
+                      <div><label className={labelClass}>Heading (BM)</label><input className={inputClass} value={copy.joinUs.vacancyHeadingBm} onChange={(e) => setCopy({ ...copy, joinUs: { ...copy.joinUs, vacancyHeadingBm: e.target.value } })} /></div>
+                      <div><label className={labelClass}>Text (EN)</label><textarea className={inputClass + ' h-24 resize-none'} value={copy.joinUs.vacancyTextEn} onChange={(e) => setCopy({ ...copy, joinUs: { ...copy.joinUs, vacancyTextEn: e.target.value } })} /></div>
+                      <div><label className={labelClass}>Text (BM)</label><textarea className={inputClass + ' h-24 resize-none'} value={copy.joinUs.vacancyTextBm} onChange={(e) => setCopy({ ...copy, joinUs: { ...copy.joinUs, vacancyTextBm: e.target.value } })} /></div>
+                      <div><label className={labelClass}>WhatsApp Number</label><input className={inputClass} value={copy.joinUs.vacancyWhatsapp} onChange={(e) => setCopy({ ...copy, joinUs: { ...copy.joinUs, vacancyWhatsapp: e.target.value } })} placeholder="Format: 601XXXXXXXX (tanpa +)" /></div>
                     </div>
                   </div>
-                  <div className={SECTION}>
+                  <div className={sectionClass}>
                     <h2 className="font-semibold text-gray-800 mb-5">Learning CTA (Learn With Us)</h2>
                     <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-                      <div><label className={LABEL}>Heading (EN)</label><input className={INPUT} value={copy.joinUs.learningHeadingEn} onChange={(e) => setCopy({ ...copy, joinUs: { ...copy.joinUs, learningHeadingEn: e.target.value } })} /></div>
-                      <div><label className={LABEL}>Heading (BM)</label><input className={INPUT} value={copy.joinUs.learningHeadingBm} onChange={(e) => setCopy({ ...copy, joinUs: { ...copy.joinUs, learningHeadingBm: e.target.value } })} /></div>
-                      <div><label className={LABEL}>Text (EN)</label><textarea className={INPUT + ' h-24 resize-none'} value={copy.joinUs.learningTextEn} onChange={(e) => setCopy({ ...copy, joinUs: { ...copy.joinUs, learningTextEn: e.target.value } })} /></div>
-                      <div><label className={LABEL}>Text (BM)</label><textarea className={INPUT + ' h-24 resize-none'} value={copy.joinUs.learningTextBm} onChange={(e) => setCopy({ ...copy, joinUs: { ...copy.joinUs, learningTextBm: e.target.value } })} /></div>
-                      <div><label className={LABEL}>WhatsApp Number</label><input className={INPUT} value={copy.joinUs.learningWhatsapp} onChange={(e) => setCopy({ ...copy, joinUs: { ...copy.joinUs, learningWhatsapp: e.target.value } })} placeholder="Format: 601XXXXXXXX (tanpa +)" /></div>
+                      <div><label className={labelClass}>Heading (EN)</label><input className={inputClass} value={copy.joinUs.learningHeadingEn} onChange={(e) => setCopy({ ...copy, joinUs: { ...copy.joinUs, learningHeadingEn: e.target.value } })} /></div>
+                      <div><label className={labelClass}>Heading (BM)</label><input className={inputClass} value={copy.joinUs.learningHeadingBm} onChange={(e) => setCopy({ ...copy, joinUs: { ...copy.joinUs, learningHeadingBm: e.target.value } })} /></div>
+                      <div><label className={labelClass}>Text (EN)</label><textarea className={inputClass + ' h-24 resize-none'} value={copy.joinUs.learningTextEn} onChange={(e) => setCopy({ ...copy, joinUs: { ...copy.joinUs, learningTextEn: e.target.value } })} /></div>
+                      <div><label className={labelClass}>Text (BM)</label><textarea className={inputClass + ' h-24 resize-none'} value={copy.joinUs.learningTextBm} onChange={(e) => setCopy({ ...copy, joinUs: { ...copy.joinUs, learningTextBm: e.target.value } })} /></div>
+                      <div><label className={labelClass}>WhatsApp Number</label><input className={inputClass} value={copy.joinUs.learningWhatsapp} onChange={(e) => setCopy({ ...copy, joinUs: { ...copy.joinUs, learningWhatsapp: e.target.value } })} placeholder="Format: 601XXXXXXXX (tanpa +)" /></div>
                     </div>
                   </div>
-                  <button onClick={() => save('copy', copy)} className={BTN_SAVE}>Simpan Join Us Copy</button>
+                  <button onClick={() => save('copy', copy)} className={btnPrimary + ' inline-flex items-center gap-2'}>
+                    <FloppyDisk size={15} weight="bold" />
+                    Simpan Join Us Copy
+                  </button>
                 </div>
               )}
             </div>
@@ -652,7 +699,7 @@ export default function AdminPage() {
                     <div className="flex items-center gap-3">
                       <StatusBadge status={statuses['blog_posts'] ?? 'idle'} />
                       <button
-                        className={BTN_SAVE}
+                        className={btnPrimary + ' inline-flex items-center gap-2'}
                         onClick={() => {
                           const newPost: BlogPost = { id: uid(), slug: '', titleEn: '', titleBm: '', bodyEn: '', bodyBm: '', category: '', featuredImage: '', published: false, createdAt: new Date().toISOString() };
                           const updated = [...blogPosts, newPost];
@@ -660,21 +707,25 @@ export default function AdminPage() {
                           setBlogEditIdx(updated.length - 1);
                         }}
                       >
-                        + Post Baru
+                        <Plus size={15} weight="bold" />
+                        Post Baru
                       </button>
                     </div>
                   </div>
                   {blogPosts.length === 0 ? (
-                    <div className={SECTION + ' text-center py-12'}>
+                    <div className={sectionClass + ' text-center py-12'}>
                       <p className="text-gray-400 text-sm mb-4">Tiada post lagi.</p>
-                      <button className={BTN_SAVE} onClick={() => {
+                      <button className={btnPrimary + ' inline-flex items-center gap-2'} onClick={() => {
                         const newPost: BlogPost = { id: uid(), slug: '', titleEn: '', titleBm: '', bodyEn: '', bodyBm: '', category: '', featuredImage: '', published: false, createdAt: new Date().toISOString() };
                         setBlogPosts([newPost]);
                         setBlogEditIdx(0);
-                      }}>Cipta Post Pertama</button>
+                      }}>
+                        <Plus size={15} weight="bold" />
+                        Cipta Post Pertama
+                      </button>
                     </div>
                   ) : (
-                    <div className={SECTION + ' p-0 overflow-hidden'}>
+                    <div className={sectionClass + ' p-0 overflow-hidden'}>
                       <table className="w-full text-sm">
                         <thead>
                           <tr className="border-b border-gray-100">
@@ -699,8 +750,14 @@ export default function AdminPage() {
                               </td>
                               <td className="px-4 py-3.5">
                                 <div className="flex items-center justify-end gap-2">
-                                  <button className={BTN_SEC + ' text-xs px-3 py-1.5'} onClick={() => setBlogEditIdx(i)}>Edit</button>
-                                  <button className={BTN_DANGER} onClick={() => { if (window.confirm('Padam blog post ini? Tindakan ini tidak boleh dibatalkan.')) { const u = blogPosts.filter((_, idx) => idx !== i); setBlogPosts(u); save('blog_posts', u); } }}>Padam</button>
+                                  <button className={btnSecondary + ' text-xs px-3 py-1.5 inline-flex items-center gap-1.5'} onClick={() => setBlogEditIdx(i)}>
+                                    <PencilSimple size={14} weight="bold" />
+                                    Edit
+                                  </button>
+                                  <button className={btnDanger + ' inline-flex items-center gap-1.5'} onClick={() => { if (window.confirm('Padam blog post ini? Tindakan ini tidak boleh dibatalkan.')) { const u = blogPosts.filter((_, idx) => idx !== i); setBlogPosts(u); save('blog_posts', u); } }}>
+                                    <Trash size={14} weight="bold" />
+                                    Padam
+                                  </button>
                                 </div>
                               </td>
                             </tr>
@@ -722,64 +779,73 @@ export default function AdminPage() {
                   return (
                     <div className="flex flex-col gap-6">
                       <div className="flex items-center gap-3">
-                        <button className={BTN_SEC} onClick={() => setBlogEditIdx(null)}>← Senarai</button>
+                        <button className={btnSecondary + ' inline-flex items-center gap-1.5'} onClick={() => setBlogEditIdx(null)}>
+                          <ArrowLeft size={14} weight="bold" />
+                          Senarai
+                        </button>
                         <span className="text-gray-400 text-sm">{post.titleEn || 'Post Baru'}</span>
                       </div>
 
-                      <div className={SECTION}>
+                      <div className={sectionClass}>
                         <div className="flex items-center justify-between mb-5">
                           <h2 className="font-semibold text-gray-800">Maklumat Post</h2>
                           <div className="flex items-center gap-3">
                             <label className="relative inline-flex items-center cursor-pointer">
                               <input type="checkbox" className="sr-only peer" checked={post.published}
                                 onChange={(e) => update({ published: e.target.checked })} />
-                              <div className="w-10 h-6 bg-gray-200 rounded-full peer peer-checked:bg-rose-700 peer-checked:after:translate-x-4 after:content-[''] after:absolute after:top-0.5 after:left-0.5 after:bg-white after:rounded-full after:h-5 after:w-5 after:transition-all"></div>
+                              <div className="w-10 h-6 bg-gray-200 rounded-full peer peer-checked:bg-[var(--wine-700)] peer-checked:after:translate-x-4 after:content-[''] after:absolute after:top-0.5 after:left-0.5 after:bg-white after:rounded-full after:h-5 after:w-5 after:transition-all"></div>
                               <span className="ml-2 text-sm text-gray-600">Published</span>
                             </label>
                           </div>
                         </div>
                         <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                           <div>
-                            <label className={LABEL}>Tajuk (English)</label>
-                            <input className={INPUT} value={post.titleEn} onChange={(e) => update({ titleEn: e.target.value })} placeholder="e.g. 5 Tips for Perfect Brows" />
+                            <label className={labelClass}>Tajuk (English)</label>
+                            <input className={inputClass} value={post.titleEn} onChange={(e) => update({ titleEn: e.target.value })} placeholder="e.g. 5 Tips for Perfect Brows" />
                           </div>
                           <div>
-                            <label className={LABEL}>Tajuk (BM)</label>
-                            <input className={INPUT} value={post.titleBm} onChange={(e) => update({ titleBm: e.target.value })} placeholder="cth. 5 Tips untuk Kening Sempurna" />
+                            <label className={labelClass}>Tajuk (BM)</label>
+                            <input className={inputClass} value={post.titleBm} onChange={(e) => update({ titleBm: e.target.value })} placeholder="cth. 5 Tips untuk Kening Sempurna" />
                           </div>
                           <div>
-                            <label className={LABEL}>Slug (URL)</label>
-                            <input className={INPUT} value={post.slug} onChange={(e) => update({ slug: e.target.value.toLowerCase().replace(/\s+/g, '-').replace(/[^a-z0-9-]/g, '') })} placeholder="e.g. tips-for-perfect-brows" />
+                            <label className={labelClass}>Slug (URL)</label>
+                            <input className={inputClass} value={post.slug} onChange={(e) => update({ slug: e.target.value.toLowerCase().replace(/\s+/g, '-').replace(/[^a-z0-9-]/g, '') })} placeholder="e.g. tips-for-perfect-brows" />
                             <p className="text-xs text-gray-400 mt-1">URL: /blog/{post.slug || 'slug'}</p>
                           </div>
                           <div>
-                            <label className={LABEL}>Kategori</label>
-                            <input className={INPUT} value={post.category} onChange={(e) => update({ category: e.target.value })} placeholder="e.g. Brow Care, Lash Tips, Studio News" />
+                            <label className={labelClass}>Kategori</label>
+                            <input className={inputClass} value={post.category} onChange={(e) => update({ category: e.target.value })} placeholder="e.g. Brow Care, Lash Tips, Studio News" />
                           </div>
                           <div className="md:col-span-2">
-                            <label className={LABEL}>Featured Image</label>
+                            <label className={labelClass}>Featured Image</label>
                             <MediaPicker value={post.featuredImage} onChange={(url) => update({ featuredImage: url })} password={password} label="Featured Image" />
                           </div>
                         </div>
                       </div>
 
-                      <div className={SECTION}>
+                      <div className={sectionClass}>
                         <h2 className="font-semibold text-gray-800 mb-5">Kandungan / Body</h2>
                         <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                           <div>
-                            <label className={LABEL}>Kandungan (English)</label>
-                            <textarea className={INPUT + ' resize-y'} style={{ minHeight: 240 }} value={post.bodyEn} onChange={(e) => update({ bodyEn: e.target.value })} placeholder={'Write your post content here...\n\nSeparate paragraphs with a blank line.'} />
+                            <label className={labelClass}>Kandungan (English)</label>
+                            <textarea className={inputClass + ' resize-y'} style={{ minHeight: 240 }} value={post.bodyEn} onChange={(e) => update({ bodyEn: e.target.value })} placeholder={'Write your post content here...\n\nSeparate paragraphs with a blank line.'} />
                           </div>
                           <div>
-                            <label className={LABEL}>Kandungan (BM)</label>
-                            <textarea className={INPUT + ' resize-y'} style={{ minHeight: 240 }} value={post.bodyBm} onChange={(e) => update({ bodyBm: e.target.value })} placeholder={'Tulis kandungan post di sini...\n\nPisahkan perenggan dengan baris kosong.'} />
+                            <label className={labelClass}>Kandungan (BM)</label>
+                            <textarea className={inputClass + ' resize-y'} style={{ minHeight: 240 }} value={post.bodyBm} onChange={(e) => update({ bodyBm: e.target.value })} placeholder={'Tulis kandungan post di sini...\n\nPisahkan perenggan dengan baris kosong.'} />
                           </div>
                         </div>
                       </div>
 
                       <div className="flex gap-3">
-                        <button onClick={() => { save('blog_posts', blogPosts); }} className={BTN_SAVE}>Simpan Post</button>
-                        <button className={BTN_SEC} onClick={() => setBlogEditIdx(null)}>Batal</button>
+                        <button onClick={() => { save('blog_posts', blogPosts); }} className={btnPrimary + ' inline-flex items-center gap-2'}>
+                          <FloppyDisk size={15} weight="bold" />
+                          Simpan Post
+                        </button>
+                        <button className={btnSecondary + ' inline-flex items-center gap-1.5'} onClick={() => setBlogEditIdx(null)}>
+                          <X size={14} weight="bold" />
+                          Batal
+                        </button>
                       </div>
                     </div>
                   );
@@ -791,7 +857,7 @@ export default function AdminPage() {
           {/* ── NAVIGATION ────────────────────────────────────────────────── */}
           {tab === 'nav' && (
             <div className="flex flex-col gap-6">
-              <div className={SECTION}>
+              <div className={sectionClass}>
                 <div className="flex items-center justify-between mb-2">
                   <h2 className="font-semibold text-gray-800">Navigation Menu</h2>
                   <StatusBadge status={statuses['nav_items'] ?? 'idle'} />
@@ -812,8 +878,10 @@ export default function AdminPage() {
                             }));
                           }}
                           disabled={idx === 0}
+                          aria-label="Alih ke atas"
+                          title="Alih ke atas"
                           className="w-6 h-6 flex items-center justify-center rounded text-xs text-gray-400 hover:bg-white hover:text-gray-700 disabled:opacity-25 transition-all"
-                        >↑</button>
+                        ><ArrowUp size={13} weight="bold" /></button>
                         <button
                           onClick={() => {
                             if (idx === arr.length - 1) return;
@@ -825,8 +893,10 @@ export default function AdminPage() {
                             }));
                           }}
                           disabled={idx === arr.length - 1}
+                          aria-label="Alih ke bawah"
+                          title="Alih ke bawah"
                           className="w-6 h-6 flex items-center justify-center rounded text-xs text-gray-400 hover:bg-white hover:text-gray-700 disabled:opacity-25 transition-all"
-                        >↓</button>
+                        ><ArrowDown size={13} weight="bold" /></button>
                       </div>
                       <span className="flex-1 text-sm font-medium text-gray-700 capitalize">{item.key}</span>
                       <button
@@ -839,14 +909,17 @@ export default function AdminPage() {
                   ))}
                 </div>
               </div>
-              <button onClick={() => save('nav_items', navItems)} className={BTN_SAVE}>Simpan Navigation</button>
+              <button onClick={() => save('nav_items', navItems)} className={btnPrimary + ' inline-flex items-center gap-2'}>
+                <FloppyDisk size={15} weight="bold" />
+                Simpan Navigation
+              </button>
             </div>
           )}
 
           {/* ── SETTINGS ──────────────────────────────────────────────────── */}
           {tab === 'settings' && (
             <div className="flex flex-col gap-6">
-              <div className={SECTION}>
+              <div className={sectionClass}>
                 <div className="flex items-center justify-between mb-5">
                   <h2 className="font-semibold text-gray-800">Site Font</h2>
                   <StatusBadge status={statuses['font_family'] ?? 'idle'} />
@@ -857,7 +930,7 @@ export default function AdminPage() {
                     <label
                       key={opt.value}
                       className="flex items-center gap-3 p-3 rounded-xl border cursor-pointer transition-all"
-                      style={{ borderColor: fontFamily === opt.value ? '#be123c' : '#f3f4f6', background: fontFamily === opt.value ? '#fff1f2' : '#f9fafb' }}
+                      style={{ borderColor: fontFamily === opt.value ? 'var(--wine-700)' : 'var(--line)', background: fontFamily === opt.value ? 'var(--beige-100)' : '#fff' }}
                     >
                       <input
                         type="radio"
@@ -870,7 +943,10 @@ export default function AdminPage() {
                   ))}
                 </div>
               </div>
-              <button onClick={() => save('font_family', fontFamily)} className={BTN_SAVE}>Simpan Font</button>
+              <button onClick={() => save('font_family', fontFamily)} className={btnPrimary + ' inline-flex items-center gap-2'}>
+                <FloppyDisk size={15} weight="bold" />
+                Simpan Font
+              </button>
             </div>
           )}
 
