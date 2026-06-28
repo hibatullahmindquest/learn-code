@@ -55,7 +55,7 @@ export default function ServicesPage() {
   const BOOKING_URL = contact.bookingUrl;
   const [activeCategory, setActiveCategory] = useState(categoryOrder[0]);
   const [expandedId, setExpandedId] = useState<string | null>(null);
-  const [playingVideoFor, setPlayingVideoFor] = useState<string | null>(null);
+  const [videoLightboxFor, setVideoLightboxFor] = useState<string | null>(null);
   const [lightbox, setLightbox] = useState<{ serviceId: string; index: number } | null>(null);
   const touchStartX = useRef<number | null>(null);
 
@@ -112,7 +112,18 @@ export default function ServicesPage() {
     return () => observer.disconnect();
   }, []);
 
-  // Lightbox keyboard support
+  // Video lightbox keyboard support
+  useEffect(() => {
+    if (!videoLightboxFor) return;
+    const onKey = (e: KeyboardEvent) => {
+      if (e.key === 'Escape') setVideoLightboxFor(null);
+    };
+    document.body.style.overflow = 'hidden';
+    window.addEventListener('keydown', onKey);
+    return () => { window.removeEventListener('keydown', onKey); document.body.style.overflow = ''; };
+  }, [videoLightboxFor]);
+
+  // Gallery lightbox keyboard support
   useEffect(() => {
     if (!lightbox) return;
     const onKey = (e: KeyboardEvent) => {
@@ -242,7 +253,6 @@ export default function ServicesPage() {
                   const videoEmbed = getVideoEmbed(svc.videoUrl);
                   const hasDetail = Boolean(detailText || detailImages.length > 0 || videoEmbed);
                   const isExpanded = hasDetail && expandedId === svc.id;
-                  const isVideoPlaying = isExpanded && playingVideoFor === svc.id;
                   return (
                   <div
                     key={svc.id}
@@ -306,10 +316,7 @@ export default function ServicesPage() {
                         {hasDetail && (
                           <button
                             type="button"
-                            onClick={() => {
-                              setExpandedId(isExpanded ? null : svc.id);
-                              setPlayingVideoFor(null);
-                            }}
+                            onClick={() => setExpandedId(isExpanded ? null : svc.id)}
                             aria-expanded={isExpanded}
                             className="flex items-center gap-1.5 text-sm px-4 py-2.5 transition-all duration-200 active:scale-[0.97] whitespace-nowrap"
                             style={{ border: '1px solid var(--line)', color: 'var(--ink-600)', borderRadius: 'var(--radius-button)' }}
@@ -380,40 +387,31 @@ export default function ServicesPage() {
                                 </button>
                               )}
 
-                              {/* Video — click loads & plays the embed inline, only if videoUrl is set */}
+                              {/* Video thumbnail — click opens video in a lightbox (Instagram opens externally) */}
                               {videoEmbed && (
-                                <div className="relative flex-1 aspect-[4/3] rounded-xl overflow-hidden" style={{ background: 'var(--ink-950)' }}>
-                                  {!isVideoPlaying ? (
-                                    <button
-                                      type="button"
-                                      onClick={() => setPlayingVideoFor(svc.id)}
-                                      className="absolute inset-0 flex items-center justify-center text-xs cursor-pointer"
-                                      style={{ color: 'var(--beige-50)' }}
-                                    >
-                                      <span className="flex items-center justify-center w-12 h-12 rounded-full" style={{ background: 'var(--wine-700)' }}>
-                                        <Play size={18} weight="fill" />
-                                      </span>
-                                    </button>
-                                  ) : videoEmbed.type === 'instagram' ? (
-                                    <a
-                                      href={videoEmbed.originalUrl}
-                                      target="_blank"
-                                      rel="noopener noreferrer"
-                                      className="absolute inset-0 flex flex-col items-center justify-center gap-2 text-xs"
-                                      style={{ color: 'var(--beige-50)' }}
-                                    >
-                                      <InstagramLogo size={24} />
-                                      {lang === 'en' ? 'Watch on Instagram' : 'Tonton di Instagram'}
-                                    </a>
-                                  ) : (
-                                    <iframe
-                                      src={videoEmbed.embedUrl}
-                                      className="absolute inset-0 w-full h-full"
-                                      allow="autoplay; encrypted-media; fullscreen"
-                                      allowFullScreen
-                                    />
-                                  )}
-                                </div>
+                                videoEmbed.type === 'instagram' ? (
+                                  <a
+                                    href={videoEmbed.originalUrl}
+                                    target="_blank"
+                                    rel="noopener noreferrer"
+                                    className="relative flex-1 aspect-[4/3] rounded-xl overflow-hidden flex flex-col items-center justify-center gap-2 text-xs"
+                                    style={{ background: 'var(--ink-950)', color: 'var(--beige-50)' }}
+                                  >
+                                    <InstagramLogo size={24} />
+                                    {lang === 'en' ? 'Watch on Instagram' : 'Tonton di Instagram'}
+                                  </a>
+                                ) : (
+                                  <button
+                                    type="button"
+                                    onClick={() => setVideoLightboxFor(svc.id)}
+                                    className="relative flex-1 aspect-[4/3] rounded-xl overflow-hidden flex items-center justify-center cursor-pointer"
+                                    style={{ background: 'var(--ink-950)' }}
+                                  >
+                                    <span className="flex items-center justify-center w-12 h-12 rounded-full" style={{ background: 'var(--wine-700)' }}>
+                                      <Play size={18} weight="fill" color="var(--beige-50)" />
+                                    </span>
+                                  </button>
+                                )
                               )}
                             </div>
                           )}
@@ -525,6 +523,39 @@ export default function ServicesPage() {
           )}
         </div>
       )}
+
+      {/* ─────────────── VIDEO LIGHTBOX ─────────────── */}
+      {videoLightboxFor && (() => {
+        const svc = services.find((s) => s.id === videoLightboxFor);
+        const embed = getVideoEmbed(svc?.videoUrl);
+        if (!embed || embed.type === 'instagram') return null;
+        return (
+          <div
+            className="fixed inset-0 z-50 flex items-center justify-center"
+            style={{ background: 'rgba(28,28,28,0.95)' }}
+            onClick={() => setVideoLightboxFor(null)}
+          >
+            <button
+              className="absolute top-6 right-6 w-10 h-10 rounded-full flex items-center justify-center transition-opacity duration-200 hover:opacity-70"
+              style={{ background: 'rgba(249,246,243,0.1)', color: 'var(--beige-50)' }}
+              onClick={() => setVideoLightboxFor(null)}
+            >
+              <X size={18} />
+            </button>
+            <div
+              className="relative w-[90vw] md:w-[70vw] aspect-video rounded-xl overflow-hidden"
+              onClick={(e) => e.stopPropagation()}
+            >
+              <iframe
+                src={embed.embedUrl}
+                className="absolute inset-0 w-full h-full"
+                allow="autoplay; encrypted-media; fullscreen"
+                allowFullScreen
+              />
+            </div>
+          </div>
+        );
+      })()}
     </div>
   );
 }
