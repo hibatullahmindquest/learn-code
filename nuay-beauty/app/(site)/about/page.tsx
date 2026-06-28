@@ -116,21 +116,28 @@ export default function AboutPage() {
       </section>
 
       {/* ─────────────── JOIN US / LEARN WITH US ─────────────── */}
-      <section
-        className="py-28 md:py-36 px-6 lg:px-10"
-        style={{ background: 'var(--beige-100)' }}
-      >
-        <div className="max-w-5xl mx-auto">
+      <section className="relative py-28 md:py-36 px-6 lg:px-10 overflow-hidden">
+        <Image
+          src="https://fsyqbpaafdorxrjqkemb.supabase.co/storage/v1/object/public/media/uploads/1782651687556-dkn2e.png"
+          alt=""
+          fill
+          className="object-cover"
+        />
+        <div
+          className="absolute inset-0"
+          style={{ background: 'linear-gradient(180deg, rgba(28,20,16,0.8) 0%, rgba(28,20,16,0.88) 100%)' }}
+        />
+        <div className="max-w-5xl mx-auto relative z-10">
           <div
             className="reveal text-center mb-14"
             style={{ transform: 'translateY(24px)' } as React.CSSProperties}
           >
-            <p className="text-xs tracking-[0.38em] uppercase mb-3" style={{ color: 'var(--gold-600)' }}>
+            <p className="text-xs tracking-[0.38em] uppercase mb-3" style={{ color: 'var(--gold-300)' }}>
               {lang === 'en' ? 'Opportunities' : 'Peluang'}
             </p>
             <h2
               className="tracking-tight leading-none"
-              style={{ fontSize: 'var(--fs-section-title)', fontFamily: 'var(--font-nuay-display), serif', fontWeight: 600, color: 'var(--ink-950)' }}
+              style={{ fontSize: 'var(--fs-section-title)', fontFamily: 'var(--font-nuay-display), serif', fontWeight: 600, color: 'var(--beige-50)' }}
             >
               {lang === 'en' ? 'Grow With Nuay' : 'Berkembang Dengan Nuay'}
             </h2>
