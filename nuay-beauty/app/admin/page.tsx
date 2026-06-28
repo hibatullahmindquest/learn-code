@@ -5,6 +5,11 @@ import { useState, useEffect, useCallback } from 'react';
 import { defaultCopy, defaultNavItems, type CopyData, type NavItemSetting } from '@/components/SiteDataContext';
 import { MediaPicker } from '@/components/MediaPicker';
 import { MediaLibraryTab } from '@/components/MediaLibraryTab';
+import { type Artist, type Service, type FaqItem, type Testimonial, ARTIST_DEFAULTS, SERVICE_DEFAULTS } from '@/lib/types';
+import { FaqTab } from './tabs/FaqTab';
+import { TestimonialsTab } from './tabs/TestimonialsTab';
+import { ServicesTab } from './tabs/ServicesTab';
+import { ArtistsTab } from './tabs/ArtistsTab';
 
 type Tab = 'dashboard' | 'contact' | 'artists' | 'services' | 'gallery' | 'media' | 'faq' | 'testimonials' | 'content' | 'blog' | 'nav';
 type ContentSubTab = 'homepage' | 'about' | 'footer';
@@ -21,43 +26,6 @@ type ContactData = {
   hoursBm: string;
 };
 
-type ArtistTier = 'senior' | 'junior';
-
-type Artist = {
-  id: string;
-  name: string;
-  tier: ArtistTier;
-  bioEn: string;
-  bioBm: string;
-  services: string[];
-  image: string;
-  instagram: string | null;
-  gallery: string[];
-  published: boolean;
-};
-
-const ARTIST_DEFAULTS = { published: true, tier: 'senior' as ArtistTier };
-
-type Service = {
-  id: string;
-  category: string;
-  nameEn: string;
-  nameBm: string;
-  descEn: string;
-  descBm: string;
-  price: number;
-  duration: string;
-  longevityEn: string;
-  longevityBm: string;
-  image: string;
-  badge: string | null;
-  bookingUrl: string | null;
-  featured: boolean;
-  published: boolean;
-};
-
-const SERVICE_DEFAULTS = { longevityEn: '', longevityBm: '', image: '', bookingUrl: null, featured: false };
-
 type GalleryImage = { url: string; label: string; span: string };
 
 type ImageData = {
@@ -71,25 +39,6 @@ type ImageData = {
 };
 
 const IMAGE_DEFAULTS: ImageData = { hero: '', featuredService: '', studio: ['', '', '', '', ''], gallery: [], aboutPhotos: ['', '', ''], beforeAfter: { before: '', after: '' }, whyNuay: '' };
-
-type FaqItem = {
-  id: string;
-  questionEn: string;
-  questionBm: string;
-  answerEn: string;
-  answerBm: string;
-};
-
-type Testimonial = {
-  id: string;
-  name: string;
-  service: string;
-  location?: string;
-  rating: number;
-  quoteEn: string;
-  quoteBm: string;
-  published: boolean;
-};
 
 type BlogPost = {
   id: string;
@@ -497,198 +446,12 @@ export default function AdminPage() {
 
           {/* ── ARTISTS ───────────────────────────────────────────────────── */}
           {tab === 'artists' && (
-            <div className="flex flex-col gap-6">
-              {artists.map((artist, i) => (
-                <div key={artist.id} className={SECTION}>
-                  <div className="flex items-center justify-between mb-5">
-                    <div className="flex items-center gap-2">
-                      <h2 className="font-semibold text-gray-800">{artist.name || 'Artist Baru'}</h2>
-                      <span className={`text-xs px-2 py-0.5 rounded-full font-medium ${artist.published !== false ? 'bg-green-100 text-green-700' : 'bg-orange-100 text-orange-700'}`}>
-                        {artist.published !== false ? 'Aktif' : 'Disembunyikan'}
-                      </span>
-                    </div>
-                    <div className="flex items-center gap-3">
-                      <label className="relative inline-flex items-center cursor-pointer" title={artist.published !== false ? 'Sembunyikan artist' : 'Tunjuk artist'}>
-                        <input type="checkbox" className="sr-only peer" checked={artist.published !== false}
-                          onChange={(e) => { const u = [...artists]; u[i] = { ...artist, published: e.target.checked }; setArtists(u); }} />
-                        <div className="w-10 h-6 bg-gray-200 rounded-full peer peer-checked:bg-green-600 peer-checked:after:translate-x-4 after:content-[''] after:absolute after:top-0.5 after:left-0.5 after:bg-white after:rounded-full after:h-5 after:w-5 after:transition-all"></div>
-                      </label>
-                      <StatusBadge status={statuses['artists'] ?? 'idle'} />
-                      <button className={BTN_DANGER} onClick={() => { if (window.confirm('Padam artist ini? Tindakan ini tidak boleh dibatalkan.')) setArtists(artists.filter((_, idx) => idx !== i)); }}>Padam</button>
-                    </div>
-                  </div>
-                  <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-                    <div>
-                      <label className={LABEL}>Nama</label>
-                      <input className={INPUT} value={artist.name} onChange={(e) => { const u = [...artists]; u[i] = { ...artist, name: e.target.value }; setArtists(u); }} />
-                    </div>
-                    <div>
-                      <label className={LABEL}>Instagram (URL penuh atau kosong)</label>
-                      <input className={INPUT} value={artist.instagram ?? ''} onChange={(e) => { const u = [...artists]; u[i] = { ...artist, instagram: e.target.value || null }; setArtists(u); }} placeholder="https://instagram.com/..." />
-                    </div>
-                    <div className="md:col-span-2">
-                      <label className={LABEL}>URL Gambar</label>
-                      <MediaPicker value={artist.image} onChange={(url) => { const u = [...artists]; u[i] = { ...artist, image: url }; setArtists(u); }} password={password} label={artist.name || 'Artist Image'} />
-                    </div>
-                    <div>
-                      <label className={LABEL}>Tahap Artist</label>
-                      <select className={INPUT} value={artist.tier} onChange={(e) => { const u = [...artists]; u[i] = { ...artist, tier: e.target.value as ArtistTier }; setArtists(u); }}>
-                        <option value="senior">Senior Artist</option>
-                        <option value="junior">Junior Artist</option>
-                      </select>
-                    </div>
-                    <div>
-                      <label className={LABEL}>Bio (English)</label>
-                      <textarea className={INPUT + ' h-20 resize-none'} value={artist.bioEn} onChange={(e) => { const u = [...artists]; u[i] = { ...artist, bioEn: e.target.value }; setArtists(u); }} />
-                    </div>
-                    <div>
-                      <label className={LABEL}>Bio (BM)</label>
-                      <textarea className={INPUT + ' h-20 resize-none'} value={artist.bioBm} onChange={(e) => { const u = [...artists]; u[i] = { ...artist, bioBm: e.target.value }; setArtists(u); }} />
-                    </div>
-                    <div className="md:col-span-2">
-                      <label className={LABEL}>Servis Yang Dicover</label>
-                      <div className="flex flex-wrap gap-2 mt-1">
-                        {services.map((svc) => {
-                          const checked = artist.services.includes(svc.id);
-                          return (
-                            <label key={svc.id} className={`text-sm px-3 py-1.5 rounded-full border cursor-pointer transition-colors ${checked ? 'bg-rose-700 text-white border-rose-700' : 'bg-white text-gray-600 border-gray-300'}`}>
-                              <input
-                                type="checkbox"
-                                className="sr-only"
-                                checked={checked}
-                                onChange={(e) => {
-                                  const u = [...artists];
-                                  const svcIds = e.target.checked
-                                    ? [...artist.services, svc.id]
-                                    : artist.services.filter((id) => id !== svc.id);
-                                  u[i] = { ...artist, services: svcIds };
-                                  setArtists(u);
-                                }}
-                              />
-                              {svc.nameEn || 'Servis Tanpa Nama'}
-                            </label>
-                          );
-                        })}
-                        {services.length === 0 && <p className="text-sm text-gray-400">Tiada servis lagi — tambah servis dahulu di tab Services.</p>}
-                      </div>
-                    </div>
-                    <div className="md:col-span-2">
-                      <label className={LABEL}>Gambar Galeri (Portfolio Lightbox)</label>
-                      <div className="flex flex-col gap-2 mt-1">
-                        {(artist.gallery ?? []).map((url, gi) => (
-                          <div key={gi} className="flex gap-2 items-center">
-                            <div className="flex-1">
-                              <MediaPicker value={url} onChange={(newUrl) => {
-                                const u = [...artists]; const g = [...(artist.gallery ?? [])]; g[gi] = newUrl; u[i] = { ...artist, gallery: g }; setArtists(u);
-                              }} password={password} label={`${artist.name} Gallery ${gi + 1}`} />
-                            </div>
-                            <button className={BTN_DANGER} onClick={() => {
-                              if (window.confirm('Padam gambar ini?')) { const u = [...artists]; const g = (artist.gallery ?? []).filter((_, idx) => idx !== gi); u[i] = { ...artist, gallery: g }; setArtists(u); }
-                            }}>✕</button>
-                          </div>
-                        ))}
-                        <button className={BTN_ADD} style={{ marginTop: 4 }} onClick={() => {
-                          const u = [...artists]; u[i] = { ...artist, gallery: [...(artist.gallery ?? []), ''] }; setArtists(u);
-                        }}>+ Tambah Gambar Galeri</button>
-                      </div>
-                    </div>
-                  </div>
-                </div>
-              ))}
-              <button className={BTN_ADD} onClick={() => setArtists([...artists, { id: uid(), name: '', tier: 'senior', bioEn: '', bioBm: '', services: [], image: '', instagram: null, gallery: [], published: true }])}>
-                + Tambah Artist
-              </button>
-              <button onClick={() => save('artists', artists)} className={BTN_SAVE}>Simpan Semua Artist</button>
-            </div>
+            <ArtistsTab artists={artists} setArtists={setArtists} services={services} save={save} status={statuses['artists'] ?? 'idle'} password={password} />
           )}
 
           {/* ── SERVICES ──────────────────────────────────────────────────── */}
           {tab === 'services' && (
-            <div className="flex flex-col gap-6">
-              {services.map((svc, i) => (
-                <div key={svc.id} className={SECTION}>
-                  <div className="flex items-center justify-between mb-4">
-                    <div className="flex items-center gap-2">
-                      <h2 className="font-semibold text-gray-800">{svc.nameEn || 'Servis Baru'}</h2>
-                      <span className="text-xs px-2 py-0.5 rounded-full bg-gray-100 text-gray-500 capitalize">{svc.category}</span>
-                      <span className={`text-xs px-2 py-0.5 rounded-full font-medium ${svc.published !== false ? 'bg-green-100 text-green-700' : 'bg-orange-100 text-orange-700'}`}>
-                        {svc.published !== false ? 'Aktif' : 'Disembunyikan'}
-                      </span>
-                      {svc.featured && (
-                        <span className="text-xs px-2 py-0.5 rounded-full font-medium bg-amber-100 text-amber-700">Featured (Homepage)</span>
-                      )}
-                    </div>
-                    <div className="flex items-center gap-3">
-                      <label className="relative inline-flex items-center cursor-pointer" title={svc.published !== false ? 'Sembunyikan servis' : 'Tunjuk servis'}>
-                        <input type="checkbox" className="sr-only peer" checked={svc.published !== false}
-                          onChange={(e) => { const u = [...services]; u[i] = { ...svc, published: e.target.checked }; setServices(u); }} />
-                        <div className="w-10 h-6 bg-gray-200 rounded-full peer peer-checked:bg-green-600 peer-checked:after:translate-x-4 after:content-[''] after:absolute after:top-0.5 after:left-0.5 after:bg-white after:rounded-full after:h-5 after:w-5 after:transition-all"></div>
-                      </label>
-                      <StatusBadge status={statuses['services'] ?? 'idle'} />
-                      <button className={BTN_DANGER} onClick={() => { if (window.confirm('Padam servis ini? Tindakan ini tidak boleh dibatalkan.')) setServices(services.filter((_, idx) => idx !== i)); }}>Padam</button>
-                    </div>
-                  </div>
-                  <div className="mb-4">
-                    <label className={LABEL}>Gambar Servis</label>
-                    <MediaPicker value={svc.image} onChange={(url) => { const u = [...services]; u[i] = { ...svc, image: url }; setServices(u); }} password={password} label={svc.nameEn || 'Servis Baru'} />
-                  </div>
-                  <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-                    <div>
-                      <label className={LABEL}>Nama (English)</label>
-                      <input className={INPUT} value={svc.nameEn} onChange={(e) => { const u = [...services]; u[i] = { ...svc, nameEn: e.target.value }; setServices(u); }} />
-                    </div>
-                    <div>
-                      <label className={LABEL}>Nama (BM)</label>
-                      <input className={INPUT} value={svc.nameBm} onChange={(e) => { const u = [...services]; u[i] = { ...svc, nameBm: e.target.value }; setServices(u); }} />
-                    </div>
-                    <div>
-                      <label className={LABEL}>Harga (RM)</label>
-                      <input type="number" min={0} className={INPUT} value={svc.price} onChange={(e) => { const u = [...services]; u[i] = { ...svc, price: Number(e.target.value) || 0 }; setServices(u); }} />
-                    </div>
-                    <div>
-                      <label className={LABEL}>Tempoh Masa</label>
-                      <input className={INPUT} value={svc.duration} onChange={(e) => { const u = [...services]; u[i] = { ...svc, duration: e.target.value }; setServices(u); }} placeholder="60 min" />
-                    </div>
-                    <div>
-                      <label className={LABEL}>Deskripsi (English)</label>
-                      <textarea className={INPUT + ' h-16 resize-none'} value={svc.descEn} onChange={(e) => { const u = [...services]; u[i] = { ...svc, descEn: e.target.value }; setServices(u); }} />
-                    </div>
-                    <div>
-                      <label className={LABEL}>Deskripsi (BM)</label>
-                      <textarea className={INPUT + ' h-16 resize-none'} value={svc.descBm} onChange={(e) => { const u = [...services]; u[i] = { ...svc, descBm: e.target.value }; setServices(u); }} />
-                    </div>
-                    <div>
-                      <label className={LABEL}>Ketahanan (English)</label>
-                      <input className={INPUT} value={svc.longevityEn} onChange={(e) => { const u = [...services]; u[i] = { ...svc, longevityEn: e.target.value }; setServices(u); }} placeholder="Lasts 6-8 weeks" />
-                    </div>
-                    <div>
-                      <label className={LABEL}>Ketahanan (BM)</label>
-                      <input className={INPUT} value={svc.longevityBm} onChange={(e) => { const u = [...services]; u[i] = { ...svc, longevityBm: e.target.value }; setServices(u); }} placeholder="Tahan 6-8 minggu" />
-                    </div>
-                    <div>
-                      <label className={LABEL}>Kategori</label>
-                      <input className={INPUT} value={svc.category} onChange={(e) => { const u = [...services]; u[i] = { ...svc, category: e.target.value }; setServices(u); }} placeholder="eyebrows / lashes / lips / body" />
-                    </div>
-                    <div>
-                      <label className={LABEL}>Badge (kosongkan jika tiada)</label>
-                      <input className={INPUT} value={svc.badge ?? ''} onChange={(e) => { const u = [...services]; u[i] = { ...svc, badge: e.target.value || null }; setServices(u); }} placeholder="Most Popular / New / Bestseller" />
-                    </div>
-                    <div>
-                      <label className={LABEL}>Booking Link (kosongkan untuk guna link default)</label>
-                      <input className={INPUT} value={svc.bookingUrl ?? ''} onChange={(e) => { const u = [...services]; u[i] = { ...svc, bookingUrl: e.target.value || null }; setServices(u); }} placeholder="https://..." />
-                    </div>
-                  </div>
-                  <label className="mt-4 flex items-center gap-2 cursor-pointer w-fit">
-                    <input type="checkbox" checked={svc.featured} onChange={(e) => { const u = [...services]; u[i] = { ...svc, featured: e.target.checked }; setServices(u); }} />
-                    <span className="text-sm text-gray-700">Papar di Homepage (Featured Services) — 3 pertama yang ditanda akan dipaparkan</span>
-                  </label>
-                </div>
-              ))}
-              <button className={BTN_ADD} onClick={() => setServices([...services, { id: uid(), category: '', nameEn: '', nameBm: '', descEn: '', descBm: '', price: 0, duration: '', longevityEn: '', longevityBm: '', image: '', badge: null, bookingUrl: null, featured: false, published: true }])}>
-                + Tambah Servis
-              </button>
-              <button onClick={() => save('services', services)} className={BTN_SAVE}>Simpan Semua Servis</button>
-            </div>
+            <ServicesTab services={services} setServices={setServices} save={save} status={statuses['services'] ?? 'idle'} password={password} />
           )}
 
           {/* ── GALLERY ───────────────────────────────────────────────────── */}
@@ -806,42 +569,7 @@ export default function AdminPage() {
 
           {/* ── FAQ ───────────────────────────────────────────────────────── */}
           {tab === 'faq' && (
-            <div className="flex flex-col gap-6">
-              <div className="flex items-center justify-between">
-                <p className="text-sm text-gray-500">{faqs.length} soalan · Disusun mengikut turutan di bawah</p>
-                <StatusBadge status={statuses['faqs'] ?? 'idle'} />
-              </div>
-              {faqs.map((faq, i) => (
-                <div key={faq.id} className={SECTION}>
-                  <div className="flex items-center justify-between mb-4">
-                    <span className="text-xs font-semibold text-gray-400 uppercase tracking-wide">#{i + 1}</span>
-                    <button className={BTN_DANGER} onClick={() => { if (window.confirm('Padam soalan FAQ ini?')) setFaqs(faqs.filter((_, idx) => idx !== i)); }}>Padam</button>
-                  </div>
-                  <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-                    <div>
-                      <label className={LABEL}>Soalan (English)</label>
-                      <input className={INPUT} value={faq.questionEn} onChange={(e) => { const u = [...faqs]; u[i] = { ...faq, questionEn: e.target.value }; setFaqs(u); }} placeholder="e.g. How early should I book?" />
-                    </div>
-                    <div>
-                      <label className={LABEL}>Soalan (BM)</label>
-                      <input className={INPUT} value={faq.questionBm} onChange={(e) => { const u = [...faqs]; u[i] = { ...faq, questionBm: e.target.value }; setFaqs(u); }} placeholder="cth. Berapa awal saya perlu tempah?" />
-                    </div>
-                    <div>
-                      <label className={LABEL}>Jawapan (English)</label>
-                      <textarea className={INPUT + ' h-20 resize-none'} value={faq.answerEn} onChange={(e) => { const u = [...faqs]; u[i] = { ...faq, answerEn: e.target.value }; setFaqs(u); }} />
-                    </div>
-                    <div>
-                      <label className={LABEL}>Jawapan (BM)</label>
-                      <textarea className={INPUT + ' h-20 resize-none'} value={faq.answerBm} onChange={(e) => { const u = [...faqs]; u[i] = { ...faq, answerBm: e.target.value }; setFaqs(u); }} />
-                    </div>
-                  </div>
-                </div>
-              ))}
-              <button className={BTN_ADD} onClick={() => setFaqs([...faqs, { id: uid(), questionEn: '', questionBm: '', answerEn: '', answerBm: '' }])}>
-                + Tambah Soalan FAQ
-              </button>
-              <button onClick={() => save('faqs', faqs)} className={BTN_SAVE}>Simpan Semua FAQ</button>
-            </div>
+            <FaqTab faqs={faqs} setFaqs={setFaqs} save={save} status={statuses['faqs'] ?? 'idle'} />
           )}
 
           {/* ── CONTENT / COPY ────────────────────────────────────────────── */}
@@ -981,68 +709,12 @@ export default function AdminPage() {
 
           {/* ── TESTIMONIALS ──────────────────────────────────────────────── */}
           {tab === 'testimonials' && (
-            <div className="flex flex-col gap-6">
-              <div className="flex items-center justify-between">
-                <p className="text-sm text-gray-500">
-                  {testimonials.filter((t) => t.published).length} published &nbsp;·&nbsp;
-                  {testimonials.filter((t) => !t.published).length} pending
-                </p>
-                <StatusBadge status={statuses['testimonials'] ?? 'idle'} />
-              </div>
-              {testimonials.map((t, i) => (
-                <div key={t.id} className={SECTION}>
-                  <div className="flex items-center justify-between mb-4">
-                    <div className="flex items-center gap-2">
-                      <span className="text-sm font-semibold text-gray-700">{t.name || 'Pelanggan Baru'}</span>
-                      <span className={`text-xs px-2 py-0.5 rounded-full font-medium ${t.published ? 'bg-green-100 text-green-700' : 'bg-gray-100 text-gray-500'}`}>
-                        {t.published ? 'Published' : 'Pending'}
-                      </span>
-                    </div>
-                    <button className={BTN_DANGER} onClick={() => { if (window.confirm('Padam testimoni ini?')) setTestimonials(testimonials.filter((_, idx) => idx !== i)); }}>Padam</button>
-                  </div>
-                  <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-                    <div>
-                      <label className={LABEL}>Nama Pelanggan</label>
-                      <input className={INPUT} value={t.name} onChange={(e) => { const u = [...testimonials]; u[i] = { ...t, name: e.target.value }; setTestimonials(u); }} placeholder="Sarah K." />
-                    </div>
-                    <div>
-                      <label className={LABEL}>Servis Diambil</label>
-                      <input className={INPUT} value={t.service} onChange={(e) => { const u = [...testimonials]; u[i] = { ...t, service: e.target.value }; setTestimonials(u); }} placeholder="Eyebrow Lamination" />
-                    </div>
-                    <div>
-                      <label className={LABEL}>Lokasi (pilihan)</label>
-                      <input className={INPUT} value={t.location ?? ''} onChange={(e) => { const u = [...testimonials]; u[i] = { ...t, location: e.target.value }; setTestimonials(u); }} placeholder="Shah Alam" />
-                    </div>
-                    <div>
-                      <label className={LABEL}>Rating (1–5)</label>
-                      <select className={INPUT} value={t.rating} onChange={(e) => { const u = [...testimonials]; u[i] = { ...t, rating: Number(e.target.value) }; setTestimonials(u); }}>
-                        {[5, 4, 3, 2, 1].map((r) => <option key={r} value={r}>{r} bintang {'★'.repeat(r)}</option>)}
-                      </select>
-                    </div>
-                    <div className="flex items-center gap-3 pt-5">
-                      <label className="relative inline-flex items-center cursor-pointer">
-                        <input type="checkbox" className="sr-only peer" checked={t.published}
-                          onChange={(e) => { const u = [...testimonials]; u[i] = { ...t, published: e.target.checked }; setTestimonials(u); }} />
-                        <div className="w-10 h-6 bg-gray-200 rounded-full peer peer-checked:bg-rose-700 peer-checked:after:translate-x-4 after:content-[''] after:absolute after:top-0.5 after:left-0.5 after:bg-white after:rounded-full after:h-5 after:w-5 after:transition-all"></div>
-                        <span className="ml-2 text-sm text-gray-600">Tunjuk di website</span>
-                      </label>
-                    </div>
-                    <div>
-                      <label className={LABEL}>Ulasan (English)</label>
-                      <textarea className={INPUT + ' h-20 resize-none'} value={t.quoteEn} onChange={(e) => { const u = [...testimonials]; u[i] = { ...t, quoteEn: e.target.value }; setTestimonials(u); }} placeholder="The service was amazing..." />
-                    </div>
-                    <div>
-                      <label className={LABEL}>Ulasan (BM)</label>
-                      <textarea className={INPUT + ' h-20 resize-none'} value={t.quoteBm} onChange={(e) => { const u = [...testimonials]; u[i] = { ...t, quoteBm: e.target.value }; setTestimonials(u); }} placeholder="Servis sangat bagus..." />
-                    </div>
-                  </div>
-                </div>
-              ))}
-              <button className={BTN_ADD} onClick={() => setTestimonials([...testimonials, { id: uid(), name: '', service: '', rating: 5, quoteEn: '', quoteBm: '', published: false }])}>
-                + Tambah Testimoni
-              </button>
-              <button onClick={() => save('testimonials', testimonials)} className={BTN_SAVE}>Simpan Semua Testimoni</button>
-            </div>
+            <TestimonialsTab
+              testimonials={testimonials}
+              setTestimonials={setTestimonials}
+              save={save}
+              status={statuses['testimonials'] ?? 'idle'}
+            />
           )}
 
           {/* ── BLOG ──────────────────────────────────────────────────────── */}
