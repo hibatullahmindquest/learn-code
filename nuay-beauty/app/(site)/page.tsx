@@ -6,7 +6,7 @@ import Link from 'next/link';
 import { Cormorant_Garamond, Poppins } from 'next/font/google';
 import { ArrowUpRight, Star } from '@phosphor-icons/react';
 import { useLang } from '@/components/LanguageContext';
-import { useSiteData } from '@/components/SiteDataContext';
+import { useSiteData, getCopy } from '@/components/SiteDataContext';
 import { BOOKING_URL } from '@/lib/data';
 
 // Page-scoped fonts + tokens, ported from the Nuay Beauty Design System
@@ -76,6 +76,14 @@ function Eyebrow({ children, tone = 'wine' }: { children: React.ReactNode; tone?
     </span>
   );
 }
+
+const CATEGORY_LABELS: Record<string, { en: string; bm: string }> = {
+  lash: { en: 'Lash', bm: 'Lash' },
+  brow: { en: 'Brows', bm: 'Kening' },
+  lip: { en: 'Lips', bm: 'Bibir' },
+  facial: { en: 'Facial', bm: 'Rawatan Wajah' },
+  hair: { en: 'Hair Removal', bm: 'Buang Bulu' },
+};
 
 function SectionHead({
   eyebrow,
@@ -162,6 +170,7 @@ export default function HomePage() {
   const { lang } = useLang();
   const { images, services, artists, copy, testimonials, faqs } = useSiteData();
   const en = lang === 'en';
+  const t = getCopy(copy, lang);
 
   useEffect(() => {
     const observer = new IntersectionObserver(
@@ -185,6 +194,10 @@ export default function HomePage() {
   const featured = services.filter((s) => s.featured && s.published !== false).slice(0, 3);
   const publishedTestimonials = testimonials.filter((t) => t.published !== false);
   const loop = [...publishedTestimonials, ...publishedTestimonials];
+  const publishedArtists = artists.filter((a) => a.published !== false);
+  const averageRating = publishedTestimonials.length > 0
+    ? (publishedTestimonials.reduce((sum, item) => sum + (item.rating ?? 5), 0) / publishedTestimonials.length).toFixed(1)
+    : '4.9';
 
   return (
     <div
@@ -194,7 +207,7 @@ export default function HomePage() {
       {/* ── Hero ───────────────────────────────────────────────────────── */}
       <section style={{ position: 'relative', minHeight: 620, overflow: 'hidden' }}>
         <Image
-          src={images.hero}
+          src={images.hero || '/images/nuay-hero.avif'}
           alt="Close-up beauty portrait with lash and brow detail"
           fill
           priority
@@ -297,8 +310,8 @@ export default function HomePage() {
           {[
             { value: '2k+', labelEn: 'Happy Clients', labelBm: 'Pelanggan Gembira' },
             { value: '100%', labelEn: 'Wudhu-Friendly', labelBm: 'Mesra Wudhu' },
-            { value: '3', labelEn: 'Specialist Artists', labelBm: 'Artist Pakar' },
-            { value: '4.9', labelEn: 'Average Rating', labelBm: 'Penilaian Purata' },
+            { value: String(publishedArtists.length), labelEn: 'Specialist Artists', labelBm: 'Artist Pakar' },
+            { value: averageRating, labelEn: 'Average Rating', labelBm: 'Penilaian Purata' },
           ].map((s, i) => (
             <div key={i} style={{ textAlign: 'center', borderLeft: i ? '1px solid rgba(200,169,126,0.28)' : 'none' }}>
               <div style={{ ...DISPLAY, fontSize: 'clamp(1.75rem, 1vw + 1.4rem, 2.75rem)', fontWeight: 600, color: 'var(--gold-300)', lineHeight: 1 }}>
@@ -313,11 +326,13 @@ export default function HomePage() {
       </section>
 
       {/* ── Featured Services ─────────────────────────────────────────── */}
+      {featured.length > 0 && (
       <Section alt style={{ paddingTop: '110px' }}>
         <div id="services" style={{ display: 'flex', alignItems: 'flex-end', justifyContent: 'space-between', flexWrap: 'wrap', gap: 16, marginBottom: 48 }}>
           <SectionHead
             eyebrow={en ? 'Signature Treatments' : 'Rawatan Istimewa'}
-            title={en ? 'Featured Services' : 'Servis Pilihan'}
+            title={t.services.title}
+            sub={t.services.sub}
           />
         </div>
         <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(280px, 1fr))', gap: 24 }}>
@@ -345,7 +360,7 @@ export default function HomePage() {
                 />
               </div>
               <div style={{ padding: '22px 24px 26px' }}>
-                <Eyebrow tone="gold">{s.category}</Eyebrow>
+                <Eyebrow tone="gold">{en ? (CATEGORY_LABELS[s.category]?.en ?? s.category) : (CATEGORY_LABELS[s.category]?.bm ?? s.category)}</Eyebrow>
                 <h3 style={{ ...DISPLAY, fontSize: 26, fontWeight: 500, color: 'var(--ink-950)', margin: '8px 0 6px', lineHeight: 1.1 }}>
                   {en ? s.nameEn : s.nameBm}
                 </h3>
@@ -384,6 +399,7 @@ export default function HomePage() {
           ))}
         </div>
       </Section>
+      )}
 
       {/* ── Before / After ─────────────────────────────────────────────── */}
       <Section>
@@ -407,7 +423,7 @@ export default function HomePage() {
         >
           <Image src={images.beforeAfter?.after || '/images/nuay-lounge.webp'} alt="After" fill style={{ objectFit: 'cover' }} />
           <div style={{ position: 'absolute', inset: 0, width: `${pos}%`, overflow: 'hidden' }}>
-            <div style={{ position: 'relative', width: `${100 / (pos / 100)}%`, height: '100%' }}>
+            <div style={{ position: 'relative', width: `${100 / (Math.max(pos, 1) / 100)}%`, height: '100%' }}>
               <Image
                 src={images.beforeAfter?.before || '/images/nuay-reception.webp'}
                 alt="Before"
@@ -476,6 +492,7 @@ export default function HomePage() {
             max="100"
             value={pos}
             onChange={(e) => setPos(+e.target.value)}
+            aria-label={en ? 'Before and after comparison slider' : 'Slider perbandingan sebelum dan selepas'}
             style={{ position: 'absolute', inset: 0, width: '100%', height: '100%', opacity: 0, cursor: 'ew-resize', margin: 0 }}
           />
         </div>
@@ -513,13 +530,14 @@ export default function HomePage() {
       </Section>
 
       {/* ── Testimonials ───────────────────────────────────────────────── */}
+      {publishedTestimonials.length > 0 && (
       <Section>
-        <SectionHead center eyebrow={en ? 'In Their Words' : 'Kata Mereka'} title={en ? 'Held in high regard' : 'Dipandang tinggi'} />
+        <SectionHead center eyebrow={en ? 'In Their Words' : 'Kata Mereka'} title={t.testimonials.title} />
         <div style={{ overflow: 'hidden' }}>
           <div
             style={{ display: 'flex', gap: 24, animation: 'marquee 32s linear infinite', width: 'max-content' }}
           >
-            {loop.map((t, i) => (
+            {loop.map((item, i) => (
               <div
                 key={i}
                 style={{
@@ -532,26 +550,28 @@ export default function HomePage() {
                 }}
               >
                 <div style={{ marginBottom: 18 }}>
-                  <Rating score={t.rating ?? 5} />
+                  <Rating score={item.rating ?? 5} />
                 </div>
                 <p style={{ ...DISPLAY, fontStyle: 'italic', fontSize: 19, color: 'var(--ink-800)', margin: '0 0 24px', lineHeight: 1.4 }}>
-                  &ldquo;{en ? t.quoteEn : t.quoteBm}&rdquo;
+                  &ldquo;{en ? item.quoteEn : item.quoteBm}&rdquo;
                 </p>
-                <div style={{ ...BODY, fontSize: 14, fontWeight: 700, color: 'var(--ink-950)' }}>{t.name}</div>
+                <div style={{ ...BODY, fontSize: 14, fontWeight: 700, color: 'var(--ink-950)' }}>{item.name}</div>
                 <div style={{ ...BODY, fontSize: 11, letterSpacing: '0.08em', textTransform: 'uppercase', color: 'var(--ink-400)', marginTop: 4 }}>
-                  {t.service}
+                  {item.service}
                 </div>
               </div>
             ))}
           </div>
         </div>
       </Section>
+      )}
 
       {/* ── Artists ─────────────────────────────────────────────────────── */}
+      {publishedArtists.length > 0 && (
       <Section alt>
-        <SectionHead center eyebrow={en ? 'Meet Your Artists' : 'Kenali Artist Kami'} title={en ? 'Held with care' : 'Dijaga dengan teliti'} />
+        <SectionHead center eyebrow={en ? 'Meet Your Artists' : 'Kenali Artist Kami'} title={t.artists.title} sub={t.artists.sub} />
         <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(260px, 1fr))', gap: 24 }}>
-          {artists.filter((a) => a.published !== false).map((a) => (
+          {publishedArtists.map((a) => (
             <Link key={a.id} href={`/artists#${a.id}`} style={{ background: 'var(--white, #fff)', borderRadius: 'var(--radius-card)', overflow: 'hidden', boxShadow: 'var(--shadow-md)', display: 'block' }}>
               <div style={{ position: 'relative', aspectRatio: '4/5' }}>
                 <Image src={a.image || '/images/nuay-artist.png'} alt={a.name} fill style={{ objectFit: 'cover' }} />
@@ -567,11 +587,13 @@ export default function HomePage() {
           ))}
         </div>
       </Section>
+      )}
 
       {/* ── FAQ ─────────────────────────────────────────────────────────── */}
+      {faqs.length > 0 && (
       <Section>
         <div style={{ maxWidth: 820, margin: '0 auto' }}>
-          <SectionHead center eyebrow={en ? 'Good to Know' : 'Perlu Tahu'} title={en ? 'Questions, answered' : 'Soalan, dijawab'} />
+          <SectionHead center eyebrow={en ? 'Good to Know' : 'Perlu Tahu'} title={t.faq.title} />
           <div style={{ borderTop: '1px solid var(--line)' }}>
             {faqs.map((f, i) => (
               <div key={i} style={{ borderBottom: '1px solid var(--line)' }}>
@@ -609,6 +631,7 @@ export default function HomePage() {
           </div>
         </div>
       </Section>
+      )}
 
       {/* ── Final CTA ───────────────────────────────────────────────────── */}
       <section style={{ padding: '0 24px 96px' }}>
