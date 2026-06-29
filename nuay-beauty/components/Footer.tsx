@@ -2,7 +2,7 @@
 
 import Link from 'next/link';
 import Image from 'next/image';
-import { InstagramLogo, FacebookLogo, MapPin, Clock } from '@phosphor-icons/react';
+import { InstagramLogo, FacebookLogo, TiktokLogo, MapPin, Clock } from '@phosphor-icons/react';
 import { useLang } from './LanguageContext';
 import { useSiteData, getCopy } from '@/components/SiteDataContext';
 
@@ -10,7 +10,7 @@ export default function Footer() {
   const { lang } = useLang();
   const { contact, copy } = useSiteData();
   const t = getCopy(copy, lang);
-  const { instagramUrl: INSTAGRAM_URL, facebookUrl: FACEBOOK_URL } = contact;
+  const { instagramUrl: INSTAGRAM_URL, facebookUrl: FACEBOOK_URL, tiktokUrl: TIKTOK_URL } = contact;
   const address = lang === 'en' ? contact.addressEn : contact.addressBm;
   const hours = lang === 'en' ? contact.hoursEn : contact.hoursBm;
 
@@ -37,6 +37,9 @@ export default function Footer() {
             </a>
             <a href={FACEBOOK_URL} target="_blank" rel="noopener noreferrer" style={{ color: 'var(--gold-600)' }}>
               <FacebookLogo size={20} />
+            </a>
+            <a href={TIKTOK_URL} target="_blank" rel="noopener noreferrer" style={{ color: 'var(--gold-600)' }}>
+              <TiktokLogo size={20} />
             </a>
           </div>
         </div>
