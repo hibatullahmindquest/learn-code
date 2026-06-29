@@ -25,7 +25,7 @@ export default function Footer() {
           <div className="mb-4">
             <Image src="/logo/logo-light.png" alt="Nuay Beauty" width={140} height={81} className="h-14 w-auto" />
           </div>
-          <p className="text-sm mb-1" style={{ color: 'rgba(249,246,243,0.45)' }}>
+          <p className="text-sm mb-1" style={{ color: 'rgba(249,246,243,0.6)' }}>
             Nuay Enterprise (003241008-W)
           </p>
           <p className="text-sm leading-relaxed" style={{ color: 'rgba(249,246,243,0.6)' }}>
