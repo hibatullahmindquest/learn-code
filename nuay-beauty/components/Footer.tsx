@@ -23,7 +23,7 @@ export default function Footer() {
         {/* Brand */}
         <div>
           <div className="mb-4">
-            <Image src="/logo/logo-light.png" alt="Nuay Beauty" width={140} height={81} className="h-10 w-auto" />
+            <Image src="/logo/logo-light.png" alt="Nuay Beauty" width={140} height={81} className="h-14 w-auto" />
           </div>
           <p className="text-sm leading-relaxed" style={{ color: 'rgba(249,246,243,0.6)' }}>
             {t.footer.tagline}
