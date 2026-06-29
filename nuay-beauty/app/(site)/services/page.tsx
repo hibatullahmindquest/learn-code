@@ -485,7 +485,7 @@ export default function ServicesPage() {
                 : 'Tempah konsultasi percuma dan kami akan cadangkan rawatan terbaik untuk anda.'}
             </p>
             <a
-              href={BOOKING_URL}
+              href={`https://wa.me/${contact.whatsapp}`}
               target="_blank"
               rel="noopener noreferrer"
               className="inline-flex items-center gap-2 px-8 py-4 text-sm tracking-wide transition-all duration-300 active:scale-[0.97]"
