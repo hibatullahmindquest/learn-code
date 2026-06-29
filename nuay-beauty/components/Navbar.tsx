@@ -59,7 +59,7 @@ export default function Navbar() {
               alt="Nuay Beauty"
               width={140}
               height={81}
-              className="h-9 w-auto transition-opacity duration-300"
+              className="h-12 w-auto transition-opacity duration-300"
               priority
             />
           </Link>
