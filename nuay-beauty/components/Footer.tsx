@@ -25,9 +25,6 @@ export default function Footer() {
           <div className="mb-4">
             <Image src="/logo/logo-light.png" alt="Nuay Beauty" width={140} height={81} className="h-14 w-auto" />
           </div>
-          <p className="text-sm mb-1" style={{ color: 'rgba(249,246,243,0.6)' }}>
-            Nuay Enterprise (003241008-W)
-          </p>
           <p className="text-sm leading-relaxed" style={{ color: 'rgba(249,246,243,0.6)' }}>
             {t.footer.tagline}
           </p>
@@ -94,7 +91,7 @@ export default function Footer() {
         className="max-w-7xl mx-auto px-6 lg:px-10 py-5 flex flex-col md:flex-row justify-between items-center gap-2 text-xs"
         style={{ borderTop: '1px solid rgba(255,255,255,0.08)', color: 'rgba(249,246,243,0.3)' }}
       >
-        <span>© {new Date().getFullYear()} Nuay Beauty. All rights reserved.</span>
+        <span className="text-xs mb-3" style={{ color: 'rgba(249,246,243,0.45)' }}>© {new Date().getFullYear()} Nuay Enterprise (003241008-W). All rights reserved.</span>
         <span>Shah Alam, Selangor, Malaysia</span>
       </div>
     </footer>
