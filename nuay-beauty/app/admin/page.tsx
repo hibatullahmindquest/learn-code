@@ -24,6 +24,7 @@ type ContactData = {
   bookingUrl: string;
   instagramUrl: string;
   facebookUrl: string;
+  tiktokUrl: string;
   googleMapsEmbed: string;
   addressEn: string;
   addressBm: string;
@@ -131,7 +132,7 @@ export default function AdminPage() {
   const [tab, setTab] = useState<Tab>('dashboard');
 
   const [contact, setContact] = useState<ContactData>({
-    whatsapp: '', bookingUrl: '', instagramUrl: '', facebookUrl: '',
+    whatsapp: '', bookingUrl: '', instagramUrl: '', facebookUrl: '', tiktokUrl: '',
     googleMapsEmbed: '', addressEn: '', addressBm: '', hoursEn: '', hoursBm: '',
   });
   const [artists, setArtists] = useState<Artist[]>([]);
@@ -163,7 +164,7 @@ export default function AdminPage() {
   const loadSettings = useCallback(async () => {
     const res = await fetch('/api/settings');
     const data = await res.json();
-    if (data.contact) setContact(data.contact);
+    if (data.contact) setContact((prev) => ({ ...prev, ...data.contact }));
     const resolvedServices = data.services ? (data.services as Service[]).map((s) => ({ ...SERVICE_DEFAULTS, ...s })) : services;
     if (data.services) setServices(resolvedServices);
     if (data.artists) {
@@ -439,6 +440,10 @@ export default function AdminPage() {
                   <div>
                     <label className={labelClass}>Facebook URL</label>
                     <input className={inputClass} value={contact.facebookUrl} onChange={(e) => setContact({ ...contact, facebookUrl: e.target.value })} placeholder="https://facebook.com/..." />
+                  </div>
+                  <div>
+                    <label className={labelClass}>TikTok URL</label>
+                    <input className={inputClass} value={contact.tiktokUrl} onChange={(e) => setContact({ ...contact, tiktokUrl: e.target.value })} placeholder="https://www.tiktok.com/@..." />
                   </div>
                 </div>
               </div>

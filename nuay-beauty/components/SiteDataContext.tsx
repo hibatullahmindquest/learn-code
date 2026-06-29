@@ -9,6 +9,7 @@ import {
   WHATSAPP_NUMBER,
   INSTAGRAM_URL,
   FACEBOOK_URL,
+  TIKTOK_URL,
   GOOGLE_MAPS_EMBED,
 } from '@/lib/data';
 
@@ -18,6 +19,7 @@ export type ContactSettings = {
   bookingUrl: string;
   instagramUrl: string;
   facebookUrl: string;
+  tiktokUrl: string;
   googleMapsEmbed: string;
   addressEn: string;
   addressBm: string;
@@ -363,6 +365,7 @@ const defaultContact: ContactSettings = {
   bookingUrl: BOOKING_URL,
   instagramUrl: INSTAGRAM_URL,
   facebookUrl: FACEBOOK_URL,
+  tiktokUrl: TIKTOK_URL,
   googleMapsEmbed: GOOGLE_MAPS_EMBED,
   addressEn: '8-1 Jalan Metafasa U16/5, Taman Bukit Subang, Shah Alam, Selangor',
   addressBm: '8-1 Jalan Metafasa U16/5, Taman Bukit Subang, Shah Alam, Selangor',
@@ -417,7 +420,7 @@ const initialData: SiteData = {
 function mapSettings(settings: Record<string, unknown>): SiteData {
   const resolvedServices = normalizeServices((settings.services as ServiceItem[]) ?? normalizedDefaultServices);
   return {
-    contact: (settings.contact as ContactSettings) ?? defaultContact,
+    contact: settings.contact ? { ...defaultContact, ...(settings.contact as Partial<ContactSettings>) } : defaultContact,
     services: resolvedServices,
     artists: normalizeArtists((settings.artists as ArtistItem[]) ?? normalizedDefaultArtists, resolvedServices),
     testimonials: (settings.testimonials as Testimonial[]) ?? [],
